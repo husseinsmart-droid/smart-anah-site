@@ -1,1 +1,161 @@
-<!doctype html><html><head><meta charset='utf-8'><title>Smart Anah</title><link rel='manifest' href='/manifest.json'></head><body><h1>Smart Anah</h1></body></html>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>مدينة عنه الذكية | Smart Anah</title>
+
+  <!-- SEO -->
+  <meta name="description" content="المنصة الرسمية لمدينة عنه الذكية: خدمات رقمية، بيانات مفتوحة، لوحات مؤشرات، وتوأم رقمي ثلاثي الأبعاد للمشاريع الحضرية.">
+  <link rel="canonical" href="https://smart-anah.org/">
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="مدينة عنه الذكية">
+  <meta property="og:description" content="استكشف الخدمات الرقمية والتوأم الرقمي لمدينة عنه.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://smart-anah.org/">
+  <meta property="og:image" content="https://smart-anah.org/assets/img/og-cover.jpg">
+
+  <!-- PWA -->
+  <meta name="theme-color" content="#0aa06e">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/icons/icon-192.png">
+  <script>
+    if('serviceWorker' in navigator){ addEventListener('load', ()=> navigator.serviceWorker.register('/sw.js')); }
+  </script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <!-- شريط علوي -->
+  <header class="nav">
+    <div class="wrap container">
+      <a class="brand" href="/">مدينة عنه الذكية</a>
+      <nav class="links">
+        <a href="/dashboard/">اللوحة</a>
+        <a href="/city3d/">المدينة ثلاثية الأبعاد</a>
+        <a href="/opendata/">البيانات المفتوحة</a>
+        <a href="mailto:info@smart-anah.org">تواصل</a>
+      </nav>
+      <button id="installBtn" class="btn ghost" hidden>تثبيت التطبيق</button>
+    </div>
+  </header>
+
+  <!-- بطل الصفحة -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <h1>بوابة مدينة عنه الذكية</h1>
+        <p class="lead">
+          منصة موحّدة للخدمات الرقمية، عرض البيانات والمؤشرات،
+          والتجوال في التوأم الرقمي ثلاثي الأبعاد للمشاريع الحضرية.
+        </p>
+        <div class="cta">
+          <a class="btn" href="/dashboard/">فتح لوحة التحكم</a>
+          <a class="btn alt" href="/city3d/">استكشاف المدينة ثلاثية الأبعاد</a>
+        </div>
+        <p class="note">يمكنك تثبيت الموقع كتطبيق موبايل (PWA) من الزر أعلى اليمين.</p>
+      </div>
+      <div class="hero-media">
+        <img src="/assets/img/hero-city.jpg" alt="مشهد لمدينة عنه" loading="eager">
+      </div>
+    </div>
+  </section>
+
+  <!-- أقسام رئيسية -->
+  <section class="section container">
+    <h2 class="section-title">خدماتنا الذكية</h2>
+    <div class="grid">
+      <article class="card">
+        <img src="/assets/img/services-water.jpg" alt="" class="card-img">
+        <h3>المياه الذكية</h3>
+        <p>مؤشرات الضغط، الخزانات، جودة المياه وتنبيهات الأعطال.</p>
+        <a class="link" href="/dashboard/">انتقل إلى اللوحة</a>
+      </article>
+      <article class="card">
+        <img src="/assets/img/services-waste.jpg" alt="" class="card-img">
+        <h3>النظافة والبيئة</h3>
+        <p>تتبع المسارات، أرشفة البلاغات، وتحسين الجداول.</p>
+        <a class="link" href="/dashboard/">انتقل إلى اللوحة</a>
+      </article>
+      <article class="card">
+        <img src="/assets/img/services-lights.jpg" alt="" class="card-img">
+        <h3>الإنارة العامة</h3>
+        <p>بلاغات الأعمدة، الأولويات المكانية، وتحسين الاستجابة.</p>
+        <a class="link" href="/dashboard/">انتقل إلى اللوحة</a>
+      </article>
+      <article class="card">
+        <img src="/assets/img/services-weather.jpg" alt="" class="card-img">
+        <h3>الطقس والمناخ</h3>
+        <p>محطة الطقس، التوجهات الزمنية، ومؤشرات التحذير المبكر.</p>
+        <a class="link" href="/dashboard/">انتقل إلى اللوحة</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2 class="section-title">التوأم الرقمي | 3D</h2>
+    <div class="split">
+      <p>
+        نقدّم نموذجًا ثلاثي الأبعاد لمدينة عنه لعرض المشاريع المقترحة
+        والتخطيط الحضري وإشراك المواطنين وأصحاب المصلحة في اتخاذ القرار.
+        يمكنكم التجوال والنقر على المباني لعرض خصائصها.
+      </p>
+      <div>
+        <a class="btn" href="/city3d/">فتح العارض ثلاثي الأبعاد</a>
+        <p class="muted sm">يتطلب اتصال إنترنت جيد، وقد يستهلك بيانات.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2 class="section-title">البيانات المفتوحة</h2>
+    <div class="split">
+      <p>
+        نوفر ملفات CSV/XLSX لمؤشرات المدينة (ضغط المياه، الطقس، الخزانات…)
+        لتسهيل التحليل والبحث. يتم تحديثها دوريًا.
+      </p>
+      <a class="btn alt" href="/opendata/">تصفح الملفات</a>
+    </div>
+  </section>
+
+  <!-- تذييل -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <strong>مدينة عنه الذكية</strong>
+          <p class="muted">حلول رقمية لخدمة المواطن وتعزيز الحوكمة.</p>
+        </div>
+        <nav>
+          <a href="/dashboard/">اللوحة</a>
+          <a href="/city3d/">المدينة ثلاثية الأبعاد</a>
+          <a href="/opendata/">البيانات المفتوحة</a>
+        </nav>
+        <div>
+          <a class="link" href="mailto:info@smart-anah.org">info@smart-anah.org</a><br>
+          <span class="muted">© 2025 Smart Anah</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- زر تثبيت الـPWA -->
+  <script>
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e)=>{
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('installBtn');
+      btn.hidden = false;
+      btn.addEventListener('click', async ()=>{
+        btn.hidden = true;
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+      }, { once:true });
+    });
+  </script>
+</body>
+</html>
