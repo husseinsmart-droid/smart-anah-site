@@ -3,159 +3,310 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>مدينة عنه الذكية | Smart Anah</title>
-
-  <!-- SEO -->
-  <meta name="description" content="المنصة الرسمية لمدينة عنه الذكية: خدمات رقمية، بيانات مفتوحة، لوحات مؤشرات، وتوأم رقمي ثلاثي الأبعاد للمشاريع الحضرية.">
-  <link rel="canonical" href="https://smart-anah.org/">
-
-  <!-- Open Graph / Social -->
-  <meta property="og:title" content="مدينة عنه الذكية">
-  <meta property="og:description" content="استكشف الخدمات الرقمية والتوأم الرقمي لمدينة عنه.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://smart-anah.org/">
-  <meta property="og:image" content="https://smart-anah.org/assets/img/og-cover.jpg">
-
-  <!-- PWA -->
-  <meta name="theme-color" content="#0aa06e">
+  <title>بوابة مدينة عنه الذكية</title>
+  <meta name="description" content="بوابة حديثة لمدينة عنه الذكية: خدمات وتطبيقات ذكية، بيانات مفتوحة، لوحة مؤشرات، وتوأم رقمي ثلاثي الأبعاد.">
   <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0aa06e">
   <link rel="icon" href="/assets/icons/icon-192.png">
-  <script>
-    if('serviceWorker' in navigator){ addEventListener('load', ()=> navigator.serviceWorker.register('/sw.js')); }
-  </script>
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="/styles.css">
+  <style>
+    :root{
+      --bg:#0b1220; --bg2:#0f1830; --ink:#e9eef5; --muted:#a7b1c2; --brand:#12b886; --brand2:#0aa06e; --card:#111a2e; --border:#1b2742;
+      --glow: radial-gradient(600px 200px at 50% -20%, rgba(18,184,134,.25), transparent 60%);
+      --radius:16px; --container:1200px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:
+      linear-gradient(180deg,var(--bg) 0,var(--bg2) 100%) fixed,
+      var(--glow);
+      color:var(--ink);font-family:"Tajawal",system-ui,-apple-system,Segoe UI,Roboto,"Noto Kufi Arabic",Arial,sans-serif}
+    a{color:var(--brand);text-decoration:none}
+    .container{max-width:var(--container);margin-inline:auto;padding:0 18px}
+    /* Nav */
+    .nav{position:sticky;top:0;z-index:40;background:rgba(11,18,32,.7);backdrop-filter:saturate(1.2) blur(8px);border-bottom:1px solid var(--border)}
+    .nav-wrap{display:flex;align-items:center;gap:16px;min-height:64px}
+    .brand{font-weight:900;letter-spacing:.3px;color:#fff}
+    .nav-links{display:flex;gap:14px;margin-inline-start:auto}
+    .chip{display:inline-flex;align-items:center;gap:6px;background:#0c2138;border:1px solid var(--border);color:#c7d0df;border-radius:999px;padding:.35rem .7rem;font-size:.9rem}
+    .btn{display:inline-block;background:var(--brand);color:#012016;border:0;border-radius:12px;padding:.7rem 1rem;font-weight:800}
+    .btn:hover{filter:brightness(.95)}
+    .btn.alt{background:#2b8dda;color:#001325}
+    .btn.ghost{background:transparent;color:#e9eef5;border:1px solid var(--border)}
+    /* Hero */
+    .hero{position:relative;overflow:hidden}
+    .hero-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;padding:42px 0}
+    .kpis{display:grid;grid-template-columns:repeat(3,minmax(140px,1fr));gap:12px;margin-top:14px}
+    .kpi{background:linear-gradient(180deg,#0f1a31 0,#0b1326 100%);border:1px solid var(--border);border-radius:14px;padding:12px}
+    .kpi h3{margin:0;font-size:clamp(20px,3vw,28px)}
+    .kpi p{margin:.2rem 0 0;color:var(--muted)}
+    .hero-media{border-radius:16px;overflow:hidden;border:1px solid var(--border)}
+    .hero-media iframe,.hero-media img{display:block;width:100%;height:360px;object-fit:cover}
+    /* Sections */
+    .section{padding:28px 0}
+    .section h2{margin:0 0 12px;font-size:clamp(20px,3.2vw,28px)}
+    .muted{color:var(--muted)}
+    .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+    .card{background:linear-gradient(180deg,#0e1830 0,#0b1327 100%);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+    .card .img{height:140px;background:#0a162d;border-bottom:1px solid var(--border)}
+    .card .img img{width:100%;height:100%;object-fit:cover}
+    .card .body{padding:12px}
+    .tag{display:inline-block;background:#0c2138;border:1px solid var(--border);color:#a7b1c2;border-radius:999px;padding:.2rem .6rem;font-size:.85rem}
+    /* Apps showcase */
+    .apps{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));margin-top:14px}
+    .app{background:#0c162c;border:1px solid var(--border);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px}
+    .app h3{margin:0 0 4px}
+    .app .actions{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+    /* FAQ */
+    .faq{display:grid;gap:10px;margin-top:10px}
+    .faq details{background:#0c162c;border:1px solid var(--border);border-radius:12px;padding:10px}
+    .faq summary{cursor:pointer;font-weight:700}
+    /* Footer */
+    .footer{border-top:1px solid var(--border);background:#0a1326;padding:22px 0;color:#a7b1c2;margin-top:24px}
+    .footer .cols{display:grid;gap:14px;grid-template-columns:2fr 1fr 1fr}
+    /* Toggles */
+    .toolbar{display:flex;gap:10px;align-items:center}
+    .switch{position:relative;display:inline-block;width:44px;height:26px}
+    .switch input{display:none}
+    .slider{position:absolute;inset:0;background:#20314f;border-radius:999px;transition:.2s}
+    .slider:before{content:"";position:absolute;height:20px;width:20px;left:3px;top:3px;background:#e9eef5;border-radius:50%;transition:.2s}
+    input:checked + .slider{background:#16c286}
+    input:checked + .slider:before{transform:translateX(18px)}
+    /* Light theme */
+    body.light{--bg:#f7f8fa;--bg2:#eef1f7;--ink:#0a1020;--muted:#5a6679;--card:#fff;--border:#dde2ee}
+    body.light .nav{background:rgba(255,255,255,.75)}
+    body.light .chip{background:#f0f4fa;color:#1b263b;border-color:#e6ebf5}
+    body.light .kpi{background:#fff}
+    body.light .card{background:#fff}
+    body.light .app{background:#fff}
+    body.light .faq details{background:#fff}
+    body.light .footer{background:#fff;color:#5b6678}
+    /* Responsive */
+    @media (max-width: 900px){
+      .hero-inner{grid-template-columns:1fr}
+      .nav-links{display:none}
+      .hero-media iframe,.hero-media img{height:240px}
+    }
+  </style>
 </head>
 <body>
-  <!-- شريط علوي -->
+  <!-- NAV -->
   <header class="nav">
-    <div class="wrap container">
-      <a class="brand" href="/">مدينة عنه الذكية</a>
-      <nav class="links">
-        <a href="/dashboard/">اللوحة</a>
-        <a href="/city3d/">المدينة ثلاثية الأبعاد</a>
-        <a href="/opendata/">البيانات المفتوحة</a>
-        <a href="mailto:info@smart-anah.org">تواصل</a>
+    <div class="container nav-wrap">
+      <a class="brand" href="#">مدينة عنه الذكية</a>
+      <nav class="nav-links">
+        <a class="chip" href="#apps">التطبيقات الذكية</a>
+        <a class="chip" href="#digital-twin">المدينة ثلاثية الأبعاد</a>
+        <a class="chip" href="#opendata">البيانات المفتوحة</a>
+        <a class="chip" href="#faq">الأسئلة الشائعة</a>
       </nav>
-      <button id="installBtn" class="btn ghost" hidden>تثبيت التطبيق</button>
+      <div class="toolbar">
+        <button id="installBtn" class="btn ghost" hidden>تثبيت التطبيق</button>
+        <label class="switch" title="الوضع الفاتح/الداكن">
+          <input id="themeToggle" type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
     </div>
   </header>
 
-  <!-- بطل الصفحة -->
+  <!-- HERO -->
   <section class="hero">
     <div class="container hero-inner">
-      <div class="hero-text">
-        <h1>بوابة مدينة عنه الذكية</h1>
-        <p class="lead">
-          منصة موحّدة للخدمات الرقمية، عرض البيانات والمؤشرات،
-          والتجوال في التوأم الرقمي ثلاثي الأبعاد للمشاريع الحضرية.
+      <div>
+        <h1 style="margin:.2rem 0 8px;font-size:clamp(26px,5vw,44px)">بوابة حديثة للمدن الذكية</h1>
+        <p class="muted" style="margin:0 0 14px">منصة موحّدة للخدمات والتطبيقات الذكية، تجمع اللوحات التشغيلية والبيانات المفتوحة والتوأم الرقمي في تجربة واحدة.
         </p>
-        <div class="cta">
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
           <a class="btn" href="/dashboard/">فتح لوحة التحكم</a>
           <a class="btn alt" href="/city3d/">استكشاف المدينة ثلاثية الأبعاد</a>
+          <a class="btn ghost" href="#apps">استعراض التطبيقات</a>
         </div>
-        <p class="note">يمكنك تثبيت الموقع كتطبيق موبايل (PWA) من الزر أعلى اليمين.</p>
+        <div class="kpis">
+          <div class="kpi"><h3 id="kpi1">0</h3><p>بلاغات منجزة</p></div>
+          <div class="kpi"><h3 id="kpi2">0</h3><p>أجهزة متصلة</p></div>
+          <div class="kpi"><h3 id="kpi3">0</h3><p>مجموع البيانات</p></div>
+        </div>
       </div>
       <div class="hero-media">
-        <img src="/assets/img/hero-city.jpg" alt="مشهد لمدينة عنه" loading="eager">
+        <!-- صورة غلاف أو فيديو تعريفي (يمكن استبداله لاحقًا) -->
+        <img src="/assets/img/hero-city.jpg" alt="مشهد لمدينة عنه">
       </div>
     </div>
   </section>
 
-  <!-- أقسام رئيسية -->
-  <section class="section container">
-    <h2 class="section-title">خدماتنا الذكية</h2>
+  <!-- APPS SHOWCASE -->
+  <section id="apps" class="section container">
+    <h2>التطبيقات الذكية</h2>
+    <p class="muted">مجموعة مصغّرة من التطبيقات القابلة للتوسّع. يمكن البحث والتصفية والانتقال السريع.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 12px">
+      <input id="search" placeholder="ابحث عن تطبيق (مياه، نظافة، طقس...)" style="flex:1 1 260px;background:#0c162c;border:1px solid var(--border);color:var(--ink);border-radius:12px;padding:.7rem .9rem;outline:none">
+      <button class="btn ghost" onclick="resetApps()">إظهار الكل</button>
+    </div>
+    <div class="apps" id="appsGrid">
+      <!-- بطاقة تطبيق -->
+      <div class="app" data-keywords="مياه ضغط خزانات جودة">
+        <span class="tag">المياه الذكية</span>
+        <h3>مؤشرات ضغط المياه والخزانات</h3>
+        <p class="muted">لوحة مباشرة لقراءة الضغط، مناسيب الخزانات، وجودة المياه والتنبيهات.</p>
+        <div class="actions">
+          <a class="btn" href="/dashboard/">فتح اللوحة</a>
+          <a class="btn ghost" href="#opendata">بيانات</a>
+        </div>
+      </div>
+      <div class="app" data-keywords="نظافة نفايات مسارات">
+        <span class="tag">النظافة والبيئة</span>
+        <h3>تتبّع المسارات والبلاغات</h3>
+        <p class="muted">تحسين الجداول الميدانية ومعالجة البلاغات بالأولوية المكانية.</p>
+        <div class="actions">
+          <a class="btn" href="/dashboard/">فتح اللوحة</a>
+          <a class="btn ghost" href="#opendata">بيانات</a>
+        </div>
+      </div>
+      <div class="app" data-keywords="إنارة إناره اضاءة">
+        <span class="tag">الإنارة العامة</span>
+        <h3>بلاغات الأعمدة وتحليل الانقطاعات</h3>
+        <p class="muted">تنبيهات تلقائية وخرائط حرارية للأعطال.</p>
+        <div class="actions">
+          <a class="btn" href="/dashboard/">فتح اللوحة</a>
+          <a class="btn ghost" href="#opendata">بيانات</a>
+        </div>
+      </div>
+      <div class="app" data-keywords="طقس مناخ محطة رياح أمطار حرارة">
+        <span class="tag">الطقس والمناخ</span>
+        <h3>محطة الطقس والتوجّهات</h3>
+        <p class="muted">تحليلات تاريخية ورسوم بيانية للتنبيه المبكر.</p>
+        <div class="actions">
+          <a class="btn" href="/dashboard/">فتح اللوحة</a>
+          <a class="btn ghost" href="#opendata">بيانات</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIGITAL TWIN -->
+  <section id="digital-twin" class="section container">
+    <h2>التوأم الرقمي (3D)</h2>
     <div class="grid">
-      <article class="card">
-        <img src="/assets/img/services-water.jpg" alt="" class="card-img">
-        <h3>المياه الذكية</h3>
-        <p>مؤشرات الضغط، الخزانات، جودة المياه وتنبيهات الأعطال.</p>
-        <a class="link" href="/dashboard/">انتقل إلى اللوحة</a>
-      </article>
-      <article class="card">
-        <img src="/assets/img/services-waste.jpg" alt="" class="card-img">
-        <h3>النظافة والبيئة</h3>
-        <p>تتبع المسارات، أرشفة البلاغات، وتحسين الجداول.</p>
-        <a class="link" href="/dashboard/">انتقل إلى اللوحة</a>
-      </article>
-      <article class="card">
-        <img src="/assets/img/services-lights.jpg" alt="" class="card-img">
-        <h3>الإنارة العامة</h3>
-        <p>بلاغات الأعمدة، الأولويات المكانية، وتحسين الاستجابة.</p>
-        <a class="link" href="/dashboard/">انتقل إلى اللوحة</a>
-      </article>
-      <article class="card">
-        <img src="/assets/img/services-weather.jpg" alt="" class="card-img">
-        <h3>الطقس والمناخ</h3>
-        <p>محطة الطقس، التوجهات الزمنية، ومؤشرات التحذير المبكر.</p>
-        <a class="link" href="/dashboard/">انتقل إلى اللوحة</a>
-      </article>
-    </div>
-  </section>
-
-  <section class="section container">
-    <h2 class="section-title">التوأم الرقمي | 3D</h2>
-    <div class="split">
-      <p>
-        نقدّم نموذجًا ثلاثي الأبعاد لمدينة عنه لعرض المشاريع المقترحة
-        والتخطيط الحضري وإشراك المواطنين وأصحاب المصلحة في اتخاذ القرار.
-        يمكنكم التجوال والنقر على المباني لعرض خصائصها.
-      </p>
-      <div>
-        <a class="btn" href="/city3d/">فتح العارض ثلاثي الأبعاد</a>
-        <p class="muted sm">يتطلب اتصال إنترنت جيد، وقد يستهلك بيانات.</p>
+      <div class="card">
+        <div class="img"><img src="/assets/img/services-3d.jpg" alt="3D"></div>
+        <div class="body">
+          <p class="muted">نموذج ثلاثي الأبعاد لمدينة عنه لعرض المشاريع، وإشراك المواطنين بالنقر على العناصر لعرض خصائصها.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a class="btn alt" href="/city3d/">فتح العارض ثلاثي الأبعاد</a>
+            <a class="btn ghost" href="#faq">كيفية الاستخدام</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="img"><img src="/assets/img/services-opendata.jpg" alt="Open data"></div>
+        <div class="body">
+          <p class="muted">يمكن ربط خصائص المباني والطرق بملفات CSV/GeoJSON محدّثة يدويًا لعرض معلومات المشاريع والخدمات.</p>
+          <a class="btn" href="#opendata">الذهاب إلى البيانات المفتوحة</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="section container">
-    <h2 class="section-title">البيانات المفتوحة</h2>
-    <div class="split">
-      <p>
-        نوفر ملفات CSV/XLSX لمؤشرات المدينة (ضغط المياه، الطقس، الخزانات…)
-        لتسهيل التحليل والبحث. يتم تحديثها دوريًا.
-      </p>
-      <a class="btn alt" href="/opendata/">تصفح الملفات</a>
+  <!-- OPEN DATA -->
+  <section id="opendata" class="section container">
+    <h2>البيانات المفتوحة</h2>
+    <p class="muted">حزمة ملفات قابلة للتنزيل (CSV/XLSX/JSON). حدّث الروابط لاحقًا بحسب تدفّق العمل لديك.</p>
+    <div class="grid">
+      <div class="card">
+        <div class="body">
+          <h3>ضغط المياه</h3>
+          <p class="muted">نتائج شهرية بصيغة XLSX.</p>
+          <a class="btn ghost" href="/opendata/">عرض الروابط</a>
+        </div>
+      </div>
+      <div class="card"><div class="body"><h3>محطة الطقس</h3><p class="muted">قراءات يومية بصيغة CSV.</p><a class="btn ghost" href="/opendata/">عرض الروابط</a></div></div>
+      <div class="card"><div class="body"><h3>الخزانات الذكية</h3><p class="muted">مستويات المناسيب وأوقات الضخ.</p><a class="btn ghost" href="/opendata/">عرض الروابط</a></div></div>
     </div>
   </section>
 
-  <!-- تذييل -->
+  <!-- FAQ -->
+  <section id="faq" class="section container">
+    <h2>الأسئلة الشائعة</h2>
+    <div class="faq">
+      <details><summary>كيف أثبّت الموقع كتطبيق موبايل (PWA)؟</summary><p class="muted">سيظهر زر "تثبيت التطبيق" أعلى يمين الشريط. على iOS استخدم مشاركة → إضافة إلى الشاشة الرئيسية.</p></details>
+      <details><summary>لماذا لا يظهر العارض ثلاثي الأبعاد لدي؟</summary><p class="muted">يحتاج اتصال جيد ويدعم WebGL. تأكد من المتصفح، أو جرّب على كمبيوتر مكتبي.</p></details>
+      <details><summary>هل البيانات مباشرة أم محدثة يدويًا؟</summary><p class="muted">في هذه المرحلة تُحدّث يدويًا بواسطة فريق المنصة، مع خطة مستقبلية للتحديث التلقائي.</p></details>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
   <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
+    <div class="container cols">
+      <div class="cols">
         <div>
           <strong>مدينة عنه الذكية</strong>
           <p class="muted">حلول رقمية لخدمة المواطن وتعزيز الحوكمة.</p>
         </div>
         <nav>
-          <a href="/dashboard/">اللوحة</a>
-          <a href="/city3d/">المدينة ثلاثية الأبعاد</a>
-          <a href="/opendata/">البيانات المفتوحة</a>
+          <a class="chip" href="/dashboard/">اللوحة</a>
+          <a class="chip" href="/city3d/">المدينة ثلاثية الأبعاد</a>
+          <a class="chip" href="/opendata/">البيانات المفتوحة</a>
         </nav>
         <div>
-          <a class="link" href="mailto:info@smart-anah.org">info@smart-anah.org</a><br>
-          <span class="muted">© 2025 Smart Anah</span>
+          <a href="mailto:info@smart-anah.org" class="chip">info@smart-anah.org</a>
+          <div class="muted">© 2025 Smart Anah</div>
         </div>
       </div>
     </div>
   </footer>
 
-  <!-- زر تثبيت الـPWA -->
   <script>
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e)=>{
-      e.preventDefault();
-      deferredPrompt = e;
-      const btn = document.getElementById('installBtn');
-      btn.hidden = false;
-      btn.addEventListener('click', async ()=>{
-        btn.hidden = true;
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-      }, { once:true });
+    // Theme toggle with localStorage
+    const themeToggle = document.getElementById('themeToggle');
+    const userTheme = localStorage.getItem('theme');
+    if(userTheme === 'light'){ document.body.classList.add('light'); themeToggle.checked = true; }
+    themeToggle?.addEventListener('change', ()=>{
+      document.body.classList.toggle('light', themeToggle.checked);
+      localStorage.setItem('theme', themeToggle.checked ? 'light' : 'dark');
     });
+
+    // KPI counters on view
+    const counters = [
+      { el: document.getElementById('kpi1'), to: 342 },
+      { el: document.getElementById('kpi2'), to: 57 },
+      { el: document.getElementById('kpi3'), to: 128_000 }
+    ];
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          counters.forEach(({el,to})=>{
+            let cur=0, step=Math.ceil(to/40);
+            const t=setInterval(()=>{ cur+=step; if(cur>=to){cur=to; clearInterval(t);} el.textContent=cur.toLocaleString('ar-IQ'); }, 30);
+          });
+          io.disconnect();
+        }
+      })
+    },{threshold:.2});
+    io.observe(document.querySelector('.kpis'));
+
+    // Search apps
+    const grid = document.getElementById('appsGrid');
+    const search = document.getElementById('search');
+    search?.addEventListener('input', ()=>{
+      const q = search.value.trim();
+      [...grid.children].forEach(card=>{
+        const keys = card.getAttribute('data-keywords') || '';
+        card.style.display = q ? (keys.includes(q) ? 'flex' : 'none') : 'flex';
+      })
+    });
+    window.resetApps = ()=>{ search.value=''; [...grid.children].forEach(c=> c.style.display='flex'); };
+
+    // PWA install prompt
+    let deferredPrompt; const installBtn = document.getElementById('installBtn');
+    window.addEventListener('beforeinstallprompt',(e)=>{ e.preventDefault(); deferredPrompt = e; installBtn.hidden=false; });
+    installBtn?.addEventListener('click', async ()=>{ installBtn.hidden=true; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; });
+
+    // Register SW with versioned query to bust cache
+    if('serviceWorker' in navigator){
+      window.addEventListener('load', async ()=>{
+        try{ const reg = await navigator.serviceWorker.register('/sw.js?ver=5'); document.addEventListener('visibilitychange', ()=> reg.update()); }catch(err){ console.warn('SW register failed', err); }
+      });
+    }
   </script>
 </body>
 </html>
