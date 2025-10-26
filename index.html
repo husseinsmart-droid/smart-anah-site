@@ -1,312 +1,288 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>بوابة مدينة عنه الذكية</title>
-  <meta name="description" content="بوابة حديثة لمدينة عنه الذكية: خدمات وتطبيقات ذكية، بيانات مفتوحة، لوحة مؤشرات، وتوأم رقمي ثلاثي الأبعاد.">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0aa06e">
-  <link rel="icon" href="/assets/icons/icon-192.png">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>منصة عَنّة الذكية — Smart Anah</title>
+  <meta name="description" content="المنصة الرقمية لمدينة عَنّة — خدمات، منصّات، بيانات مفتوحة، أخبار." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#fff7e6',
+              100: '#ffedcc',
+              200: '#fddf99',
+              300: '#f3c866',
+              400: '#e5af33',
+              500: '#b8860b',  // لمسة ذهبية
+              600: '#936b0a',
+              700: '#6e5108',
+              800: '#4a3706',
+              900: '#2b2004'
+            },
+            bgd: {
+              900:'#0b1220',
+              800:'#101a2d',
+              700:'#121a2a'
+            }
+          },
+          boxShadow: {
+            soft: '0 6px 18px rgba(0,0,0,.12)'
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    :root{
-      --bg:#0b1220; --bg2:#0f1830; --ink:#e9eef5; --muted:#a7b1c2; --brand:#12b886; --brand2:#0aa06e; --card:#111a2e; --border:#1b2742;
-      --glow: radial-gradient(600px 200px at 50% -20%, rgba(18,184,134,.25), transparent 60%);
-      --radius:16px; --container:1200px;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;background:
-      linear-gradient(180deg,var(--bg) 0,var(--bg2) 100%) fixed,
-      var(--glow);
-      color:var(--ink);font-family:"Tajawal",system-ui,-apple-system,Segoe UI,Roboto,"Noto Kufi Arabic",Arial,sans-serif}
-    a{color:var(--brand);text-decoration:none}
-    .container{max-width:var(--container);margin-inline:auto;padding:0 18px}
-    /* Nav */
-    .nav{position:sticky;top:0;z-index:40;background:rgba(11,18,32,.7);backdrop-filter:saturate(1.2) blur(8px);border-bottom:1px solid var(--border)}
-    .nav-wrap{display:flex;align-items:center;gap:16px;min-height:64px}
-    .brand{font-weight:900;letter-spacing:.3px;color:#fff}
-    .nav-links{display:flex;gap:14px;margin-inline-start:auto}
-    .chip{display:inline-flex;align-items:center;gap:6px;background:#0c2138;border:1px solid var(--border);color:#c7d0df;border-radius:999px;padding:.35rem .7rem;font-size:.9rem}
-    .btn{display:inline-block;background:var(--brand);color:#012016;border:0;border-radius:12px;padding:.7rem 1rem;font-weight:800}
-    .btn:hover{filter:brightness(.95)}
-    .btn.alt{background:#2b8dda;color:#001325}
-    .btn.ghost{background:transparent;color:#e9eef5;border:1px solid var(--border)}
-    /* Hero */
-    .hero{position:relative;overflow:hidden}
-    .hero-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;padding:42px 0}
-    .kpis{display:grid;grid-template-columns:repeat(3,minmax(140px,1fr));gap:12px;margin-top:14px}
-    .kpi{background:linear-gradient(180deg,#0f1a31 0,#0b1326 100%);border:1px solid var(--border);border-radius:14px;padding:12px}
-    .kpi h3{margin:0;font-size:clamp(20px,3vw,28px)}
-    .kpi p{margin:.2rem 0 0;color:var(--muted)}
-    .hero-media{border-radius:16px;overflow:hidden;border:1px solid var(--border)}
-    .hero-media iframe,.hero-media img{display:block;width:100%;height:360px;object-fit:cover}
-    /* Sections */
-    .section{padding:28px 0}
-    .section h2{margin:0 0 12px;font-size:clamp(20px,3.2vw,28px)}
-    .muted{color:var(--muted)}
-    .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
-    .card{background:linear-gradient(180deg,#0e1830 0,#0b1327 100%);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-    .card .img{height:140px;background:#0a162d;border-bottom:1px solid var(--border)}
-    .card .img img{width:100%;height:100%;object-fit:cover}
-    .card .body{padding:12px}
-    .tag{display:inline-block;background:#0c2138;border:1px solid var(--border);color:#a7b1c2;border-radius:999px;padding:.2rem .6rem;font-size:.85rem}
-    /* Apps showcase */
-    .apps{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));margin-top:14px}
-    .app{background:#0c162c;border:1px solid var(--border);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px}
-    .app h3{margin:0 0 4px}
-    .app .actions{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
-    /* FAQ */
-    .faq{display:grid;gap:10px;margin-top:10px}
-    .faq details{background:#0c162c;border:1px solid var(--border);border-radius:12px;padding:10px}
-    .faq summary{cursor:pointer;font-weight:700}
-    /* Footer */
-    .footer{border-top:1px solid var(--border);background:#0a1326;padding:22px 0;color:#a7b1c2;margin-top:24px}
-    .footer .cols{display:grid;gap:14px;grid-template-columns:2fr 1fr 1fr}
-    /* Toggles */
-    .toolbar{display:flex;gap:10px;align-items:center}
-    .switch{position:relative;display:inline-block;width:44px;height:26px}
-    .switch input{display:none}
-    .slider{position:absolute;inset:0;background:#20314f;border-radius:999px;transition:.2s}
-    .slider:before{content:"";position:absolute;height:20px;width:20px;left:3px;top:3px;background:#e9eef5;border-radius:50%;transition:.2s}
-    input:checked + .slider{background:#16c286}
-    input:checked + .slider:before{transform:translateX(18px)}
-    /* Light theme */
-    body.light{--bg:#f7f8fa;--bg2:#eef1f7;--ink:#0a1020;--muted:#5a6679;--card:#fff;--border:#dde2ee}
-    body.light .nav{background:rgba(255,255,255,.75)}
-    body.light .chip{background:#f0f4fa;color:#1b263b;border-color:#e6ebf5}
-    body.light .kpi{background:#fff}
-    body.light .card{background:#fff}
-    body.light .app{background:#fff}
-    body.light .faq details{background:#fff}
-    body.light .footer{background:#fff;color:#5b6678}
-    /* Responsive */
-    @media (max-width: 900px){
-      .hero-inner{grid-template-columns:1fr}
-      .nav-links{display:none}
-      .hero-media iframe,.hero-media img{height:240px}
-    }
+    /* تحسين الخط العربي الافتراضي بدون تحميل خطوط */
+    html, body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Naskh Arabic", "Noto Kufi Arabic", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    .container { max-width: 1100px; }
+    .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,0.06); }
   </style>
 </head>
-<body>
-  <!-- NAV -->
-  <header class="nav">
-    <div class="container nav-wrap">
-      <a class="brand" href="#">مدينة عنه الذكية</a>
-      <nav class="nav-links">
-        <a class="chip" href="#apps">التطبيقات الذكية</a>
-        <a class="chip" href="#digital-twin">المدينة ثلاثية الأبعاد</a>
-        <a class="chip" href="#opendata">البيانات المفتوحة</a>
-        <a class="chip" href="#faq">الأسئلة الشائعة</a>
-      </nav>
-      <div class="toolbar">
-        <button id="installBtn" class="btn ghost" hidden>تثبيت التطبيق</button>
-        <label class="switch" title="الوضع الفاتح/الداكن">
-          <input id="themeToggle" type="checkbox">
-          <span class="slider"></span>
-        </label>
+<body class="bg-bgd-900 text-white">
+  <!-- Navbar -->
+  <header class="fixed top-0 inset-x-0 z-50 transition-colors" id="nav">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <a href="#" class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center font-bold">ع</div>
+          <span class="text-lg font-semibold">منصة عَنّة الذكية</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-6 text-sm text-white/90">
+          <a href="#services" class="hover:text-white">الخدمات</a>
+          <a href="#platforms" class="hover:text-white">المنصّات</a>
+          <a href="#opendata" class="hover:text-white">البيانات المفتوحة</a>
+          <a href="#news" class="hover:text-white">الأخبار</a>
+          <a href="#contact" class="hover:text-white">تواصل</a>
+        </nav>
+        <a href="#reports" class="md:inline-flex hidden px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-sm font-semibold">إرسال بلاغ</a>
       </div>
     </div>
   </header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="container hero-inner">
-      <div>
-        <h1 style="margin:.2rem 0 8px;font-size:clamp(26px,5vw,44px)">بوابة حديثة للمدن الذكية</h1>
-        <p class="muted" style="margin:0 0 14px">منصة موحّدة للخدمات والتطبيقات الذكية، تجمع اللوحات التشغيلية والبيانات المفتوحة والتوأم الرقمي في تجربة واحدة.
-        </p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <a class="btn" href="/dashboard/">فتح لوحة التحكم</a>
-          <a class="btn alt" href="/city3d/">استكشاف المدينة ثلاثية الأبعاد</a>
-          <a class="btn ghost" href="#apps">استعراض التطبيقات</a>
+  <!-- Hero -->
+  <section class="relative pt-24 pb-14 md:pb-20 bg-gradient-to-b from-bgd-900 to-bgd-800">
+    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(1000px 400px at 80% -10%, #e5af33, transparent);"></div>
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-2 items-center gap-8">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
+            مدينة عَنّة الذكية — خدمات رقمية وبيانات ومبادرات لتحسين جودة الحياة
+          </h1>
+          <p class="mt-4 text-white/80">واجهة "مستوحاة" أسلوبيًا من أفضل المنصّات الحكومية، مع هوية محلية لعَنّة. ابدأ من هنا للوصول إلى الخدمات والمنصّات والبيانات.</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="#services" class="px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-400 font-semibold">استكشف الخدمات</a>
+            <a href="#platforms" class="px-5 py-3 rounded-xl border border-white/20 hover:border-white/40">عرض اللوحات</a>
+          </div>
         </div>
-        <div class="kpis">
-          <div class="kpi"><h3 id="kpi1">0</h3><p>بلاغات منجزة</p></div>
-          <div class="kpi"><h3 id="kpi2">0</h3><p>أجهزة متصلة</p></div>
-          <div class="kpi"><h3 id="kpi3">0</h3><p>مجموع البيانات</p></div>
-        </div>
-      </div>
-      <div class="hero-media">
-        <!-- صورة غلاف أو فيديو تعريفي (يمكن استبداله لاحقًا) -->
-        <img src="/assets/img/hero-city.jpg" alt="مشهد لمدينة عنه">
-      </div>
-    </div>
-  </section>
-
-  <!-- APPS SHOWCASE -->
-  <section id="apps" class="section container">
-    <h2>التطبيقات الذكية</h2>
-    <p class="muted">مجموعة مصغّرة من التطبيقات القابلة للتوسّع. يمكن البحث والتصفية والانتقال السريع.</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 12px">
-      <input id="search" placeholder="ابحث عن تطبيق (مياه، نظافة، طقس...)" style="flex:1 1 260px;background:#0c162c;border:1px solid var(--border);color:var(--ink);border-radius:12px;padding:.7rem .9rem;outline:none">
-      <button class="btn ghost" onclick="resetApps()">إظهار الكل</button>
-    </div>
-    <div class="apps" id="appsGrid">
-      <!-- بطاقة تطبيق -->
-      <div class="app" data-keywords="مياه ضغط خزانات جودة">
-        <span class="tag">المياه الذكية</span>
-        <h3>مؤشرات ضغط المياه والخزانات</h3>
-        <p class="muted">لوحة مباشرة لقراءة الضغط، مناسيب الخزانات، وجودة المياه والتنبيهات.</p>
-        <div class="actions">
-          <a class="btn" href="/dashboard/">فتح اللوحة</a>
-          <a class="btn ghost" href="#opendata">بيانات</a>
-        </div>
-      </div>
-      <div class="app" data-keywords="نظافة نفايات مسارات">
-        <span class="tag">النظافة والبيئة</span>
-        <h3>تتبّع المسارات والبلاغات</h3>
-        <p class="muted">تحسين الجداول الميدانية ومعالجة البلاغات بالأولوية المكانية.</p>
-        <div class="actions">
-          <a class="btn" href="/dashboard/">فتح اللوحة</a>
-          <a class="btn ghost" href="#opendata">بيانات</a>
-        </div>
-      </div>
-      <div class="app" data-keywords="إنارة إناره اضاءة">
-        <span class="tag">الإنارة العامة</span>
-        <h3>بلاغات الأعمدة وتحليل الانقطاعات</h3>
-        <p class="muted">تنبيهات تلقائية وخرائط حرارية للأعطال.</p>
-        <div class="actions">
-          <a class="btn" href="/dashboard/">فتح اللوحة</a>
-          <a class="btn ghost" href="#opendata">بيانات</a>
-        </div>
-      </div>
-      <div class="app" data-keywords="طقس مناخ محطة رياح أمطار حرارة">
-        <span class="tag">الطقس والمناخ</span>
-        <h3>محطة الطقس والتوجّهات</h3>
-        <p class="muted">تحليلات تاريخية ورسوم بيانية للتنبيه المبكر.</p>
-        <div class="actions">
-          <a class="btn" href="/dashboard/">فتح اللوحة</a>
-          <a class="btn ghost" href="#opendata">بيانات</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- DIGITAL TWIN -->
-  <section id="digital-twin" class="section container">
-    <h2>التوأم الرقمي (3D)</h2>
-    <div class="grid">
-      <div class="card">
-        <div class="img"><img src="/assets/img/services-3d.jpg" alt="3D"></div>
-        <div class="body">
-          <p class="muted">نموذج ثلاثي الأبعاد لمدينة عنه لعرض المشاريع، وإشراك المواطنين بالنقر على العناصر لعرض خصائصها.</p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <a class="btn alt" href="/city3d/">فتح العارض ثلاثي الأبعاد</a>
-            <a class="btn ghost" href="#faq">كيفية الاستخدام</a>
+        <div class="md:pl-10">
+          <div class="glass rounded-2xl p-4 md:p-6 shadow-soft border border-white/10">
+            <div class="text-sm text-white/70 mb-3">أهم الروابط</div>
+            <ul class="grid grid-cols-2 gap-3 text-sm">
+              <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="#reports">بلاغات المواطنين</a></li>
+              <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="#platforms">لوحات المياه</a></li>
+              <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="#platforms">لوحات النفايات</a></li>
+              <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="#platforms">الطقس والهواء</a></li>
+            </ul>
           </div>
         </div>
       </div>
-      <div class="card">
-        <div class="img"><img src="/assets/img/services-opendata.jpg" alt="Open data"></div>
-        <div class="body">
-          <p class="muted">يمكن ربط خصائص المباني والطرق بملفات CSV/GeoJSON محدّثة يدويًا لعرض معلومات المشاريع والخدمات.</p>
-          <a class="btn" href="#opendata">الذهاب إلى البيانات المفتوحة</a>
-        </div>
-      </div>
     </div>
   </section>
 
-  <!-- OPEN DATA -->
-  <section id="opendata" class="section container">
-    <h2>البيانات المفتوحة</h2>
-    <p class="muted">حزمة ملفات قابلة للتنزيل (CSV/XLSX/JSON). حدّث الروابط لاحقًا بحسب تدفّق العمل لديك.</p>
-    <div class="grid">
-      <div class="card">
-        <div class="body">
-          <h3>ضغط المياه</h3>
-          <p class="muted">نتائج شهرية بصيغة XLSX.</p>
-          <a class="btn ghost" href="/opendata/">عرض الروابط</a>
-        </div>
-      </div>
-      <div class="card"><div class="body"><h3>محطة الطقس</h3><p class="muted">قراءات يومية بصيغة CSV.</p><a class="btn ghost" href="/opendata/">عرض الروابط</a></div></div>
-      <div class="card"><div class="body"><h3>الخزانات الذكية</h3><p class="muted">مستويات المناسيب وأوقات الضخ.</p><a class="btn ghost" href="/opendata/">عرض الروابط</a></div></div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq" class="section container">
-    <h2>الأسئلة الشائعة</h2>
-    <div class="faq">
-      <details><summary>كيف أثبّت الموقع كتطبيق موبايل (PWA)؟</summary><p class="muted">سيظهر زر "تثبيت التطبيق" أعلى يمين الشريط. على iOS استخدم مشاركة → إضافة إلى الشاشة الرئيسية.</p></details>
-      <details><summary>لماذا لا يظهر العارض ثلاثي الأبعاد لدي؟</summary><p class="muted">يحتاج اتصال جيد ويدعم WebGL. تأكد من المتصفح، أو جرّب على كمبيوتر مكتبي.</p></details>
-      <details><summary>هل البيانات مباشرة أم محدثة يدويًا؟</summary><p class="muted">في هذه المرحلة تُحدّث يدويًا بواسطة فريق المنصة، مع خطة مستقبلية للتحديث التلقائي.</p></details>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="container cols">
-      <div class="cols">
+  <!-- Services -->
+  <section id="services" class="py-14 md:py-16 bg-bgd-800">
+    <div class="container mx-auto px-4">
+      <div class="flex items-end justify-between gap-4 mb-6">
         <div>
-          <strong>مدينة عنه الذكية</strong>
-          <p class="muted">حلول رقمية لخدمة المواطن وتعزيز الحوكمة.</p>
+          <h2 class="text-2xl md:text-3xl font-bold">الخدمات</h2>
+          <p class="text-white/70 mt-1">وصول سريع إلى الخدمات الأكثر استخدامًا.</p>
         </div>
-        <nav>
-          <a class="chip" href="/dashboard/">اللوحة</a>
-          <a class="chip" href="/city3d/">المدينة ثلاثية الأبعاد</a>
-          <a class="chip" href="/opendata/">البيانات المفتوحة</a>
-        </nav>
+        <a href="#" class="text-brand-300 hover:text-brand-200 text-sm">جميع الخدمات</a>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- بطاقة خدمة -->
+        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#reports">
+          <div class="flex items-center justify-between">
+            <div class="text-lg font-semibold">بلاغات المواطنين</div>
+            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">📣</div>
+          </div>
+          <p class="mt-2 text-white/70 text-sm">أبلغ عن مشكلة مرفقة بصورة وموقع.</p>
+          <div class="mt-3 text-brand-300 text-sm">ابدأ الآن →</div>
+        </a>
+        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#platforms">
+          <div class="flex items-center justify-between">
+            <div class="text-lg font-semibold">خدمات المياه</div>
+            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">💧</div>
+          </div>
+          <p class="mt-2 text-white/70 text-sm">لوحات جودة المياه والضغط والخزّانات.</p>
+          <div class="mt-3 text-brand-300 text-sm">تصفّح اللوحات →</div>
+        </a>
+        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#platforms">
+          <div class="flex items-center justify-between">
+            <div class="text-lg font-semibold">النفايات الذكية</div>
+            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">🗑️</div>
+          </div>
+          <p class="mt-2 text-white/70 text-sm">مستويات التعبئة والتنبيهات والمسارات.</p>
+          <div class="mt-3 text-brand-300 text-sm">تصفّح اللوحات →</div>
+        </a>
+        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#platforms">
+          <div class="flex items-center justify-between">
+            <div class="text-lg font-semibold">الطقس والهواء</div>
+            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">🌤️</div>
+          </div>
+          <p class="mt-2 text-white/70 text-sm">محطة الطقس وملوّثات الهواء.</p>
+          <div class="mt-3 text-brand-300 text-sm">تصفّح اللوحات →</div>
+        </a>
+        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#opendata">
+          <div class="flex items-center justify-between">
+            <div class="text-lg font-semibold">البيانات المفتوحة</div>
+            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">📊</div>
+          </div>
+          <p class="mt-2 text-white/70 text-sm">حِزم قابلة للتنزيل وخرائط حيّة.</p>
+          <div class="mt-3 text-brand-300 text-sm">استعرض البيانات →</div>
+        </a>
+        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#contact">
+          <div class="flex items-center justify-between">
+            <div class="text-lg font-semibold">تواصل معنا</div>
+            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">✉️</div>
+          </div>
+          <p class="mt-2 text-white/70 text-sm">الدعم والاستفسارات والشراكات.</p>
+          <div class="mt-3 text-brand-300 text-sm">معلومات التواصل →</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Platforms -->
+  <section id="platforms" class="py-14 md:py-16 bg-bgd-900">
+    <div class="container mx-auto px-4">
+      <div class="flex items-end justify-between gap-4 mb-6">
         <div>
-          <a href="mailto:info@smart-anah.org" class="chip">info@smart-anah.org</a>
-          <div class="muted">© 2025 Smart Anah</div>
+          <h2 class="text-2xl md:text-3xl font-bold">منصّات المدينة</h2>
+          <p class="text-white/70 mt-1">لوحات حيّة واستعراض المؤشرات.</p>
+        </div>
+        <a href="#" class="text-brand-300 hover:text-brand-200 text-sm">الانتقال إلى جميع المنصّات</a>
+      </div>
+      <div class="grid md:grid-cols-3 gap-4">
+        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#">
+          <div class="p-5">
+            <div class="text-lg font-semibold">لوحة ضغط المياه</div>
+            <p class="mt-2 text-white/70 text-sm">ثلاث حساسات + اتجاهات يوم/شهر/سنة.</p>
+          </div>
+        </a>
+        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#">
+          <div class="p-5">
+            <div class="text-lg font-semibold">لوحة جودة المياه</div>
+            <p class="mt-2 text-white/70 text-sm">pH, TDS, NTU, °C مع تنبيهات.</p>
+          </div>
+        </a>
+        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#">
+          <div class="p-5">
+            <div class="text-lg font-semibold">لوحة النفايات الذكية</div>
+            <p class="mt-2 text-white/70 text-sm">مستويات التعبئة وخريطة الحاويات.</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Open Data -->
+  <section id="opendata" class="py-14 md:py-16 bg-bgd-800">
+    <div class="container mx-auto px-4">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold">البيانات المفتوحة</h2>
+          <p class="text-white/70 mt-1">مجموعات بيانات قابلة للتنزيل، وواجهات برمجية لاحقًا.</p>
+        </div>
+        <a href="#" class="text-brand-300 hover:text-brand-200 text-sm">تصفّح الكتالوج</a>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="rounded-2xl p-5 bg-white/5 border border-white/10">
+          <div class="text-lg font-semibold">Smart Bins — Markers</div>
+          <p class="mt-2 text-white/70 text-sm">GeoJSON مُحدّث دوريًا لمواقع ومستويات التعبئة.</p>
+          <div class="mt-3 text-brand-300 text-sm">تنزيل قريبًا</div>
+        </div>
+        <div class="rounded-2xl p-5 bg-white/5 border border-white/10">
+          <div class="text-lg font-semibold">Water Pressure — Trends</div>
+          <p class="mt-2 text-white/70 text-sm">CSV/JSON لاتجاهات الضغط اليومية/الشهرية.</p>
+          <div class="mt-3 text-brand-300 text-sm">تنزيل قريبًا</div>
         </div>
       </div>
     </div>
-  </footer>
+  </section>
+
+  <!-- News -->
+  <section id="news" class="py-14 md:py-16 bg-bgd-900">
+    <div class="container mx-auto px-4">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold">الأخبار والمستجدّات</h2>
+          <p class="text-white/70 mt-1">ملخّصات قصيرة وروابط للتفاصيل.</p>
+        </div>
+        <a href="#" class="text-brand-300 hover:text-brand-200 text-sm">مشاهدة المزيد</a>
+      </div>
+      <div class="grid md:grid-cols-3 gap-4">
+        <a class="rounded-2xl p-5 bg-white/5 border border-white/10 hover:bg-white/10" href="#">
+          <div class="text-lg font-semibold">إطلاق المنصة التجريبية</div>
+          <p class="mt-2 text-white/70 text-sm">بدء التشغيل التجريبي لخدمات المنصّة.</p>
+          <div class="mt-3 text-brand-300 text-sm">اقرأ الخبر →</div>
+        </a>
+        <a class="rounded-2xl p-5 bg-white/5 border border-white/10 hover:bg-white/10" href="#">
+          <div class="text-lg font-semibold">توسعة محطات الاستشعار</div>
+          <p class="mt-2 text-white/70 text-sm">إضافة أجهزة لقياس جودة المياه والطقس.</p>
+          <div class="mt-3 text-brand-300 text-sm">اقرأ الخبر →</div>
+        </a>
+        <a class="rounded-2xl p-5 bg-white/5 border border-white/10 hover:bg-white/10" href="#">
+          <div class="text-lg font-semibold">برنامج التبليغات</div>
+          <p class="mt-2 text-white/70 text-sm">دمج بلاغات المواطنين ضمن الواجهة.</p>
+          <div class="mt-3 text-brand-300 text-sm">اقرأ الخبر →</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact / Footer -->
+  <section id="contact" class="py-14 md:py-16 bg-bgd-800">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-6">
+        <div>
+          <div class="text-xl font-bold">منصة عَنّة الذكية</div>
+          <p class="mt-2 text-white/70 text-sm">واجهة رقمية موحّدة للخدمات والبيانات والمبادرات.</p>
+        </div>
+        <div>
+          <div class="font-semibold">روابط</div>
+          <ul class="mt-2 space-y-2 text-sm text-white/80">
+            <li><a href="#services" class="hover:text-white">الخدمات</a></li>
+            <li><a href="#platforms" class="hover:text-white">المنصّات</a></li>
+            <li><a href="#opendata" class="hover:text-white">البيانات المفتوحة</a></li>
+            <li><a href="#news" class="hover:text-white">الأخبار</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="font-semibold">تواصل</div>
+          <p class="mt-2 text-white/70 text-sm">البريد: info@smart-anah.org</p>
+          <p class="text-white/70 text-sm">الهاتف: 07xxxxxxxxx</p>
+        </div>
+      </div>
+      <div class="mt-8 pt-6 border-t border-white/10 text-xs text-white/60">© <span id="y"></span> Smart Anah. جميع الحقوق محفوظة.</div>
+    </div>
+  </section>
+
+  <a id="reports"></a>
 
   <script>
-    // Theme toggle with localStorage
-    const themeToggle = document.getElementById('themeToggle');
-    const userTheme = localStorage.getItem('theme');
-    if(userTheme === 'light'){ document.body.classList.add('light'); themeToggle.checked = true; }
-    themeToggle?.addEventListener('change', ()=>{
-      document.body.classList.toggle('light', themeToggle.checked);
-      localStorage.setItem('theme', themeToggle.checked ? 'light' : 'dark');
-    });
-
-    // KPI counters on view
-    const counters = [
-      { el: document.getElementById('kpi1'), to: 342 },
-      { el: document.getElementById('kpi2'), to: 57 },
-      { el: document.getElementById('kpi3'), to: 128_000 }
-    ];
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{
-        if(e.isIntersecting){
-          counters.forEach(({el,to})=>{
-            let cur=0, step=Math.ceil(to/40);
-            const t=setInterval(()=>{ cur+=step; if(cur>=to){cur=to; clearInterval(t);} el.textContent=cur.toLocaleString('ar-IQ'); }, 30);
-          });
-          io.disconnect();
-        }
-      })
-    },{threshold:.2});
-    io.observe(document.querySelector('.kpis'));
-
-    // Search apps
-    const grid = document.getElementById('appsGrid');
-    const search = document.getElementById('search');
-    search?.addEventListener('input', ()=>{
-      const q = search.value.trim();
-      [...grid.children].forEach(card=>{
-        const keys = card.getAttribute('data-keywords') || '';
-        card.style.display = q ? (keys.includes(q) ? 'flex' : 'none') : 'flex';
-      })
-    });
-    window.resetApps = ()=>{ search.value=''; [...grid.children].forEach(c=> c.style.display='flex'); };
-
-    // PWA install prompt
-    let deferredPrompt; const installBtn = document.getElementById('installBtn');
-    window.addEventListener('beforeinstallprompt',(e)=>{ e.preventDefault(); deferredPrompt = e; installBtn.hidden=false; });
-    installBtn?.addEventListener('click', async ()=>{ installBtn.hidden=true; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; });
-
-    // Register SW with versioned query to bust cache
-    if('serviceWorker' in navigator){
-      window.addEventListener('load', async ()=>{
-        try{ const reg = await navigator.serviceWorker.register('/sw.js?ver=5'); document.addEventListener('visibilitychange', ()=> reg.update()); }catch(err){ console.warn('SW register failed', err); }
-      });
-    }
+    // لون الخلفية للنافبار عند التمرير
+    const nav = document.getElementById('nav');
+    const onScroll = () => {
+      if (window.scrollY > 4) nav.classList.add('bg-bgd-900/80','backdrop-blur');
+      else nav.classList.remove('bg-bgd-900/80','backdrop-blur');
+    }; onScroll(); window.addEventListener('scroll', onScroll);
+    document.getElementById('y').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
