@@ -130,7 +130,7 @@
   const photoInp   = document.getElementById('photo');
   const alertBox   = document.getElementById('alert');
 
-  const PHONE_RE = /^07\\d{9}$/;
+const PHONE_RE = /^07\d{9}$/;  // ✅ صحيح
 
   function show(type,msg){
     alertBox.className = 'alert ' + (type==='err'?'err':'ok');
