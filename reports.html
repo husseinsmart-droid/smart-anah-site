@@ -37,9 +37,16 @@
     #dlSeq{background:#b8860b;color:#fff;flex:1}
     #newReportBtn{background:#20304f;color:#e9f1f7;border:0;cursor:pointer;flex:0 0 160px}
     .flex{display:flex;gap:10px;margin-top:12px}
+    .topbar{max-width:680px;margin:0 auto 10px;display:flex;justify-content:space-between;align-items:center;padding:10px 16px}
+    .topbar a{color:#e9f1f7;text-decoration:none}
   </style>
 </head>
 <body>
+  <div class="topbar">
+    <a href="/index.html">← العودة للمنصّة</a>
+    <a href="/">الصفحة الرئيسية</a>
+  </div>
+
   <div class="wrap">
     <div class="card">
       <div class="head">
@@ -47,9 +54,9 @@
         <div class="ver">v1</div>
       </div>
 
-      <div class="notice">🔔 يتم إرسال البلاغ مباشرة إلى غرفة العمليات ببلدية عَنّة عبر المنصة الذكية. قد نستخدم موقعك لتسريع الاستجابة.</div>
+      <div class="notice">🔔 يتم إرسال البلاغ مباشرة إلى غرفة العمليات ببلدية عَنّة عبر المنصة الذكية.</div>
 
-      <!-- غلاف الفورم ليسهل إخفاؤه بعد النجاح -->
+      <!-- نموذج البلاغ -->
       <div id="formWrap">
         <form id="reportForm" autocomplete="off" novalidate>
           <div class="label">نوع البلاغ</div>
@@ -78,17 +85,9 @@
           <div class="label">الاسم <span class="tiny">(*)</span></div>
           <input id="name" type="text" placeholder="الاسم الثلاثي" required />
 
-       <div class="label">رقم الهاتف <span class="tiny">(*)</span></div>
-<input
-  id="phone"
-  type="tel"
-  inputmode="numeric"
-  placeholder="مثال: 07XXXXXXXXX"
-  required
-  pattern="^07\d{9}$"
-  title="أدخل رقمًا بصيغة 07XXXXXXXXX فقط"
-/>
-<div class="tiny">الصيغة المقبولة: 07XXXXXXXXX</div>
+          <div class="label">رقم الهاتف <span class="tiny">(*)</span></div>
+          <input id="phone" type="tel" inputmode="numeric" placeholder="مثال: 07XXXXXXXXX" required pattern="^07\\d{9}$" title="أدخل رقمًا بصيغة 07XXXXXXXXX فقط" />
+          <div class="tiny">الصيغة المقبولة: 07XXXXXXXXX</div>
 
           <div class="actions">
             <button type="button" class="btn btn-clear" id="btnClear">مسح</button>
@@ -103,8 +102,7 @@
       <div id="confirmWrap">
         <div class="box">
           <h3 style="margin:0 0 10px">تم استلام البلاغ ✅</h3>
-          <p style="margin:0 0 12px">تم تسجيل بلاغك وإرساله إلى غرفة العمليات. احتفظ بالصورة التالية التي تحتوي الرقم التسلسلي للبلاغ:</p>
-
+          <p style="margin:0 0 12px">تم تسجيل بلاغك وإرساله إلى غرفة العمليات. احتفظ بالصورة التالية التي تحتوي الرقم التسلسلي:</p>
           <img id="seqImg" alt="رقم البلاغ" />
           <div class="flex">
             <a id="dlSeq" href="#" download="ANAH-CODE.png">تحميل الصورة</a>
@@ -118,6 +116,11 @@
 
 <script>
 (() => {
+  // ===== إعداد عنوان الـ API =====
+  // غيّره لو كان مختلفًا لديك.
+  const API_BASE = window.__API_BASE || "https://api.smart-anah.org";
+  const REPORTS_ENDPOINT = "/api/reports-json"; // بدّله إلى مسارك إن كان مختلفًا (مثلاً /reports/notify)
+
   const formWrap   = document.getElementById('formWrap');
   const confirmWrap= document.getElementById('confirmWrap');
   const form       = document.getElementById('reportForm');
@@ -127,37 +130,35 @@
   const photoInp   = document.getElementById('photo');
   const alertBox   = document.getElementById('alert');
 
-// يقبل 07XXXXXXXXX فقط
-const PHONE_RE = /^07\d{9}$/;
+  const PHONE_RE = /^07\\d{9}$/;
 
-// تحويل الأرقام العربية/الفارسية للاتينية + تنظيف وتحويل أي شكل إلى 07XXXXXXXXX
-function normalizeDigits(str){
-  const map = {'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9',
-               '۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9'};
-  return String(str||'').replace(/[٠-٩۰-۹]/g, d=>map[d]||d);
-}
-function cleanPhone(raw){
-  let s = normalizeDigits(raw);
-  s = s.replace(/[^\d+]/g,'');        // إزالة غير الأرقام/+
-  // تحويل صيغ 964 إلى محلية 07
-  if (s.startsWith('+964')) s = '0' + s.slice(4);
-  else if (s.startsWith('00964')) s = '0' + s.slice(5);
-  else if (s.startsWith('964')) s = '0' + s.slice(3);
-  // إزالة +
-  s = s.replace(/\+/g,'');
-  // لو كان 7XXXXXXXXX حوله إلى 07XXXXXXXXX
-  if (s.length === 10 && s.startsWith('7')) s = '0' + s;
-  // إزالة أي شيء ليس رقمًا
-  s = s.replace(/\D/g,'');
-  return s;
-}
-// تطبيع مباشر أثناء الإدخال
-document.getElementById('phone').addEventListener('input', (e)=>{
-  const pos = e.target.selectionStart;
-  e.target.value = cleanPhone(e.target.value).slice(0,11);
-  e.target.setSelectionRange(pos, pos);
-});
+  function show(type,msg){
+    alertBox.className = 'alert ' + (type==='err'?'err':'ok');
+    alertBox.textContent = msg;
+    alertBox.style.display = 'block';
+  }
 
+  // تحويل الأرقام العربية/الفارسية للاتينية + تنظيف الهاتف
+  function normalizeDigits(str){
+    const map = {'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9','۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9'};
+    return String(str||'').replace(/[٠-٩۰-۹]/g, d=>map[d]||d);
+  }
+  function cleanPhone(raw){
+    let s = normalizeDigits(raw);
+    s = s.replace(/[^\d+]/g,'');
+    if (s.startsWith('+964')) s = '0' + s.slice(4);
+    else if (s.startsWith('00964')) s = '0' + s.slice(5);
+    else if (s.startsWith('964')) s = '0' + s.slice(3);
+    s = s.replace(/\+/g,'');
+    if (s.length === 10 && s.startsWith('7')) s = '0' + s;
+    s = s.replace(/\D/g,'');
+    return s;
+  }
+  document.getElementById('phone').addEventListener('input', (e)=>{
+    const pos = e.target.selectionStart;
+    e.target.value = cleanPhone(e.target.value).slice(0,11);
+    e.target.setSelectionRange(pos, pos);
+  });
 
   // اختيار التصنيف
   let selectedCategory = '';
@@ -246,7 +247,6 @@ document.getElementById('phone').addEventListener('input', (e)=>{
     const a=document.getElementById('dlSeq'); a.href=png; a.download=`${seqCode}.png`;
   }
 
-  // زر "بلاغ جديد"
   document.getElementById('newReportBtn').addEventListener('click', ()=>{
     confirmWrap.style.display='none';
     form.reset(); selectedCategory=''; alertBox.style.display='none';
@@ -261,22 +261,14 @@ document.getElementById('phone').addEventListener('input', (e)=>{
     e.preventDefault();
     alertBox.style.display='none';
 
-    // ===== التحقق من الحقول الإلزامية (اسم/هاتف/وصف) =====
     const nameVal  = document.getElementById('name').value.trim();
     const descVal  = document.getElementById('desc').value.trim();
-const phoneRaw = document.getElementById('phone').value;
-const phoneVal = cleanPhone(phoneRaw);
-document.getElementById('phone').value = phoneVal;
+    const phoneEl  = document.getElementById('phone');
+    const phoneVal = cleanPhone(phoneEl.value);
+    phoneEl.value = phoneVal;
 
-if (!nameVal || !descVal) {
-  show('err','يرجى ملء الاسم والوصف ورقم الهاتف.');
-  return;
-}
-if (!PHONE_RE.test(phoneVal)) {
-  show('err','رقم الهاتف غير صحيح. الصيغة المقبولة: 07XXXXXXXXX');
-  return;
-}
-
+    if (!nameVal || !descVal || !phoneVal) { show('err','يرجى ملء الاسم والوصف ورقم الهاتف.'); return; }
+    if (!PHONE_RE.test(phoneVal)) { show('err','رقم الهاتف غير صحيح. الصيغة المقبولة: 07XXXXXXXXX'); return; }
 
     btnSend.disabled = true;
 
@@ -285,19 +277,18 @@ if (!PHONE_RE.test(phoneVal)) {
       desc    : descVal,
       name    : nameVal,
       phone   : phoneVal,
-      lat     : window.__geo?.lat || '',
-      lon     : window.__geo?.lon || ''
+      loc     : { lat: window.__geo?.lat || null, lon: window.__geo?.lon || null },
     };
 
     const f = photoInp?.files?.[0];
     if (f && f.size > 0){
       if (f.size > 4*1024*1024){ show('err','حجم الصورة يتجاوز 4MB'); btnSend.disabled=false; return; }
       const dataURL = await fileToBase64(f);
-      body.photo_base64 = dataURL.split(',').pop();
+      body.photo = { base64: dataURL.split(',').pop(), type: f.type, name: f.name };
     }
 
     try{
-      const res = await fetch('/reports/notify', {
+      const res = await fetch(`${API_BASE}${REPORTS_ENDPOINT}`, {
         method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
       });
 
@@ -305,12 +296,11 @@ if (!PHONE_RE.test(phoneVal)) {
       try { j = await res.clone().json(); } catch(_){}
       try { t = await res.text(); } catch(_){}
 
-      const seqFromJson = j?.seq_code || j?.seq;
-      const seqFromText = (t && (t.match(/ANAH-\d{8}-\d{4}/)||[])[0]) || null;
+      const seqFromJson = j?.id || j?.seq_code || j?.seq;
+      const seqFromText = (t && (t.match(/ANAH-\\d{8}-\\d{4}/)||[])[0]) || null;
       const seq = seqFromJson || seqFromText;
 
       if (res.ok && (j?.ok===true || seq)){
-        // إظهار شاشة التأكيد بالصورة
         formWrap.style.display='none';
         renderSeqBadge({
           seqCode: seq || 'ANAH-????',
@@ -334,3 +324,4 @@ if (!PHONE_RE.test(phoneVal)) {
 </script>
 </body>
 </html>
+
