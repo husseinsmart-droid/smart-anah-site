@@ -1,0 +1,12 @@
+{
+  "name": "منصة عنّة الذكية — بلاغات المواطنين",
+  "short_name": "بلاغات عنّة",
+  "start_url": "/reports/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#c58a00",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": []
+}
+
