@@ -11,34 +11,16 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              50:  '#fff7e6',
-              100: '#ffedcc',
-              200: '#fddf99',
-              300: '#f3c866',
-              400: '#e5af33',
-              500: '#b8860b',  // لمسة ذهبية
-              600: '#936b0a',
-              700: '#6e5108',
-              800: '#4a3706',
-              900: '#2b2004'
-            },
-            bgd: {
-              900:'#0b1220',
-              800:'#101a2d',
-              700:'#121a2a'
-            }
+            brand: {50:'#fff7e6',100:'#ffedcc',200:'#fddf99',300:'#f3c866',400:'#e5af33',500:'#b8860b',600:'#936b0a',700:'#6e5108',800:'#4a3706',900:'#2b2004'},
+            bgd: {900:'#0b1220',800:'#101a2d',700:'#121a2a'}
           },
-          boxShadow: {
-            soft: '0 6px 18px rgba(0,0,0,.12)'
-          }
+          boxShadow: { soft: '0 6px 18px rgba(0,0,0,.12)' }
         }
       }
     }
   </script>
   <style>
-    /* تحسين الخط العربي الافتراضي بدون تحميل خطوط */
-    html, body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Naskh Arabic", "Noto Kufi Arabic", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    html, body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Naskh Arabic", "Noto Kufi Arabic", "Helvetica Neue", Arial; }
     .container { max-width: 1100px; }
     .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,0.06); }
   </style>
@@ -48,7 +30,7 @@
   <header class="fixed top-0 inset-x-0 z-50 transition-colors" id="nav">
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between h-16">
-        <a href="#" class="flex items-center gap-2">
+        <a href="/" class="flex items-center gap-2">
           <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center font-bold">ع</div>
           <span class="text-lg font-semibold">منصة عَنّة الذكية</span>
         </a>
@@ -58,9 +40,8 @@
           <a href="#opendata" class="hover:text-white">البيانات المفتوحة</a>
           <a href="#news" class="hover:text-white">الأخبار</a>
           <a href="#contact" class="hover:text-white">تواصل</a>
-          <a href="/reports.html">إرسال بلاغ</a>
         </nav>
-        <a href="#reports" class="md:inline-flex hidden px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-sm font-semibold">إرسال بلاغ</a>
+        <a href="/reports.html" class="md:inline-flex hidden px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-sm font-semibold">إرسال بلاغ</a>
       </div>
     </div>
   </header>
@@ -74,17 +55,18 @@
           <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
             مدينة عَنّة الذكية — خدمات رقمية وبيانات ومبادرات لتحسين جودة الحياة
           </h1>
-          <p class="mt-4 text-white/80">واجهة "مستوحاة" أسلوبيًا من أفضل المنصّات الحكومية، مع هوية محلية لعَنّة. ابدأ من هنا للوصول إلى الخدمات والمنصّات والبيانات.</p>
+          <p class="mt-4 text-white/80">واجهة \"مستوحاة\" أسلوبيًا من أفضل المنصّات الحكومية، مع هوية محلية لعَنّة. ابدأ من هنا للوصول إلى الخدمات والمنصّات والبيانات.</p>
           <div class="mt-6 flex flex-wrap gap-3">
             <a href="#services" class="px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-400 font-semibold">استكشف الخدمات</a>
             <a href="#platforms" class="px-5 py-3 rounded-xl border border-white/20 hover:border-white/40">عرض اللوحات</a>
+            <a href="/reports.html" class="px-5 py-3 rounded-xl border border-white/20 hover:border-white/40">إرسال بلاغ</a>
           </div>
         </div>
         <div class="md:pl-10">
           <div class="glass rounded-2xl p-4 md:p-6 shadow-soft border border-white/10">
             <div class="text-sm text-white/70 mb-3">أهم الروابط</div>
             <ul class="grid grid-cols-2 gap-3 text-sm">
-              <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="#reports">بلاغات المواطنين</a></li>
+              <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="/reports.html">بلاغات المواطنين</a></li>
               <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="#platforms">لوحات المياه</a></li>
               <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="#platforms">لوحات النفايات</a></li>
               <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="#platforms">الطقس والهواء</a></li>
@@ -106,8 +88,7 @@
         <a href="#" class="text-brand-300 hover:text-brand-200 text-sm">جميع الخدمات</a>
       </div>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- بطاقة خدمة -->
-        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#reports">
+        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="/reports.html">
           <div class="flex items-center justify-between">
             <div class="text-lg font-semibold">بلاغات المواطنين</div>
             <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">📣</div>
@@ -170,19 +151,19 @@
         <a href="#" class="text-brand-300 hover:text-brand-200 text-sm">الانتقال إلى جميع المنصّات</a>
       </div>
       <div class="grid md:grid-cols-3 gap-4">
-        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#">
+        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#platforms">
           <div class="p-5">
             <div class="text-lg font-semibold">لوحة ضغط المياه</div>
             <p class="mt-2 text-white/70 text-sm">ثلاث حساسات + اتجاهات يوم/شهر/سنة.</p>
           </div>
         </a>
-        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#">
+        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#platforms">
           <div class="p-5">
             <div class="text-lg font-semibold">لوحة جودة المياه</div>
             <p class="mt-2 text-white/70 text-sm">pH, TDS, NTU, °C مع تنبيهات.</p>
           </div>
         </a>
-        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#">
+        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#platforms">
           <div class="p-5">
             <div class="text-lg font-semibold">لوحة النفايات الذكية</div>
             <p class="mt-2 text-white/70 text-sm">مستويات التعبئة وخريطة الحاويات.</p>
@@ -267,17 +248,14 @@
         <div>
           <div class="font-semibold">تواصل</div>
           <p class="mt-2 text-white/70 text-sm">البريد: info@smart-anah.org</p>
-          <p class="text-white/70 text-sm">الهاتف: 07xxxxxxxxx</p>
+          <p class="text-white/70 text-sm">الهاتف: 07XXXXXXXXX</p>
         </div>
       </div>
       <div class="mt-8 pt-6 border-t border-white/10 text-xs text-white/60">© <span id="y"></span> Smart Anah. جميع الحقوق محفوظة.</div>
     </div>
   </section>
 
-  <a id="reports"></a>
-
   <script>
-    // لون الخلفية للنافبار عند التمرير
     const nav = document.getElementById('nav');
     const onScroll = () => {
       if (window.scrollY > 4) nav.classList.add('bg-bgd-900/80','backdrop-blur');
@@ -287,4 +265,3 @@
   </script>
 </body>
 </html>
-
