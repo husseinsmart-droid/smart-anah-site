@@ -118,9 +118,9 @@
 (() => {
   // ===== إعداد عنوان الـ API =====
   // غيّره لو كان مختلفًا لديك.
-  const API_BASE = window.__API_BASE || "https://api.smart-anah.org";
-  const REPORTS_ENDPOINT = "/api/reports-json"; // بدّله إلى مسارك إن كان مختلفًا (مثلاً /reports/notify)
-
+  const API_BASE = "https://nodered.smart-anah.org";
+const REPORTS_ENDPOINT = "/api/reports-json";   // أو "/reports/notify" إذا هذا مسارك في Node-RED
+  
   const formWrap   = document.getElementById('formWrap');
   const confirmWrap= document.getElementById('confirmWrap');
   const form       = document.getElementById('reportForm');
