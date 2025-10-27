@@ -4,15 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>منصة عَنّة الذكية — Smart Anah</title>
-  <meta name="description" content="المنصة الرقمية لمدينة عَنّة — خدمات، منصّات، بيانات مفتوحة، أخبار." />
+  <meta name="description" content="المنصة الرقمية لمدينة عَنّة — خدمات، مبادرات، بيانات مفتوحة." />
   <meta name="theme-color" content="#ffffff" />
 
   <!-- PWA -->
-  <link rel="manifest" href="/manifest.webmanifest">
-  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
-  <!-- خطوط عربية حديثة -->
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- خطوط -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,330 +21,193 @@
       theme: {
         extend: {
           colors: {
-            brand: {50:'#fff8eb',100:'#feefd1',200:'#fde2a8',300:'#f7cd73',400:'#eeb748',500:'#d79a19',600:'#b07b12',700:'#8a5f0e',800:'#5c3f09',900:'#3a2806'},
-            mint:  {50:'#effaf5',100:'#d9f3ea',200:'#b7e7d7',300:'#8ed9c2',400:'#65caae',500:'#43b896'},
-            ink:   {50:'#f9fafb',100:'#f5f7fa',200:'#eef2f7',300:'#e6ebf2',400:'#cfd7e3',500:'#a8b3c4',600:'#70829a',700:'#4f5f78',800:'#384556',900:'#25313d'}
+            brand: {500:'#d79a19',600:'#b07b12',700:'#8a5f0e'},
+            ink: {50:'#f9fafb',100:'#eef2f7',200:'#dfe6ee',700:'#384556',900:'#1f2937'}
           },
-          boxShadow: { soft: '0 8px 24px rgba(0,0,0,.08)' },
-          maxWidth: { c: '1200px' }
+          boxShadow:{soft:'0 6px 18px rgba(0,0,0,.08)'}
         }
       }
     }
   </script>
 
   <style>
-    html, body { font-family: "IBM Plex Sans Arabic","Cairo","Segoe UI",system-ui,-apple-system,Tahoma,Arial; }
-    .container { max-width: 1200px; }
+    body { font-family: 'Cairo', sans-serif; background: #f9fafb; color: #1f2937; }
     .section-head {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      gap: .6rem;
-      padding: .5rem 1rem;
-      border-radius: 999px;
-      background: linear-gradient(145deg,#f7f7fb,#eef2f7);
-      box-shadow: 0 6px 16px rgba(0,0,0,.06), inset 0 0 0 1px rgba(0,0,0,.05);
+      display: inline-flex; align-items: center; gap: .6rem;
+      padding: .5rem 1rem; border-radius: 999px;
+      background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.08);
     }
-    .section-head .dot{
-      width: .7rem; height: .7rem; border-radius: 999px; background:#d79a19;
-      box-shadow: 0 0 0 4px rgba(215,154,25,.15);
-    }
+    .section-head .dot { width: .6rem; height: .6rem; border-radius: 50%; background: #d79a19; }
   </style>
 </head>
-<body class="bg-ink-50 text-ink-900">
 
-  <!-- شريط علوي صغير ثابت مع أزرار سريعة + زر تثبيت -->
-  <div class="fixed top-0 inset-x-0 z-50 bg-white border-b border-ink-200/70">
-    <div class="container mx-auto px-3">
-      <div class="flex items-center justify-between h-11 text-sm">
-        <div class="flex items-center gap-2">
-          <a href="/" class="flex items-center gap-2 text-ink-800 font-semibold">
-            <span class="inline-flex w-7 h-7 rounded-lg bg-brand-500 text-white items-center justify-center">ع</span>
-            منصة عَنّة الذكية
-          </a>
-        </div>
-        <div class="flex items-center gap-2">
-          <a href="https://reports.smart-anah.org/ui" target="_blank" rel="noopener"
-             class="px-3 py-1.5 rounded-lg bg-ink-100 hover:bg-ink-200 text-ink-800 font-semibold">لوحة البيانات</a>
-          <a href="https://reports.smart-anah.org/reports/index.html"
-             class="px-3 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-400 text-white font-semibold">إرسال بلاغ</a>
-          <button id="installBtn" class="hidden px-3 py-1.5 rounded-lg bg-mint-500 hover:bg-mint-400 text-white font-semibold">تثبيت التطبيق</button>
-        </div>
+<body>
+
+  <!-- شريط علوي -->
+  <header class="fixed top-0 inset-x-0 bg-white border-b border-ink-200 z-50">
+    <div class="max-w-6xl mx-auto flex justify-between items-center px-4 h-14">
+      <a href="/" class="font-bold text-brand-700 text-lg">منصة عَنّة الذكية</a>
+      <div class="flex gap-3 text-sm font-semibold">
+        <a href="https://reports.smart-anah.org/ui" target="_blank" class="bg-ink-100 px-3 py-1.5 rounded-lg hover:bg-ink-200">لوحة البيانات</a>
+        <a href="https://reports.smart-anah.org/reports/index.html" class="bg-brand-500 text-white px-3 py-1.5 rounded-lg hover:bg-brand-600">إرسال بلاغ</a>
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- Hero -->
-  <section class="relative pt-24 md:pt-28 pb-12 md:pb-16 bg-gradient-to-b from-white to-ink-100">
-    <div class="absolute inset-0 pointer-events-none" style="background:
-      radial-gradient(700px 260px at 20% -10%, rgba(67,184,150,.22), transparent 60%),
-      radial-gradient(800px 320px at 85% -10%, rgba(215,154,25,.18), transparent 60%);"></div>
-
-    <div class="container mx-auto px-4 relative">
-      <div class="grid md:grid-cols-2 items-center gap-10">
-        <div>
-          <div class="section-head mb-3"><span class="dot"></span><span class="text-ink-800">مدينة عَنّة الذكية</span></div>
-          <h1 class="text-4xl md:text-5xl font-extrabold leading-tight text-ink-900">
-            خدمات رقمية، بيانات حيّة، ومبادرات لتحسين جودة الحياة
-          </h1>
-          <p class="mt-4 text-ink-700">
-            واجهة حديثة بألوان مشرقة وخطوط عربية عصرية. ادخل للخدمات، اللوحات، والبيانات المفتوحة من مكان واحد.
-          </p>
-          <div class="mt-6 flex flex-wrap gap-3">
-            <a href="#services" class="px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-400 font-semibold text-white shadow-soft">استكشف الخدمات</a>
-            <a href="https://reports.smart-anah.org/ui" target="_blank" rel="noopener"
-               class="px-5 py-3 rounded-xl border border-ink-300 hover:bg-ink-100 text-ink-800 font-semibold">عرض اللوحات</a>
-            <a href="https://reports.smart-anah.org/reports/index.html"
-               class="px-5 py-3 rounded-xl border border-ink-300 hover:bg-ink-100 text-ink-800">إرسال بلاغ</a>
-          </div>
+  <!-- البانر -->
+  <section class="pt-24 pb-16 bg-gradient-to-b from-white to-ink-100">
+    <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <div class="section-head mb-3"><span class="dot"></span><span>مدينة عَنّة الذكية</span></div>
+        <h1 class="text-4xl font-extrabold mb-3 leading-snug text-ink-900">خدمات رقمية، مبادرات ذكية، وبيانات مفتوحة لتحسين جودة الحياة</h1>
+        <p class="text-ink-700 mb-6">منصة موحدة تتيح الوصول إلى البلاغات، البيانات، والمشاريع الذكية في المدينة.</p>
+        <div class="flex gap-3 flex-wrap">
+          <a href="#services" class="bg-brand-500 text-white px-5 py-3 rounded-xl shadow-soft hover:bg-brand-600">استكشف الخدمات</a>
+          <a href="https://reports.smart-anah.org/ui" target="_blank" class="border border-ink-300 px-5 py-3 rounded-xl hover:bg-ink-100">عرض اللوحات</a>
+          <a href="https://reports.smart-anah.org/reports/index.html" class="border border-ink-300 px-5 py-3 rounded-xl hover:bg-ink-100">إرسال بلاغ</a>
         </div>
-        <div class="md:pl-10">
-          <div class="rounded-2xl p-6 shadow-soft border border-ink-200 bg-white">
-            <div class="text-sm text-ink-600 mb-3">روابط سريعة</div>
-            <ul class="grid grid-cols-2 gap-3 text-sm">
-              <li><a class="block p-3 rounded-xl bg-ink-100 hover:bg-ink-200 text-ink-900" href="https://reports.smart-anah.org/reports/index.html">بلاغات المواطنين</a></li>
-              <li><a class="block p-3 rounded-xl bg-ink-100 hover:bg-ink-200 text-ink-900" href="https://reports.smart-anah.org/ui" target="_blank">لوحات البيانات</a></li>
-              <li><a class="block p-3 rounded-xl bg-ink-100 hover:bg-ink-200 text-ink-900" href="#strategy">استراتيجية عَنّة الذكية</a></li>
-              <li><a class="block p-3 rounded-xl bg-ink-100 hover:bg-ink-200 text-ink-900" href="#initiatives">المبادرات الذكية</a></li>
-            </ul>
-          </div>
-        </div>
+      </div>
+      <div class="hidden md:block">
+        <img src="/icons/icon-512.png" alt="Smart Anah" class="w-64 mx-auto">
       </div>
     </div>
   </section>
 
-  <!-- الخدمات — ست فئات رئيسية -->
-  <section id="services" class="py-14 md:py-16 bg-white">
-    <div class="container mx-auto px-4">
-      <div class="flex items-end justify-between gap-4 mb-6">
-        <div>
-          <div class="section-head mb-2"><span class="dot"></span><span>الخدمات</span></div>
-          <h2 class="text-3xl md:text-4xl font-extrabold text-ink-900">خدمات المنصّة</h2>
-          <p class="text-ink-700 mt-1">خدمات بلدية، تعليمية، صحية، ترفيهية، سياحية، وتجارية.</p>
-        </div>
-      </div>
+  <!-- الخدمات -->
+  <section id="services" class="py-16 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="section-head mb-3"><span class="dot"></span><span>الخدمات</span></div>
+      <h2 class="text-3xl font-bold mb-8 text-ink-900">خدمات المنصّة</h2>
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- بلدية -->
-        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="https://reports.smart-anah.org/reports/index.html">
-          <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold text-ink-900">الخدمات البلدية</div>
-            <div class="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-700 flex items-center justify-center">🏛️</div>
-          </div>
-          <p class="mt-2 text-ink-700 text-sm">بلاغات، نظافة، إنارة، طرق، مياه.</p>
-          <div class="mt-3 text-brand-700 text-sm">إرسال بلاغ →</div>
-        </a>
-        <!-- تعليمية -->
-        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="#platforms">
-          <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold text-ink-900">الخدمات التعليمية</div>
-            <div class="w-10 h-10 rounded-xl bg-mint-100 text-mint-500 flex items-center justify-center">🎓</div>
-          </div>
-          <p class="mt-2 text-ink-700 text-sm">دعم المدارس، أنشطة توعوية، بيانات ذكية.</p>
-          <div class="mt-3 text-brand-700 text-sm">عرض التفاصيل →</div>
-        </a>
-        <!-- صحية -->
-        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="#platforms">
-          <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold text-ink-900">الخدمات الصحية</div>
-            <div class="w-10 h-10 rounded-xl bg-ink-200 text-ink-700 flex items-center justify-center">⚕️</div>
-          </div>
-          <p class="mt-2 text-ink-700 text-sm">دليل العيادات والبيانات الصحية العامة.</p>
-          <div class="mt-3 text-brand-700 text-sm">عرض التفاصيل →</div>
-        </a>
-        <!-- ترفيهية -->
-        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="#platforms">
-          <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold text-ink-900">الخدمات الترفيهية</div>
-            <div class="w-10 h-10 rounded-xl bg-ink-200 text-ink-700 flex items-center justify-center">🎡</div>
-          </div>
-          <p class="mt-2 text-ink-700 text-sm">حدائق عامة وفعاليّات محلية.</p>
-          <div class="mt-3 text-brand-700 text-sm">عرض التفاصيل →</div>
-        </a>
-        <!-- سياحية -->
-        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="#platforms">
-          <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold text-ink-900">الخدمات السياحية</div>
-            <div class="w-10 h-10 rounded-xl bg-ink-200 text-ink-700 flex items-center justify-center">🗺️</div>
-          </div>
-          <p class="mt-2 text-ink-700 text-sm">أدلة الزيارات والمعالم والمسارات.</p>
-          <div class="mt-3 text-brand-700 text-sm">عرض التفاصيل →</div>
-        </a>
-        <!-- تجارية -->
-        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="#platforms">
-          <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold text-ink-900">الخدمات التجارية</div>
-            <div class="w-10 h-10 rounded-xl bg-ink-200 text-ink-700 flex items-center justify-center">🛍️</div>
-          </div>
-          <p class="mt-2 text-ink-700 text-sm">أدلة الأسواق والمتاجر والخدمات.</p>
-          <div class="mt-3 text-brand-700 text-sm">عرض التفاصيل →</div>
-        </a>
+        <div class="p-5 bg-ink-100 rounded-2xl hover:bg-ink-200">
+          <h3 class="text-lg font-bold text-ink-900 mb-2">الخدمات البلدية</h3>
+          <p class="text-sm text-ink-700">إدارة النفايات، الإنارة الذكية، والصيانة العامة.</p>
+        </div>
+        <div class="p-5 bg-ink-100 rounded-2xl hover:bg-ink-200">
+          <h3 class="text-lg font-bold text-ink-900 mb-2">الخدمات التعليمية</h3>
+          <p class="text-sm text-ink-700">دعم المدارس والمنصات التعليمية الرقمية.</p>
+        </div>
+        <div class="p-5 bg-ink-100 rounded-2xl hover:bg-ink-200">
+          <h3 class="text-lg font-bold text-ink-900 mb-2">الخدمات الصحية</h3>
+          <p class="text-sm text-ink-700">دليل العيادات البيطرية والطبية والبيانات البيئية.</p>
+        </div>
+        <div class="p-5 bg-ink-100 rounded-2xl hover:bg-ink-200">
+          <h3 class="text-lg font-bold text-ink-900 mb-2">الخدمات الترفيهية</h3>
+          <p class="text-sm text-ink-700">الحدائق العامة، الأنشطة الشبابية، والمهرجانات.</p>
+        </div>
+        <div class="p-5 bg-ink-100 rounded-2xl hover:bg-ink-200">
+          <h3 class="text-lg font-bold text-ink-900 mb-2">الخدمات السياحية</h3>
+          <p class="text-sm text-ink-700">المعالم السياحية وأدلة الزوار.</p>
+        </div>
+        <div class="p-5 bg-ink-100 rounded-2xl hover:bg-ink-200">
+          <h3 class="text-lg font-bold text-ink-900 mb-2">الخدمات التجارية</h3>
+          <p class="text-sm text-ink-700">أدلة الأسواق والمتاجر الإلكترونية.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- الاستراتيجية -->
-  <section id="strategy" class="py-14 md:py-16 bg-ink-100">
-    <div class="container mx-auto px-4">
-      <div class="section-head mb-2"><span class="dot"></span><span>استراتيجية مدينة عَنّة الذكية</span></div>
-      <h2 class="text-3xl md:text-4xl font-extrabold text-ink-900">خارطة الطريق للتحوّل الذكي 2026–2030</h2>
-      <p class="text-ink-700 mt-3 max-w-3xl">
-        إطار عمل عملي يعتمد على مؤشرات <b>ISO 37122</b> وتجارب ناجحة (برشلونة، سنغافورة، دبي) مع تكييف للمحليّة العراقية.
-        يغطّي البنى التحتيّة الرقمية، الحساسات، البيانات المفتوحة، الحوكمة، واستدامة الطاقة.
+  <section id="strategy" class="py-16 bg-ink-100">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="section-head mb-3"><span class="dot"></span><span>استراتيجية مدينة عَنّة الذكية</span></div>
+      <h2 class="text-3xl font-bold mb-4 text-ink-900">خارطة الطريق للتحوّل الذكي 2026–2030</h2>
+      <p class="text-ink-700 max-w-3xl">
+        تستند الاستراتيجية إلى معايير <b>ISO 37122</b> وتجارب عالمية في برشلونة وسنغافورة ودبي،
+        وتهدف إلى بناء منظومة رقمية متكاملة لتحسين الخدمات وجودة الحياة.
       </p>
-      <div class="mt-4 flex gap-10 flex-wrap">
-        <ul class="list-disc pr-6 text-ink-800">
-          <li>بنية تحتية  LoRaWAN + بوابات متعددة</li>
-          <li>لوحات تشغيل موحّدة لقطاعات المياه والبيئة والنفايات</li>
-          <li>البيانات المفتوحة والشفافية والمشاركة المجتمعية</li>
-        </ul>
-        <ul class="list-disc pr-6 text-ink-800">
-          <li>تكامل التوائم الرقمية (Digital Twin) والـGIS</li>
-          <li>تنبيهات ذكية ومؤشرات أداء (KPIs)</li>
-          <li>إدارة طاقة ذكية للإنارة والمباني</li>
-        </ul>
-      </div>
-      <!-- رابط تفصيلي (ضع ملف PDF لاحقًا) -->
-      <a href="#" class="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-lg bg-ink-900 text-white hover:bg-ink-800">قراءة الاستراتيجية الكاملة (PDF) ↗</a>
+      <ul class="list-disc pr-6 text-ink-700 mt-3 space-y-1">
+        <li>نشر شبكات LoRaWAN وحساسات المدن الذكية.</li>
+        <li>منصات موحدة لإدارة المياه والنفايات والبيئة.</li>
+        <li>التحول نحو البيانات المفتوحة والمشاركة المجتمعية.</li>
+      </ul>
     </div>
   </section>
 
-  <!-- المبادرات الذكية -->
-  <section id="initiatives" class="py-14 md:py-16 bg-white">
-    <div class="container mx-auto px-4">
-      <div class="section-head mb-2"><span class="dot"></span><span>المبادرات الذكية</span></div>
-      <h2 class="text-3xl md:text-4xl font-extrabold text-ink-900">مشاريع قيد التنفيذ</h2>
+  <!-- المبادرات -->
+  <section id="initiatives" class="py-16 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="section-head mb-3"><span class="dot"></span><span>المبادرات الذكية</span></div>
+      <h2 class="text-3xl font-bold mb-8 text-ink-900">مشاريع قيد التنفيذ</h2>
 
-      <div class="grid md:grid-cols-3 gap-4 mt-6">
-        <div class="rounded-2xl border border-ink-200 bg-ink-100 p-5">
-          <div class="text-lg font-semibold text-ink-900">الإنارة الذكية</div>
-          <p class="mt-2 text-ink-700 text-sm">أعمدة LED مع استشعار حركة وتخفيض استهلاك الطاقة.</p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-ink-100 p-5 rounded-2xl hover:bg-ink-200">
+          <h3 class="font-bold mb-2">الإنارة الذكية</h3>
+          <p class="text-sm text-ink-700">أعمدة LED مع استشعار حركة لتقليل الطاقة.</p>
         </div>
-        <div class="rounded-2xl border border-ink-200 bg-ink-100 p-5">
-          <div class="text-lg font-semibold text-ink-900">النفايات الذكية</div>
-          <p class="mt-2 text-ink-700 text-sm">حساسات امتلاء، خرائط آنية، مسارات تحسين الجمع.</p>
+        <div class="bg-ink-100 p-5 rounded-2xl hover:bg-ink-200">
+          <h3 class="font-bold mb-2">النفايات الذكية</h3>
+          <p class="text-sm text-ink-700">حساسات امتلاء وتحديث خرائط الجمع.</p>
         </div>
-        <div class="rounded-2xl border border-ink-200 bg-ink-100 p-5">
-          <div class="text-lg font-semibold text-ink-900">جودة المياه</div>
-          <p class="mt-2 text-ink-700 text-sm">pH/TD S/NTU/ORP + تنبيهات تيليغرام ومعايير محلية.</p>
+        <div class="bg-ink-100 p-5 rounded-2xl hover:bg-ink-200">
+          <h3 class="font-bold mb-2">مراقبة جودة المياه</h3>
+          <p class="text-sm text-ink-700">قياسات pH وTDS ودرجة الحرارة وORP.</p>
         </div>
-        <div class="rounded-2xl border border-ink-200 bg-ink-100 p-5">
-          <div class="text-lg font-semibold text-ink-900">ضغط المياه</div>
-          <p class="mt-2 text-ink-700 text-sm">3 حساسات + اتجاهات يوم/شهر/سنة ولوحات مرجعية.</p>
+        <div class="bg-ink-100 p-5 rounded-2xl hover:bg-ink-200">
+          <h3 class="font-bold mb-2">ضغط المياه</h3>
+          <p class="text-sm text-ink-700">تحليل الاتجاهات اليومية والشهرية.</p>
         </div>
-        <div class="rounded-2xl border border-ink-200 bg-ink-100 p-5">
-          <div class="text-lg font-semibold text-ink-900">محطة الطقس والهواء</div>
-          <p class="mt-2 text-ink-700 text-sm">طقس، رياح، أمطار، PM2.5/PM10 مع خرائط ومخططات.</p>
+        <div class="bg-ink-100 p-5 rounded-2xl hover:bg-ink-200">
+          <h3 class="font-bold mb-2">الطقس والهواء</h3>
+          <p class="text-sm text-ink-700">محطة ذكية لقياس الطقس وجودة الهواء.</p>
         </div>
-        <div class="rounded-2xl border border-ink-200 bg-ink-100 p-5">
-          <div class="text-lg font-semibold text-ink-900">بلاغات المواطنين</div>
-          <p class="mt-2 text-ink-700 text-sm">بوابة موحّدة مع رقم تسلسلي وصور وموقع جغرافي.</p>
+        <div class="bg-ink-100 p-5 rounded-2xl hover:bg-ink-200">
+          <h3 class="font-bold mb-2">بلاغات المواطنين</h3>
+          <p class="text-sm text-ink-700">نظام بلاغات موحد متكامل مع تيليغرام.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- المنصّات (روابط مباشرة) -->
-  <section id="platforms" class="py-14 md:py-16 bg-ink-100">
-    <div class="container mx-auto px-4">
-      <div class="section-head mb-2"><span class="dot"></span><span>منصّات المدينة</span></div>
-      <h2 class="text-3xl md:text-4xl font-extrabold text-ink-900">لوحات حيّة</h2>
-      <div class="grid md:grid-cols-3 gap-4 mt-6">
-        <a class="rounded-2xl overflow-hidden border border-ink-200 bg-white hover:bg-ink-100" href="https://reports.smart-anah.org/ui" target="_blank" rel="noopener">
-          <div class="p-5">
-            <div class="text-lg font-semibold text-ink-900">ضغط المياه</div>
-            <p class="mt-2 text-ink-700 text-sm">ثلاث حساسات + اتجاهات.</p>
-          </div>
-        </a>
-        <a class="rounded-2xl overflow-hidden border border-ink-200 bg-white hover:bg-ink-100" href="https://reports.smart-anah.org/ui" target="_blank" rel="noopener">
-          <div class="p-5">
-            <div class="text-lg font-semibold text-ink-900">جودة المياه</div>
-            <p class="mt-2 text-ink-700 text-sm">pH, TDS, NTU, ORP.</p>
-          </div>
-        </a>
-        <a class="rounded-2xl overflow-hidden border border-ink-200 bg-white hover:bg-ink-100" href="https://reports.smart-anah.org/ui" target="_blank" rel="noopener">
-          <div class="p-5">
-            <div class="text-lg font-semibold text-ink-900">النفايات الذكية</div>
-            <p class="mt-2 text-ink-700 text-sm">مستويات التعبئة وخريطة الحاويات.</p>
-          </div>
-        </a>
-      </div>
-    </div>
-  </section>
+  <!-- تذييل -->
+  <footer class="bg-ink-900 text-white py-8 text-center text-sm">
+    <p>© <span id="year"></span> منصة عَنّة الذكية — جميع الحقوق محفوظة</p>
+  </footer>
 
-  <!-- البيانات المفتوحة -->
-  <section id="opendata" class="py-14 md:py-16 bg-white">
-    <div class="container mx-auto px-4">
-      <div class="section-head mb-2"><span class="dot"></span><span>البيانات المفتوحة</span></div>
-      <h2 class="text-3xl md:text-4xl font-extrabold text-ink-900">كتالوج البيانات</h2>
-      <div class="grid md:grid-cols-2 gap-4 mt-6">
-        <div class="rounded-2xl p-5 bg-ink-100 border border-ink-200">
-          <div class="text-lg font-semibold text-ink-900">Smart Bins — Markers</div>
-          <p class="mt-2 text-ink-700 text-sm">GeoJSON مُحدّث دوريًا لمواقع ومستويات التعبئة.</p>
-          <div class="mt-3 text-brand-700 text-sm">تنزيل قريبًا</div>
-        </div>
-        <div class="rounded-2xl p-5 bg-ink-100 border border-ink-200">
-          <div class="text-lg font-semibold text-ink-900">Water Pressure — Trends</div>
-          <p class="mt-2 text-ink-700 text-sm">CSV/JSON لاتجاهات الضغط اليومية/الشهرية.</p>
-          <div class="mt-3 text-brand-700 text-sm">تنزيل قريبًا</div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- زر التثبيت -->
+  <div id="installPrompt" class="fixed bottom-5 left-5 z-50 hidden">
+    <button id="installBtn"
+      class="px-5 py-3 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-full shadow-lg flex items-center gap-2">
+      📱 تثبيت تطبيق منصة عَنّة
+    </button>
+  </div>
 
-  <!-- تواصل / تذييل -->
-  <section id="contact" class="py-14 md:py-16 bg-ink-100">
-    <div class="container mx-auto px-4">
-      <div class="grid md:grid-cols-3 gap-6">
-        <div>
-          <div class="text-xl font-bold text-ink-900">منصة عَنّة الذكية</div>
-          <p class="mt-2 text-ink-700 text-sm">واجهة موحّدة للخدمات والبيانات والمبادرات.</p>
-        </div>
-        <div>
-          <div class="font-semibold text-ink-900">روابط</div>
-          <ul class="mt-2 space-y-2 text-sm text-ink-800">
-            <li><a href="#services" class="hover:text-ink-900">الخدمات</a></li>
-            <li><a href="#platforms" class="hover:text-ink-900">المنصّات</a></li>
-            <li><a href="#opendata" class="hover:text-ink-900">البيانات المفتوحة</a></li>
-            <li><a href="#news" class="hover:text-ink-900">الأخبار</a></li>
-          </ul>
-        </div>
-        <div>
-          <div class="font-semibold text-ink-900">تواصل</div>
-          <p class="mt-2 text-ink-700 text-sm">البريد: info@smart-anah.org</p>
-          <p class="text-ink-700 text-sm">الهاتف: 07XXXXXXXXX</p>
-        </div>
-      </div>
-      <div class="mt-8 pt-6 border-t border-ink-200 text-xs text-ink-600">
-        © <span id="y"></span> Smart Anah. جميع الحقوق محفوظة.
-      </div>
-    </div>
-  </section>
-
+  <!-- سكربتات -->
   <script>
-    // تحديث السنة
-    document.getElementById('y').textContent = new Date().getFullYear();
+    document.getElementById("year").textContent = new Date().getFullYear();
 
-    // تسجيل Service Worker للتثبيت كتطبيق
+    // تسجيل Service Worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(()=>{});
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log("✅ Service Worker registered"))
+        .catch(err => console.error("❌ SW error:", err));
     }
 
-    // زر "تثبيت التطبيق"
+    // زر تثبيت التطبيق
     let deferredPrompt;
+    const installDiv = document.getElementById('installPrompt');
     const installBtn = document.getElementById('installBtn');
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      installBtn.classList.remove('hidden');
+      installDiv.classList.remove('hidden');
     });
-    installBtn?.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      installBtn.classList.add('hidden');
+
+    installBtn.addEventListener('click', async () => {
+      installDiv.classList.add('hidden');
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+      }
+    });
+
+    window.addEventListener('appinstalled', () => {
+      installDiv.classList.add('hidden');
     });
   </script>
+
 </body>
 </html>
