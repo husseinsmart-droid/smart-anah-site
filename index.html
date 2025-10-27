@@ -5,71 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>منصة عَنّة الذكية — Smart Anah</title>
   <meta name="description" content="المنصة الرقمية لمدينة عَنّة — خدمات، منصّات، بيانات مفتوحة، أخبار." />
+
+  <!-- خطوط عربية حديثة -->
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            brand: {50:'#fff7e6',100:'#ffedcc',200:'#fddf99',300:'#f3c866',400:'#e5af33',500:'#b8860b',600:'#936b0a',700:'#6e5108',800:'#4a3706',900:'#2b2004'},
-            bgd: {900:'#0b1220',800:'#101a2d',700:'#121a2a'}
+            brand: {
+              50:'#fff8eb', 100:'#feefd1', 200:'#fde2a8', 300:'#f7cd73', 400:'#eeb748',
+              500:'#d79a19', 600:'#b07b12', 700:'#8a5f0e', 800:'#5c3f09', 900:'#3a2806'
+            },
+            mint: { 50:'#effaf5', 100:'#d9f3ea', 200:'#b7e7d7', 300:'#8ed9c2', 400:'#65caae', 500:'#43b896' },
+            ink:  { 50:'#f9fafb', 100:'#f5f7fa', 200:'#eef2f7', 300:'#e6ebf2', 400:'#cfd7e3', 500:'#a8b3c4', 600:'#70829a', 700:'#4f5f78', 800:'#384556', 900:'#25313d' }
           },
-          boxShadow: { soft: '0 6px 18px rgba(0,0,0,.12)' }
+          boxShadow: { soft: '0 8px 24px rgba(0,0,0,.08)' },
+          maxWidth: { c: '1100px' }
         }
       }
     }
   </script>
+
   <style>
-    html, body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Naskh Arabic", "Noto Kufi Arabic", "Helvetica Neue", Arial; }
+    html, body { font-family: "IBM Plex Sans Arabic", "Cairo", "Segoe UI", system-ui, -apple-system, Tahoma, Arial; }
     .container { max-width: 1100px; }
-    .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,0.06); }
   </style>
 </head>
-<body class="bg-bgd-900 text-white">
-  <!-- Navbar -->
-  <header class="fixed top-0 inset-x-0 z-50 transition-colors" id="nav">
+<body class="bg-ink-50 text-ink-900">
+
+  <!-- Navbar (فاتح) -->
+  <header class="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur border-b border-ink-200">
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between h-16">
-        <a href="/" class="flex items-center gap-2">
-          <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center font-bold">ع</div>
-          <span class="text-lg font-semibold">منصة عَنّة الذكية</span>
+        <a href="/" class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-brand-500 text-white flex items-center justify-center font-bold">ع</div>
+          <span class="text-lg font-semibold text-ink-900">منصة عَنّة الذكية</span>
         </a>
-        <nav class="hidden md:flex items-center gap-6 text-sm text-white/90">
-          <a href="#services" class="hover:text-white">الخدمات</a>
-          <a href="#platforms" class="hover:text-white">المنصّات</a>
-          <a href="#opendata" class="hover:text-white">البيانات المفتوحة</a>
-          <a href="#news" class="hover:text-white">الأخبار</a>
-          <a href="#contact" class="hover:text-white">تواصل</a>
+        <nav class="hidden md:flex items-center gap-6 text-sm text-ink-700">
+          <a href="#services" class="hover:text-ink-900">الخدمات</a>
+          <a href="#platforms" class="hover:text-ink-900">المنصّات</a>
+          <a href="#opendata" class="hover:text-ink-900">البيانات المفتوحة</a>
+          <a href="#news" class="hover:text-ink-900">الأخبار</a>
+          <a href="#contact" class="hover:text-ink-900">تواصل</a>
         </nav>
-        <a href="/reports.html" class="md:inline-flex hidden px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-sm font-semibold">إرسال بلاغ</a>
+        <div class="hidden md:flex items-center gap-2">
+          <a href="https://reports.smart-anah.org/ui" target="_blank" rel="noopener"
+             class="px-4 py-2 rounded-xl bg-ink-100 hover:bg-ink-200 text-sm font-semibold text-ink-800">
+            لوحة البيانات
+          </a>
+          <a href="https://reports.smart-anah.org/reports/index.html"
+             class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-sm font-semibold text-white">
+            إرسال بلاغ
+          </a>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- Hero -->
-  <section class="relative pt-24 pb-14 md:pb-20 bg-gradient-to-b from-bgd-900 to-bgd-800">
-    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(1000px 400px at 80% -10%, #e5af33, transparent);"></div>
-    <div class="container mx-auto px-4">
+  <!-- Hero (فاتح بلمسة ذهب/منت) -->
+  <section class="relative pt-24 pb-12 md:pb-16 bg-gradient-to-b from-white to-ink-100">
+    <div class="absolute inset-0 pointer-events-none" style="background:
+      radial-gradient(700px 260px at 20% -10%, rgba(67,184,150,.25), transparent 60%),
+      radial-gradient(800px 320px at 85% -10%, rgba(215,154,25,.22), transparent 60%);
+    "></div>
+
+    <div class="container mx-auto px-4 relative">
       <div class="grid md:grid-cols-2 items-center gap-8">
         <div>
-          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">
-            مدينة عَنّة الذكية — خدمات رقمية وبيانات ومبادرات لتحسين جودة الحياة
+          <h1 class="text-3xl md:text-4xl font-extrabold leading-tight text-ink-900">
+            مدينة عَنّة الذكية — خدمات رقمية وبيانات لتحسين جودة الحياة
           </h1>
-          <p class="mt-4 text-white/80">واجهة \"مستوحاة\" أسلوبيًا من أفضل المنصّات الحكومية، مع هوية محلية لعَنّة. ابدأ من هنا للوصول إلى الخدمات والمنصّات والبيانات.</p>
+          <p class="mt-4 text-ink-700">
+            واجهة حديثة بألوان مشرقة وخطوط عربية عصرية. ابدأ من هنا للوصول إلى الخدمات والمنصّات والبيانات المفتوحة.
+          </p>
           <div class="mt-6 flex flex-wrap gap-3">
-            <a href="#services" class="px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-400 font-semibold">استكشف الخدمات</a>
-            <a href="#platforms" class="px-5 py-3 rounded-xl border border-white/20 hover:border-white/40">عرض اللوحات</a>
-            <a href="/reports.html" class="px-5 py-3 rounded-xl border border-white/20 hover:border-white/40">إرسال بلاغ</a>
+            <a href="#services" class="px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-400 font-semibold text-white shadow-soft">استكشف الخدمات</a>
+            <a href="https://reports.smart-anah.org/ui" target="_blank" rel="noopener"
+               class="px-5 py-3 rounded-xl border border-ink-300 hover:bg-ink-100 text-ink-800 font-semibold">عرض اللوحات</a>
+            <a href="https://reports.smart-anah.org/reports/index.html"
+               class="px-5 py-3 rounded-xl border border-ink-300 hover:bg-ink-100 text-ink-800">إرسال بلاغ</a>
           </div>
         </div>
+
         <div class="md:pl-10">
-          <div class="glass rounded-2xl p-4 md:p-6 shadow-soft border border-white/10">
-            <div class="text-sm text-white/70 mb-3">أهم الروابط</div>
+          <div class="rounded-2xl p-5 md:p-6 shadow-soft border border-ink-200 bg-white">
+            <div class="text-sm text-ink-600 mb-3">روابط سريعة</div>
             <ul class="grid grid-cols-2 gap-3 text-sm">
-              <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="/reports.html">بلاغات المواطنين</a></li>
-              <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="#platforms">لوحات المياه</a></li>
-              <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="#platforms">لوحات النفايات</a></li>
-              <li><a class="block p-3 rounded-xl bg-white/5 hover:bg-white/10" href="#platforms">الطقس والهواء</a></li>
+              <li><a class="block p-3 rounded-xl bg-ink-100 hover:bg-ink-200 text-ink-900" href="https://reports.smart-anah.org/reports/index.html">بلاغات المواطنين</a></li>
+              <li><a class="block p-3 rounded-xl bg-ink-100 hover:bg-ink-200 text-ink-900" href="https://reports.smart-anah.org/ui" target="_blank">لوحات البيانات</a></li>
+              <li><a class="block p-3 rounded-xl bg-ink-100 hover:bg-ink-200 text-ink-900" href="#platforms">النفايات الذكية</a></li>
+              <li><a class="block p-3 rounded-xl bg-ink-100 hover:bg-ink-200 text-ink-900" href="#platforms">الطقس والهواء</a></li>
             </ul>
           </div>
         </div>
@@ -77,96 +106,102 @@
     </div>
   </section>
 
-  <!-- Services -->
-  <section id="services" class="py-14 md:py-16 bg-bgd-800">
+  <!-- Services (فاتح) -->
+  <section id="services" class="py-14 md:py-16 bg-white">
     <div class="container mx-auto px-4">
       <div class="flex items-end justify-between gap-4 mb-6">
         <div>
-          <h2 class="text-2xl md:text-3xl font-bold">الخدمات</h2>
-          <p class="text-white/70 mt-1">وصول سريع إلى الخدمات الأكثر استخدامًا.</p>
+          <h2 class="text-2xl md:text-3xl font-bold text-ink-900">الخدمات</h2>
+          <p class="text-ink-600 mt-1">وصول سريع إلى الخدمات الأكثر استخدامًا.</p>
         </div>
-        <a href="#" class="text-brand-300 hover:text-brand-200 text-sm">جميع الخدمات</a>
+        <a href="#" class="text-brand-600 hover:text-brand-700 text-sm">جميع الخدمات</a>
       </div>
+
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="/reports.html">
+        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="https://reports.smart-anah.org/reports/index.html">
           <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold">بلاغات المواطنين</div>
-            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">📣</div>
+            <div class="text-lg font-semibold text-ink-900">بلاغات المواطنين</div>
+            <div class="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-700 flex items-center justify-center">📣</div>
           </div>
-          <p class="mt-2 text-white/70 text-sm">أبلغ عن مشكلة مرفقة بصورة وموقع.</p>
-          <div class="mt-3 text-brand-300 text-sm">ابدأ الآن →</div>
+          <p class="mt-2 text-ink-700 text-sm">أبلغ عن مشكلة مرفقة بصورة وموقع.</p>
+          <div class="mt-3 text-brand-700 text-sm">ابدأ الآن →</div>
         </a>
-        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#platforms">
+
+        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="#platforms">
           <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold">خدمات المياه</div>
-            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">💧</div>
+            <div class="text-lg font-semibold text-ink-900">خدمات المياه</div>
+            <div class="w-10 h-10 rounded-xl bg-mint-100 text-mint-500 flex items-center justify-center">💧</div>
           </div>
-          <p class="mt-2 text-white/70 text-sm">لوحات جودة المياه والضغط والخزّانات.</p>
-          <div class="mt-3 text-brand-300 text-sm">تصفّح اللوحات →</div>
+          <p class="mt-2 text-ink-700 text-sm">لوحات جودة المياه والضغط والخزّانات.</p>
+          <div class="mt-3 text-brand-700 text-sm">تصفّح اللوحات →</div>
         </a>
-        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#platforms">
+
+        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="#platforms">
           <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold">النفايات الذكية</div>
-            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">🗑️</div>
+            <div class="text-lg font-semibold text-ink-900">النفايات الذكية</div>
+            <div class="w-10 h-10 rounded-xl bg-ink-200 text-ink-700 flex items-center justify-center">🗑️</div>
           </div>
-          <p class="mt-2 text-white/70 text-sm">مستويات التعبئة والتنبيهات والمسارات.</p>
-          <div class="mt-3 text-brand-300 text-sm">تصفّح اللوحات →</div>
+          <p class="mt-2 text-ink-700 text-sm">مستويات التعبئة والتنبيهات والمسارات.</p>
+          <div class="mt-3 text-brand-700 text-sm">تصفّح اللوحات →</div>
         </a>
-        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#platforms">
+
+        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="#platforms">
           <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold">الطقس والهواء</div>
-            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">🌤️</div>
+            <div class="text-lg font-semibold text-ink-900">الطقس والهواء</div>
+            <div class="w-10 h-10 rounded-xl bg-ink-200 text-ink-700 flex items-center justify-center">🌤️</div>
           </div>
-          <p class="mt-2 text-white/70 text-sm">محطة الطقس وملوّثات الهواء.</p>
-          <div class="mt-3 text-brand-300 text-sm">تصفّح اللوحات →</div>
+          <p class="mt-2 text-ink-700 text-sm">محطة الطقس وملوّثات الهواء.</p>
+          <div class="mt-3 text-brand-700 text-sm">تصفّح اللوحات →</div>
         </a>
-        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#opendata">
+
+        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="#opendata">
           <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold">البيانات المفتوحة</div>
-            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">📊</div>
+            <div class="text-lg font-semibold text-ink-900">البيانات المفتوحة</div>
+            <div class="w-10 h-10 rounded-xl bg-ink-200 text-ink-700 flex items-center justify-center">📊</div>
           </div>
-          <p class="mt-2 text-white/70 text-sm">حِزم قابلة للتنزيل وخرائط حيّة.</p>
-          <div class="mt-3 text-brand-300 text-sm">استعرض البيانات →</div>
+          <p class="mt-2 text-ink-700 text-sm">حِزم قابلة للتنزيل وخرائط حيّة.</p>
+          <div class="mt-3 text-brand-700 text-sm">استعرض البيانات →</div>
         </a>
-        <a class="group rounded-2xl p-5 bg-white/5 hover:bg-white/10 border border-white/10" href="#contact">
+
+        <a class="group rounded-2xl p-5 bg-ink-100 hover:bg-ink-200 border border-ink-200" href="#contact">
           <div class="flex items-center justify-between">
-            <div class="text-lg font-semibold">تواصل معنا</div>
-            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center">✉️</div>
+            <div class="text-lg font-semibold text-ink-900">تواصل معنا</div>
+            <div class="w-10 h-10 rounded-xl bg-ink-200 text-ink-700 flex items-center justify-center">✉️</div>
           </div>
-          <p class="mt-2 text-white/70 text-sm">الدعم والاستفسارات والشراكات.</p>
-          <div class="mt-3 text-brand-300 text-sm">معلومات التواصل →</div>
+          <p class="mt-2 text-ink-700 text-sm">الدعم والاستفسارات والشراكات.</p>
+          <div class="mt-3 text-brand-700 text-sm">معلومات التواصل →</div>
         </a>
       </div>
     </div>
   </section>
 
   <!-- Platforms -->
-  <section id="platforms" class="py-14 md:py-16 bg-bgd-900">
+  <section id="platforms" class="py-14 md:py-16 bg-ink-100">
     <div class="container mx-auto px-4">
       <div class="flex items-end justify-between gap-4 mb-6">
         <div>
-          <h2 class="text-2xl md:text-3xl font-bold">منصّات المدينة</h2>
-          <p class="text-white/70 mt-1">لوحات حيّة واستعراض المؤشرات.</p>
+          <h2 class="text-2xl md:text-3xl font-bold text-ink-900">منصّات المدينة</h2>
+          <p class="text-ink-700 mt-1">لوحات حيّة واستعراض المؤشرات.</p>
         </div>
-        <a href="#" class="text-brand-300 hover:text-brand-200 text-sm">الانتقال إلى جميع المنصّات</a>
+        <a href="#" class="text-brand-700 hover:text-brand-800 text-sm">الانتقال إلى جميع المنصّات</a>
       </div>
       <div class="grid md:grid-cols-3 gap-4">
-        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#platforms">
+        <a class="rounded-2xl overflow-hidden border border-ink-200 bg-white hover:bg-ink-100" href="https://reports.smart-anah.org/ui" target="_blank" rel="noopener">
           <div class="p-5">
-            <div class="text-lg font-semibold">لوحة ضغط المياه</div>
-            <p class="mt-2 text-white/70 text-sm">ثلاث حساسات + اتجاهات يوم/شهر/سنة.</p>
+            <div class="text-lg font-semibold text-ink-900">لوحة ضغط المياه</div>
+            <p class="mt-2 text-ink-700 text-sm">ثلاث حساسات + اتجاهات يوم/شهر/سنة.</p>
           </div>
         </a>
-        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#platforms">
+        <a class="rounded-2xl overflow-hidden border border-ink-200 bg-white hover:bg-ink-100" href="https://reports.smart-anah.org/ui" target="_blank" rel="noopener">
           <div class="p-5">
-            <div class="text-lg font-semibold">لوحة جودة المياه</div>
-            <p class="mt-2 text-white/70 text-sm">pH, TDS, NTU, °C مع تنبيهات.</p>
+            <div class="text-lg font-semibold text-ink-900">لوحة جودة المياه</div>
+            <p class="mt-2 text-ink-700 text-sm">pH, TDS, NTU, °C مع تنبيهات.</p>
           </div>
         </a>
-        <a class="rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10" href="#platforms">
+        <a class="rounded-2xl overflow-hidden border border-ink-200 bg-white hover:bg-ink-100" href="https://reports.smart-anah.org/ui" target="_blank" rel="noopener">
           <div class="p-5">
-            <div class="text-lg font-semibold">لوحة النفايات الذكية</div>
-            <p class="mt-2 text-white/70 text-sm">مستويات التعبئة وخريطة الحاويات.</p>
+            <div class="text-lg font-semibold text-ink-900">لوحة النفايات الذكية</div>
+            <p class="mt-2 text-ink-700 text-sm">مستويات التعبئة وخريطة الحاويات.</p>
           </div>
         </a>
       </div>
@@ -174,93 +209,91 @@
   </section>
 
   <!-- Open Data -->
-  <section id="opendata" class="py-14 md:py-16 bg-bgd-800">
+  <section id="opendata" class="py-14 md:py-16 bg-white">
     <div class="container mx-auto px-4">
       <div class="flex items-end justify-between gap-4 mb-6">
         <div>
-          <h2 class="text-2xl md:text-3xl font-bold">البيانات المفتوحة</h2>
-          <p class="text-white/70 mt-1">مجموعات بيانات قابلة للتنزيل، وواجهات برمجية لاحقًا.</p>
+          <h2 class="text-2xl md:text-3xl font-bold text-ink-900">البيانات المفتوحة</h2>
+          <p class="text-ink-700 mt-1">مجموعات بيانات قابلة للتنزيل، وواجهات برمجية لاحقًا.</p>
         </div>
-        <a href="#" class="text-brand-300 hover:text-brand-200 text-sm">تصفّح الكتالوج</a>
+        <a href="#" class="text-brand-700 hover:text-brand-800 text-sm">تصفّح الكتالوج</a>
       </div>
       <div class="grid md:grid-cols-2 gap-4">
-        <div class="rounded-2xl p-5 bg-white/5 border border-white/10">
-          <div class="text-lg font-semibold">Smart Bins — Markers</div>
-          <p class="mt-2 text-white/70 text-sm">GeoJSON مُحدّث دوريًا لمواقع ومستويات التعبئة.</p>
-          <div class="mt-3 text-brand-300 text-sm">تنزيل قريبًا</div>
+        <div class="rounded-2xl p-5 bg-ink-100 border border-ink-200">
+          <div class="text-lg font-semibold text-ink-900">Smart Bins — Markers</div>
+          <p class="mt-2 text-ink-700 text-sm">GeoJSON مُحدّث دوريًا لمواقع ومستويات التعبئة.</p>
+          <div class="mt-3 text-brand-700 text-sm">تنزيل قريبًا</div>
         </div>
-        <div class="rounded-2xl p-5 bg-white/5 border border-white/10">
-          <div class="text-lg font-semibold">Water Pressure — Trends</div>
-          <p class="mt-2 text-white/70 text-sm">CSV/JSON لاتجاهات الضغط اليومية/الشهرية.</p>
-          <div class="mt-3 text-brand-300 text-sm">تنزيل قريبًا</div>
+        <div class="rounded-2xl p-5 bg-ink-100 border border-ink-200">
+          <div class="text-lg font-semibold text-ink-900">Water Pressure — Trends</div>
+          <p class="mt-2 text-ink-700 text-sm">CSV/JSON لاتجاهات الضغط اليومية/الشهرية.</p>
+          <div class="mt-3 text-brand-700 text-sm">تنزيل قريبًا</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- News -->
-  <section id="news" class="py-14 md:py-16 bg-bgd-900">
+  <section id="news" class="py-14 md:py-16 bg-ink-100">
     <div class="container mx-auto px-4">
       <div class="flex items-end justify-between gap-4 mb-6">
         <div>
-          <h2 class="text-2xl md:text-3xl font-bold">الأخبار والمستجدّات</h2>
-          <p class="text-white/70 mt-1">ملخّصات قصيرة وروابط للتفاصيل.</p>
+          <h2 class="text-2xl md:text-3xl font-bold text-ink-900">الأخبار والمستجدّات</h2>
+          <p class="text-ink-700 mt-1">ملخّصات قصيرة وروابط للتفاصيل.</p>
         </div>
-        <a href="#" class="text-brand-300 hover:text-brand-200 text-sm">مشاهدة المزيد</a>
+        <a href="#" class="text-brand-700 hover:text-brand-800 text-sm">مشاهدة المزيد</a>
       </div>
       <div class="grid md:grid-cols-3 gap-4">
-        <a class="rounded-2xl p-5 bg-white/5 border border-white/10 hover:bg-white/10" href="#">
-          <div class="text-lg font-semibold">إطلاق المنصة التجريبية</div>
-          <p class="mt-2 text-white/70 text-sm">بدء التشغيل التجريبي لخدمات المنصّة.</p>
-          <div class="mt-3 text-brand-300 text-sm">اقرأ الخبر →</div>
+        <a class="rounded-2xl p-5 bg-white border border-ink-200 hover:bg-ink-50" href="#">
+          <div class="text-lg font-semibold text-ink-900">إطلاق المنصة التجريبية</div>
+          <p class="mt-2 text-ink-700 text-sm">بدء التشغيل التجريبي لخدمات المنصّة.</p>
+          <div class="mt-3 text-brand-700 text-sm">اقرأ الخبر →</div>
         </a>
-        <a class="rounded-2xl p-5 bg-white/5 border border-white/10 hover:bg-white/10" href="#">
-          <div class="text-lg font-semibold">توسعة محطات الاستشعار</div>
-          <p class="mt-2 text-white/70 text-sm">إضافة أجهزة لقياس جودة المياه والطقس.</p>
-          <div class="mt-3 text-brand-300 text-sm">اقرأ الخبر →</div>
+        <a class="rounded-2xl p-5 bg-white border border-ink-200 hover:bg-ink-50" href="#">
+          <div class="text-lg font-semibold text-ink-900">توسعة محطات الاستشعار</div>
+          <p class="mt-2 text-ink-700 text-sm">إضافة أجهزة لقياس جودة المياه والطقس.</p>
+          <div class="mt-3 text-brand-700 text-sm">اقرأ الخبر →</div>
         </a>
-        <a class="rounded-2xl p-5 bg-white/5 border border-white/10 hover:bg-white/10" href="#">
-          <div class="text-lg font-semibold">برنامج التبليغات</div>
-          <p class="mt-2 text-white/70 text-sm">دمج بلاغات المواطنين ضمن الواجهة.</p>
-          <div class="mt-3 text-brand-300 text-sm">اقرأ الخبر →</div>
+        <a class="rounded-2xl p-5 bg-white border border-ink-200 hover:bg-ink-50" href="#">
+          <div class="text-lg font-semibold text-ink-900">برنامج التبليغات</div>
+          <p class="mt-2 text-ink-700 text-sm">دمج بلاغات المواطنين ضمن الواجهة.</p>
+          <div class="mt-3 text-brand-700 text-sm">اقرأ الخبر →</div>
         </a>
       </div>
     </div>
   </section>
 
   <!-- Contact / Footer -->
-  <section id="contact" class="py-14 md:py-16 bg-bgd-800">
+  <section id="contact" class="py-14 md:py-16 bg-white">
     <div class="container mx-auto px-4">
       <div class="grid md:grid-cols-3 gap-6">
         <div>
-          <div class="text-xl font-bold">منصة عَنّة الذكية</div>
-          <p class="mt-2 text-white/70 text-sm">واجهة رقمية موحّدة للخدمات والبيانات والمبادرات.</p>
+          <div class="text-xl font-bold text-ink-900">منصة عَنّة الذكية</div>
+          <p class="mt-2 text-ink-700 text-sm">واجهة رقمية موحّدة للخدمات والبيانات والمبادرات.</p>
         </div>
         <div>
-          <div class="font-semibold">روابط</div>
-          <ul class="mt-2 space-y-2 text-sm text-white/80">
-            <li><a href="#services" class="hover:text-white">الخدمات</a></li>
-            <li><a href="#platforms" class="hover:text-white">المنصّات</a></li>
-            <li><a href="#opendata" class="hover:text-white">البيانات المفتوحة</a></li>
-            <li><a href="#news" class="hover:text-white">الأخبار</a></li>
+          <div class="font-semibold text-ink-900">روابط</div>
+          <ul class="mt-2 space-y-2 text-sm text-ink-800">
+            <li><a href="#services" class="hover:text-ink-900">الخدمات</a></li>
+            <li><a href="#platforms" class="hover:text-ink-900">المنصّات</a></li>
+            <li><a href="#opendata" class="hover:text-ink-900">البيانات المفتوحة</a></li>
+            <li><a href="#news" class="hover:text-ink-900">الأخبار</a></li>
           </ul>
         </div>
         <div>
-          <div class="font-semibold">تواصل</div>
-          <p class="mt-2 text-white/70 text-sm">البريد: info@smart-anah.org</p>
-          <p class="text-white/70 text-sm">الهاتف: 07XXXXXXXXX</p>
+          <div class="font-semibold text-ink-900">تواصل</div>
+          <p class="mt-2 text-ink-700 text-sm">البريد: info@smart-anah.org</p>
+          <p class="text-ink-700 text-sm">الهاتف: 07XXXXXXXXX</p>
         </div>
       </div>
-      <div class="mt-8 pt-6 border-t border-white/10 text-xs text-white/60">© <span id="y"></span> Smart Anah. جميع الحقوق محفوظة.</div>
+      <div class="mt-8 pt-6 border-t border-ink-200 text-xs text-ink-600">
+        © <span id="y"></span> Smart Anah. جميع الحقوق محفوظة.
+      </div>
     </div>
   </section>
 
   <script>
-    const nav = document.getElementById('nav');
-    const onScroll = () => {
-      if (window.scrollY > 4) nav.classList.add('bg-bgd-900/80','backdrop-blur');
-      else nav.classList.remove('bg-bgd-900/80','backdrop-blur');
-    }; onScroll(); window.addEventListener('scroll', onScroll);
+    // تحديث السنة
     document.getElementById('y').textContent = new Date().getFullYear();
   </script>
 </body>
