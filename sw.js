@@ -1,4 +1,9 @@
 const CACHE = 'anah-reports-v2';
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  // تجاهل أي طلبات خارجية (مثل Node-RED)
+  if (url.origin !== self.location.origin) return;
+});
 
 self.addEventListener('install', e => {
   e.waitUntil(
