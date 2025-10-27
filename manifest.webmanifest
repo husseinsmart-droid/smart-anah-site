@@ -1,12 +1,33 @@
 {
-  "name": "منصة عنّة الذكية — بلاغات المواطنين",
-  "short_name": "بلاغات عنّة",
-  "start_url": "/reports/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#c58a00",
+  "name": "منصة عَنّة الذكية",
+  "short_name": "Smart Anah",
+  "description": "المنصة الرقمية لمدينة عَنّة — خدمات، منصّات، بيانات مفتوحة، أخبار.",
   "lang": "ar",
   "dir": "rtl",
-  "icons": []
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "categories": ["utilities", "productivity", "government", "education"],
+  "icons": [
+    { "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "shortcuts": [
+    {
+      "name": "إرسال بلاغ",
+      "short_name": "بلاغ",
+      "url": "https://reports.smart-anah.org/reports/index.html",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "لوحة البيانات",
+      "short_name": "اللوحات",
+      "url": "https://reports.smart-anah.org/ui",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
+  "prefer_related_applications": false
 }
-
