@@ -1,26 +1,21 @@
-/* Smart Anah — Service Worker (كامل) */
+/* Smart Anah — Service Worker */
 const CACHE_NAME = "smart-anah-v1";
 const PRECACHE = [
   "/",                          // الصفحة الرئيسية
   "/manifest.webmanifest",
   "/sw.js",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
-  "/icons/maskable-192.png",
-  "/icons/maskable-512.png"
+  "/assets/icons/icon-192.png",
+  "/assets/icons/icon-512.png"
 ];
 
-// تفعيل Navigation Preload عند توفره
+// تفعيل Navigation Preload + تنظيف الكاش القديم
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     if (self.registration.navigationPreload) {
       await self.registration.navigationPreload.enable();
     }
-    // حذف الكاشات القديمة
     const keys = await caches.keys();
-    await Promise.all(
-      keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-    );
+    await Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)));
     await self.clients.claim();
   })());
 });
@@ -34,30 +29,23 @@ self.addEventListener("install", (event) => {
   })());
 });
 
-// استراتيجية:
-// - للطلبات الملاحية (HTML): شبكة أولاً ثم كاش كاحتياط.
-// - للأصول الثابتة داخل نفس الأصل (icons/manifest/sw): كاش أولاً ثم شبكة للتحديث.
-// - لبقية الطلبات: نحاول الشبكة، وإن فشلنا نرجع الكاش إن وجد.
+// إستراتيجيات الجلب
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
-
-  // نتعامل فقط مع نفس المصدر (origin)
   const sameOrigin = url.origin === self.location.origin;
 
-  // طلبات الملاحة (الصفحات)
+  // تنقّلات HTML: شبكة أولاً ثم كاش كنسخة احتياطية
   if (req.mode === "navigate") {
     event.respondWith((async () => {
       try {
-        // استخدم navigation preload إن توفر
         const preload = await event.preloadResponse;
         if (preload) return preload;
         const net = await fetch(req);
         const cache = await caches.open(CACHE_NAME);
         cache.put(req, net.clone());
         return net;
-      } catch (err) {
-        // رجوع إلى نسخة الكاش أو الصفحة الرئيسية
+      } catch {
         const cache = await caches.open(CACHE_NAME);
         return (await cache.match(req)) || (await cache.match("/"));
       }
@@ -65,9 +53,9 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // أصول ثابتة محلية (أيقونات/مانيفست/SW) — Cache First
+  // أصول ثابتة محليّة: Cache-First
   if (sameOrigin && (
-      url.pathname.startsWith("/icons/") ||
+      url.pathname.startsWith("/assets/icons/") ||
       url.pathname === "/manifest.webmanifest" ||
       url.pathname === "/sw.js"
     )) {
@@ -79,14 +67,14 @@ self.addEventListener("fetch", (event) => {
         const net = await fetch(req);
         cache.put(req, net.clone());
         return net;
-      } catch (e) {
-        return new Response("", { status: 504, statusText: "Gateway Timeout" });
+      } catch {
+        return new Response("", { status: 504 });
       }
     })());
     return;
   }
 
-  // باقي الطلبات — Network First مع fallback للكاش
+  // باقي الطلبات: Network-First مع fallback للكاش
   event.respondWith((async () => {
     try {
       const net = await fetch(req);
@@ -95,19 +83,12 @@ self.addEventListener("fetch", (event) => {
         cache.put(req, net.clone());
       }
       return net;
-    } catch (e) {
+    } catch {
       const cache = await caches.open(CACHE_NAME);
       const cached = await cache.match(req);
       if (cached) return cached;
-      // للصور المفقودة مثلاً: رجّع 204 بدلاً من كسر الصفحة
-      if (req.destination === "image") {
-        return new Response("", { status: 204 });
-      }
-      // افتراضي
-      return new Response("Offline", {
-        status: 503,
-        headers: { "Content-Type": "text/plain; charset=utf-8" }
-      });
+      if (req.destination === "image") return new Response("", { status: 204 });
+      return new Response("Offline", { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" }});
     }
   })());
 });
