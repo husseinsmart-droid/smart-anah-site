@@ -127,12 +127,13 @@
   viewer.scene.primitives.add(model);
   await model.ready;
 
-  // أبعد الكاميرا عن المركز بدل zoomTo(model) حتى لا تدخل داخل المجسم
-  viewer.camera.flyTo({
-    destination: Cesium.Cartesian3.fromDegrees(lon, lat, 3000), // ارتفاع ~ 3 كم
-    orientation: { heading: 0, pitch: -0.8, roll: 0 },
-    duration: 1.2
-  });
+ // ابعِد الكاميرا تلقائياً حسب نصف قطر النموذج
+const r = model.boundingSphere.radius;
+viewer.camera.flyToBoundingSphere(
+  model.boundingSphere,
+  { offset: new Cesium.HeadingPitchRange(0, -0.6, r * 2.8) }
+);
+
 
   // ======== تلوين حسب استعمالات الأرض (إن وُجدت حقول مناسبة) ========
   let currentStyled = false;
