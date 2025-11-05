@@ -1,0 +1,172 @@
+<!-- =========================== municipal.html =========================== -->
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>الخدمات البلدية — منصة عَنّة الذكية</title>
+  <meta name="description" content="الخدمات البلدية في منصة عَنّة — إجازات البناء، النفايات، الماء، المجاري، الطرق والأرصفة، المشاريع." />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body{font-family:'Cairo',sans-serif}
+    .tab-btn[aria-selected="true"]{background:#111827;color:#fff}
+    .badge{display:inline-block;padding:.125rem .5rem;font-size:.75rem;border-radius:.5rem;background:#e5e7eb;color:#374151}
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <!-- رأس موحد -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b">
+    <div class="max-w-6xl mx-auto h-14 px-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 font-bold text-lg text-amber-700"><span class="grid place-items-center w-8 h-8 bg-amber-500 text-white rounded-xl">ع</span>منصة عَنّة الذكية</a>
+      <nav class="hidden md:flex gap-4 text-sm font-semibold">
+        <a href="/index.html#services" class="hover:text-gray-900">الخدمات</a>
+        <a href="/index.html#initiatives" class="hover:text-gray-900">المبادرات</a>
+        <a href="/digital-twin.html" class="hover:text-gray-900">التوأم الرقمي</a>
+      </nav>
+      <div class="text-sm font-semibold flex gap-2">
+        <a href="https://nodered.smart-anah.org/dashboard" target="_blank" class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200">لوحة البيانات <span class="badge">🔒 موظفون</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    <!-- مسار -->
+    <nav class="text-sm text-gray-600 mb-4"><a class="underline" href="/">الرئيسية</a> / الخدمات / <span class="text-gray-900">الخدمات البلدية</span></nav>
+
+    <header class="mb-6">
+      <h1 class="text-3xl font-extrabold mb-2">الخدمات البلدية</h1>
+      <p class="text-gray-700">اختر تبويب الخدمة للدخول إلى تفاصيلها وروابطها.</p>
+    </header>
+
+    <!-- تبويبات -->
+    <div class="flex flex-wrap gap-2 mb-6" role="tablist">
+      <button class="tab-btn px-3 py-1.5 rounded-lg border" role="tab" aria-selected="true" data-tab="permits">إجازات البناء</button>
+      <button class="tab-btn px-3 py-1.5 rounded-lg border" role="tab" data-tab="waste">النفايات</button>
+      <button class="tab-btn px-3 py-1.5 rounded-lg border" role="tab" data-tab="water">الماء</button>
+      <button class="tab-btn px-3 py-1.5 rounded-lg border" role="tab" data-tab="sewage">المجاري</button>
+      <button class="tab-btn px-3 py-1.5 rounded-lg border" role="tab" data-tab="roads">الطرق والأرصفة</button>
+      <button class="tab-btn px-3 py-1.5 rounded-lg border" role="tab" data-tab="projects">المشاريع</button>
+    </div>
+
+    <!-- المحتوى: إجازات البناء -->
+    <section id="permits" role="tabpanel" class="grid md:grid-cols-2 gap-4">
+      <article class="p-4 bg-white rounded-xl border">
+        <h2 class="text-xl font-bold">تقديم طلب إجازة بناء</h2>
+        <p class="mt-2 text-gray-700">نموذج إلكتروني لتقديم طلب إجازة بناء ومتابعة الحالة.</p>
+        <div class="mt-3 flex gap-2">
+          <a class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600" href="/services/forms/building-permit.html">بدء الطلب</a>
+          <a class="px-4 py-2 border rounded-lg hover:bg-gray-50" href="/services/guides/permits-guide.pdf" target="_blank">الدليل</a>
+        </div>
+      </article>
+      <article class="p-4 bg-white rounded-xl border">
+        <h3 class="font-semibold">التحقق من المتطلبات</h3>
+        <ul class="mt-2 list-disc pr-5 text-gray-700 space-y-1">
+          <li>مخطط موقع مصدّق</li>
+          <li>وثائق الملكية</li>
+          <li>موافقات الخدمات (ماء، كهرباء، مجاري)</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- المحتوى: النفايات -->
+    <section id="waste" role="tabpanel" hidden class="grid md:grid-cols-2 gap-4">
+      <article class="p-4 bg-white rounded-xl border">
+        <h2 class="text-xl font-bold">إدارة النفايات الذكية</h2>
+        <p class="mt-2 text-gray-700">مستويات التعبئة والتنبيهات وخريطة الحاويات.</p>
+        <div class="mt-3 flex gap-2">
+          <a href="https://nodered.smart-anah.org/dashboard?tab=waste" class="px-4 py-2 border rounded-lg hover:bg-gray-50">فتح اللوحة <span class="badge">🔒 موظفون</span></a>
+          <a href="https://reports.smart-anah.org/reports/index.html" class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-black">إرسال بلاغ</a>
+        </div>
+      </article>
+      <article class="p-4 bg-white rounded-xl border">
+        <h3 class="font-semibold">أهداف الخدمة</h3>
+        <ul class="mt-2 list-disc pr-5 text-gray-700 space-y-1">
+          <li>رفع كفاءة جمع النفايات</li>
+          <li>تخفيض التكاليف واستهلاك الوقود</li>
+          <li>تحسين النظافة العامة</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- المحتوى: الماء -->
+    <section id="water" role="tabpanel" hidden class="grid md:grid-cols-2 gap-4">
+      <article class="p-4 bg-white rounded-xl border">
+        <h2 class="text-xl font-bold">الماء</h2>
+        <p class="mt-2 text-gray-700">ضغط المياه وجودتها مع اتجاهات يوم/شهر/سنة.</p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <a href="https://nodered.smart-anah.org/dashboard?tab=pressure" class="px-4 py-2 border rounded-lg hover:bg-gray-50">ضغط المياه <span class="badge">🔒 موظفون</span></a>
+          <a href="https://nodered.smart-anah.org/dashboard?tab=weather" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">لوحة الطقس (مفتوحة)</a>
+          <a href="https://nodered.smart-anah.org/dashboard?tab=quality" class="px-4 py-2 border rounded-lg hover:bg-gray-50">جودة المياه <span class="badge">🔒</span></a>
+        </div>
+      </article>
+      <article class="p-4 bg-white rounded-xl border">
+        <h3 class="font-semibold">مؤشرات رئيسية</h3>
+        <ul class="mt-2 list-disc pr-5 text-gray-700 space-y-1">
+          <li>الضغط (bar)</li>
+          <li>pH, TDS, NTU, °C</li>
+          <li>سجلات الأعطال</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- المحتوى: المجاري -->
+    <section id="sewage" role="tabpanel" hidden class="grid md:grid-cols-2 gap-4">
+      <article class="p-4 bg-white rounded-xl border">
+        <h2 class="text-xl font-bold">شبكة المجاري</h2>
+        <p class="mt-2 text-gray-700">متابعة الانسدادات والصيانة الدورية.</p>
+        <a href="#" class="mt-3 inline-block px-4 py-2 border rounded-lg hover:bg-gray-50">سجل الصيانة <span class="badge">قريباً</span></a>
+      </article>
+      <article class="p-4 bg-white rounded-xl border">
+        <h3 class="font-semibold">خريطة الشبكة</h3>
+        <p class="mt-2 text-gray-700">سيتم ربطها مع التوأم الرقمي لاحقاً.</p>
+      </article>
+    </section>
+
+    <!-- المحتوى: الطرق -->
+    <section id="roads" role="tabpanel" hidden class="grid md:grid-cols-2 gap-4">
+      <article class="p-4 bg-white rounded-xl border">
+        <h2 class="text-xl font-bold">الطرق والأرصفة</h2>
+        <p class="mt-2 text-gray-700">بلاغات الحفر والتشققات وبرنامج الصيانة.</p>
+        <a href="https://reports.smart-anah.org/reports/index.html" class="mt-3 inline-block px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-black">أرسل بلاغ</a>
+      </article>
+      <article class="p-4 bg-white rounded-xl border">
+        <h3 class="font-semibold">الأولوية</h3>
+        <p class="mt-2 text-gray-700">حسب مستوى الضرر وكثافة الحركة المرورية.</p>
+      </article>
+    </section>
+
+    <!-- المحتوى: المشاريع -->
+    <section id="projects" role="tabpanel" hidden class="grid md:grid-cols-2 gap-4">
+      <article class="p-4 bg-white rounded-xl border">
+        <h2 class="text-xl font-bold">مشاريع البلدية</h2>
+        <p class="mt-2 text-gray-700">قائمة المشاريع الحالية مع نسب الإنجاز.</p>
+        <a href="#" class="mt-3 inline-block px-4 py-2 border rounded-lg hover:bg-gray-50">استعرض المشاريع <span class="badge">قريباً</span></a>
+      </article>
+      <article class="p-4 bg-white rounded-xl border">
+        <h3 class="font-semibold">الشفافية</h3>
+        <p class="mt-2 text-gray-700">سيتم نشر العقود والجداول الزمنية تباعاً.</p>
+      </article>
+    </section>
+  </main>
+
+  <!-- تذييل موحد -->
+  <footer class="bg-gray-900 text-white text-center py-8 text-sm">
+    <p>© <span id="year"></span> منصة عَنّة الذكية — جميع الحقوق محفوظة</p>
+    <p class="mt-2">للتواصل: <a class="underline" href="mailto:smart.anah25@gmail.com">smart.anah25@gmail.com</a></p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent=new Date().getFullYear();
+    const tabs=[...document.querySelectorAll('.tab-btn')];
+    const panels={};
+    document.querySelectorAll('[role="tabpanel"]').forEach(s=>panels[s.id]=s);
+    tabs.forEach(btn=>btn.addEventListener('click',()=>{
+      tabs.forEach(b=>b.setAttribute('aria-selected','false'));
+      btn.setAttribute('aria-selected','true');
+      const id=btn.dataset.tab;Object.values(panels).forEach(p=>p.hidden=true);panels[id].hidden=false;
+    }));
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>الخدمات الصحية — منصة عَنّة الذكية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com"></script>
+  <style>body{font-family:'Cairo',sans-serif}.tab-btn[aria-selected="true"]{background:#111827;color:#fff}.badge{display:inline-block;padding:.125rem .5rem;font-size:.75rem;border-radius:.5rem;background:#e5e7eb;color:#374151}</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b"><div class="max-w-6xl mx-auto h-14 px-4 flex items-center justify-between"><a href="/" class="flex items-center gap-2 font-bold text-lg text-amber-700"><span class="grid place-items-center w-8 h-8 bg-amber-500 text-white rounded-xl">ع</span>منصة عَنّة الذكية</a></div></header>
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    <nav class="text-sm text-gray-600 mb-4"><a class="underline" href="/">الرئيسية</a> / الخدمات / <span class="text-gray-900">الخدمات الصحية</span></nav>
+    <header class="mb-6"><h1 class="text-3xl font-extrabold mb-2">الخدمات الصحية</h1><p class="text-gray-700">دليل العيادات ومؤشرات البيئة وجودة الماء والهواء.</p></header>
+    <div class="flex flex-wrap gap-2 mb-6" role="tablist">
+      <button class="tab-btn px-3 py-1.5 rounded-lg border" aria-selected="true" data-tab="clinics">دليل العيادات</button>
+      <button class="tab-btn px-3 py-1.5 rounded-lg border" data-tab="waterq">جودة المياه</button>
+      <button class="tab-btn px-3 py-1.5 rounded-lg border" data-tab="air">جودة الهواء</button>
+    </div>
+    <section id="clinics" role="tabpanel" class="p-4 bg-white rounded-xl border"><h2 class="text-xl font-bold">عيادات محافظة الأنبار — عَنّة</h2><p class="mt-2 text-gray-700">قريباً — جدول محدث بالعناوين والتقييمات.</p></section>
+    <section id="waterq" role="tabpanel" hidden class="p-4 bg-white rounded-xl border"><h2 class="text-xl font-bold">لوحة جودة المياه</h2><p class="mt-2 text-gray-700">pH, TDS, NTU, °C</p><a href="https://nodered.smart-anah.org/dashboard?tab=quality" class="mt-3 inline-block px-4 py-2 border rounded-lg hover:bg-gray-50">فتح اللوحة <span class="badge">🔒 موظفون</span></a></section>
+    <section id="air" role="tabpanel" hidden class="p-4 bg-white rounded-xl border"><h2 class="text-xl font-bold">لوحة الطقس والهواء</h2><p class="mt-2 text-gray-700">اللوحة مفتوحة للجميع.</p><a href="https://nodered.smart-anah.org/dashboard?tab=weather" class="mt-3 inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">افتح لوحة الطقس</a></section>
+  </main>
+  <footer class="bg-gray-900 text-white text-center py-8 text-sm"><p>© <span id="y2"></span> منصة عَنّة الذكية</p></footer>
+  <script>document.getElementById('y2').textContent=new Date().getFullYear();const t=[...document.querySelectorAll('.tab-btn')];const p={};document.querySelectorAll('[role="tabpanel"]').forEach(s=>p[s.id]=s);t.forEach(b=>b.addEventListener('click',()=>{t.forEach(x=>x.setAttribute('aria-selected','false'));b.setAttribute('aria-selected','true');Object.values(p).forEach(s=>s.hidden=true);p[b.dataset.tab].hidden=false;}));</script>
+</body>
+</html>
