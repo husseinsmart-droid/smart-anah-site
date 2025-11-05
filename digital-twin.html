@@ -85,41 +85,39 @@
 </div>
 
 <script>
-(async function () {
-  // ... الإعدادات الموجودة للـ viewer تبقى كما هي ...
+(async function() {
+  // إبقِ كود إنشاء viewer كما هو عندك
 
-  // إحداثيات عَنّة (عدّلها إذا لزم)
-  const lon = 41.9866;
-  const lat = 34.3758;
-  const height = 210;
-
-  // إطار شرق-شمال-أعلى عند موقع المدينة
+  // 1) إحداثيات عَنّة
+  const lon = 41.9866, lat = 34.3758, height = 210;
   const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
   const enu = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
 
-  // تقلـيص قوي للنموذج (جرّب 1e-5 ثم كبّره/صغّره لاحقًا)
-  const scaleMatrix = Cesium.Matrix4.fromUniformScale(1e-5); // 0.00001
+  // 2) حمّل نموذجاً معروفاً من الإنترنت (للاختبار)
+  const testUrl = 'https://cesium.com/downloads/cesiumjs/releases/1.118/Apps/SampleData/models/CesiumMilkTruck/CesiumMilkTruck.glb';
 
-  // دمج التدوير المكاني + المقياس في مصفوفة واحدة
-  const modelMatrix = Cesium.Matrix4.multiply(enu, scaleMatrix, new Cesium.Matrix4());
+  // مصفوفة مقياس صغيرة لضمان الظهور (لو أردت)
+  const scale = Cesium.Matrix4.fromUniformScale(1.0);
+  const modelMatrix = Cesium.Matrix4.multiply(enu, scale, new Cesium.Matrix4());
 
-  // تحميل النموذج
-  const model = await Cesium.Model.fromGltf({
-    url: '/city3d/anahcityscenes01_0.glb', // تأكد من الاسم/المسار الصحيح
+  const model = Cesium.Model.fromGltf({
+    url: testUrl,
     modelMatrix,
     minimumPixelSize: 64,
     shadows: Cesium.ShadowMode.ENABLED
   });
 
   viewer.scene.primitives.add(model);
-  await model.ready;
 
-  // أبعد الكاميرا نسبةً لحجم النموذج بعد التصغير
+  // بعد الجاهزية، قرّب الكاميرا بشكل مضمون على الباوندنج سفير
+  await model.readyPromise;
   const r = model.boundingSphere.radius;
-  viewer.camera.flyToBoundingSphere(
-    model.boundingSphere,
-    { offset: new Cesium.HeadingPitchRange(0, -0.6, r * 2.8) }
-  );
+  viewer.camera.flyToBoundingSphere(model.boundingSphere, {
+    offset: new Cesium.HeadingPitchRange(0, -0.6, r * 3.0)
+  });
+
+  // تقليل قيود الكاميرا (لو كان فيه منع اقتراب)
+  viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0.1;
 })();
 
   // ======== تلوين حسب استعمالات الأرض (إن وُجدت حقول مناسبة) ========
