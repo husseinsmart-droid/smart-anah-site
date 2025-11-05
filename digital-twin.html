@@ -96,22 +96,17 @@
   });
   viewer.scene.globe.depthTestAgainstTerrain = true;
 
-// =========== تحميل GLB ===========
-const lon = 41.98;   // خط الطول (عنّة تقريباً) — عدّل إذا لزم
-const lat = 34.37;   // خط العرض (عنّة تقريباً)
-const height = 0;    // الارتفاع بالمتر
-
-const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
-const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
-
+// =========== تحميل GLB (بدون modelMatrix) ===========
 const model = await Cesium.Model.fromGltf({
-  // غيّر المسار إن اختلف اسم/مكان الملف
   url: '/city3d/anahcityscenes01_0.glb',
-  modelMatrix,
   scale: 1.0,
   minimumPixelSize: 64,
   shadows: Cesium.ShadowMode.ENABLED
 });
+
+viewer.scene.primitives.add(model);
+try { await model.readyPromise; viewer.zoomTo(model); } catch(e) { console.error(e); }
+
 
 viewer.scene.primitives.add(model);
 try { await model.readyPromise; viewer.zoomTo(model); } catch(e) {}
