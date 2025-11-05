@@ -96,20 +96,22 @@
   });
   viewer.scene.globe.depthTestAgainstTerrain = true;
 
-// =========== تحميل GLB (بدون modelMatrix) ===========
+// تحميل GLB مع إسناد جغرافي لعَنّة
+const lon = 41.9866, lat = 34.3758, height = 210;   // إحداثيات عَنّة (قابلة للضبط)
+const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+
 const model = await Cesium.Model.fromGltf({
-  url: '/city3d/anahcityscenes01_0.glb',
-  scale: 1.0,
+  url: '/assets/city3d/anahcityscenes01_0.glb?v=2',  // عدّل الاسم إن كان مختلفًا
+  modelMatrix,
+  scale: 1.0,                // إن كان كبير/صغير غيّرها: 0.1 أو 10 مثلاً
   minimumPixelSize: 64,
   shadows: Cesium.ShadowMode.ENABLED
 });
 
 viewer.scene.primitives.add(model);
-try { await model.readyPromise; viewer.zoomTo(model); } catch(e) { console.error(e); }
-
-
-viewer.scene.primitives.add(model);
-try { await model.readyPromise; viewer.zoomTo(model); } catch(e) {}
+await model.readyPromise;
+viewer.zoomTo(model);
 
 
   // =========== تلوين حسب استعمالات الأرض ===========
