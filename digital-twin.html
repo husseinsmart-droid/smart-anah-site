@@ -3,60 +3,51 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" />
-  <title>التوأم الرقمي — مدينة عَنّة الذكية</title>
+  <title>التوأم الرقمي — مدينة عَنّة الذكية (اختبار GLB)</title>
   <meta name="theme-color" content="#ffffff" />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- CesiumJS -->
+  <link rel="stylesheet" href="https://unpkg.com/cesium/Build/Cesium/Widgets/widgets.css">
+  <script src="https://unpkg.com/cesium/Build/Cesium/Cesium.js"></script>
+
   <style>
-    :root { --brand:#d79a19; --ink:#1f2937; --muted:#6b7280; }
-    html,body { height:100%; margin:0; font-family:'Cairo',sans-serif; color:#111827; }
-    #wrap { position:fixed; inset:0; display:grid; grid-template-rows:auto 1fr; }
-    header {
-      background:#fff; border-bottom:1px solid #e5e7eb; padding:10px 14px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    :root{ --brand:#d79a19; --ink:#1f2937; --muted:#6b7280 }
+    html,body{height:100%;margin:0;font-family:'Cairo',sans-serif;color:#111827}
+    #wrap{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr}
+    header{
+      background:#fff;border-bottom:1px solid #e5e7eb;padding:10px 14px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px
     }
-    .brand { display:flex; align-items:center; gap:10px; font-weight:700; color:#111827 }
+    .brand{display:flex;align-items:center;gap:10px;font-weight:700}
     .brand .dot{width:28px;height:28px;border-radius:8px;background:var(--brand);display:inline-grid;place-items:center;color:#fff}
-    .btn { padding:8px 12px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; cursor:pointer; }
-    .btn.brand { background:var(--brand); color:#fff; border-color:transparent }
-    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .btn{padding:8px 12px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer}
+    .btn.brand{background:var(--brand);color:#fff;border-color:transparent}
+    #viewer{position:relative}
+    #cesiumContainer{position:absolute;inset:0}
 
-    #viewer { position:relative; }
-    #cesiumContainer { position:absolute; inset:0; }
-
-    /* لوحة المعلومات */
-    #panel {
+    /* لوحة معلومات */
+    #panel{
       position:absolute; top:12px; right:12px; width:320px; max-width:75vw;
       background:#ffffffd8; backdrop-filter: blur(8px);
       border:1px solid #e5e7eb; border-radius:14px; padding:12px;
-      box-shadow:0 10px 30px rgba(0,0,0,.12);
+      box-shadow:0 10px 30px rgba(0,0,0,.12)
     }
-    #panel h3 { margin:0 0 6px; font-size:16px }
-    #panel .muted{ color:#6b7280; font-size:12px }
-    #panel .row{ display:flex; gap:8px; align-items:center; margin-top:6px; flex-wrap:wrap}
-    #legend{ display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-top:6px }
-    .pill{ font-size:12px; padding:6px 8px; border-radius:10px; border:1px solid #e5e7eb; background:#fff }
-    .attr{ font-size:12px; background:#f9fafb; border:1px solid #e5e7eb; padding:6px 8px; border-radius:10px }
-
-    /* تلميح تحت */
-    #hint {
+    #panel h3{margin:0 0 6px; font-size:16px}
+    #panel .muted{color:#6b7280; font-size:12px}
+    #hint{
       position:absolute; left:12px; bottom:12px; padding:8px 10px; font-size:12px;
-      background:#ffffffd8; border:1px solid #e5e7eb; border-radius:10px;
+      background:#ffffffd8; border:1px solid #e5e7eb; border-radius:10px
     }
     @media (max-width:520px){ #panel{width:auto; left:12px; right:12px} }
   </style>
-
-  <!-- CesiumJS (بدون مفتاح Ion) -->
-  <link rel="stylesheet" href="https://unpkg.com/cesium/Build/Cesium/Widgets/widgets.css">
-  <script src="https://unpkg.com/cesium/Build/Cesium/Cesium.js"></script>
 </head>
 <body>
 <div id="wrap">
   <header>
-    <div class="brand"><span class="dot">ع</span> التوأم الرقمي — مدينة عَنّة</div>
+    <div class="brand"><span class="dot">ع</span> التوأم الرقمي — اختبار تحميل GLB</div>
     <div style="display:flex; gap:8px">
       <button id="btnHome" class="btn">إعادة تموضع</button>
-      <button id="btnStyle" class="btn">تلوين حسب الاستعمال</button>
-      <button id="btnReset" class="btn">إلغاء التلوين</button>
       <a href="/" class="btn brand">العودة للمنصة</a>
     </div>
   </header>
@@ -65,149 +56,80 @@
     <div id="cesiumContainer"></div>
 
     <div id="panel" dir="rtl">
-      <h3>معلومات العنصر</h3>
-      <div class="muted">انقر على مبنى/قطعة أرض لعرض البيانات.</div>
-      <div id="attrs" class="row"></div>
-
-      <div class="row" style="margin-top:10px">
-        <div class="pill">👁 لعرض/إخفاء الطبقات انقر الأزرار أعلاه</div>
-        <div class="pill">🖱 سحب: تدوير — عجلة: تكبير</div>
-      </div>
-
-      <div style="margin-top:10px">
-        <div class="muted">مفتاح الألوان (استعمالات الأرض):</div>
-        <div id="legend"></div>
+      <h3>ملاحظة الاختبار</h3>
+      <div class="muted">
+        نعرض نموذجًا قياسيًا (MilkTruck.glb) للتأكد من أن التحميل والموقع يعملان.
+        إذا ظهرت الشاحنة، فالمشكلة من ملفك GLB (مقياس/محاور/مواد) وسنحوّله إلى 3D Tiles في الخطوة التالية.
       </div>
     </div>
 
-    <div id="hint">يتم تحديث هذا النموذج دوريًا من CityEngine — حدّث الصفحة بعد الدفع.</div>
+    <div id="hint">تم وضع النموذج فوق عنّة (اختبار). استخدم العجلة للتكبير/التصغير.</div>
   </div>
 </div>
 
 <script>
-(async function() {
-  // إبقِ كود إنشاء viewer كما هو عندك
+(async function(){
+  // 1) إنشاء العارض بموفّر خرائط بدون مفاتيح
+  const viewer = new Cesium.Viewer('cesiumContainer', {
+    imageryProvider: new Cesium.OpenStreetMapImageryProvider({ url: 'https://a.tile.openstreetmap.org/' }),
+    terrainProvider: new Cesium.EllipsoidTerrainProvider(),
+    timeline: false, animation: false, homeButton: false, sceneModePicker: false,
+    baseLayerPicker: false, geocoder: false, navigationHelpButton: false, selectionIndicator: true
+  });
+  // اقتراب شديد مسموح
+  viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0.1;
+  viewer.scene.globe.depthTestAgainstTerrain = true;
 
-  // 1) إحداثيات عَنّة
-  const lon = 41.9866, lat = 34.3758, height = 210;
+  // 2) إحداثيات عنّة
+  const lon = 41.9866, lat = 34.3758, height = 210;  // عدّل الارتفاع إذا احتجت
   const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
-  const enu = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+  const enu    = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
 
-  // 2) حمّل نموذجاً معروفاً من الإنترنت (للاختبار)
+  // 3) نموذج اختبار معروف من Cesium (لا يحتاج رفع ملفاتك)
   const testUrl = 'https://cesium.com/downloads/cesiumjs/releases/1.118/Apps/SampleData/models/CesiumMilkTruck/CesiumMilkTruck.glb';
 
-  // مصفوفة مقياس صغيرة لضمان الظهور (لو أردت)
-  const scale = Cesium.Matrix4.fromUniformScale(1.0);
-  const modelMatrix = Cesium.Matrix4.multiply(enu, scale, new Cesium.Matrix4());
+  // مقياس 1:1 في الاختبار
+  const modelMatrix = Cesium.Matrix4.multiply(
+    enu,
+    Cesium.Matrix4.fromUniformScale(1.0),
+    new Cesium.Matrix4()
+  );
 
-  const model = Cesium.Model.fromGltf({
-    url: testUrl,
-    modelMatrix,
-    minimumPixelSize: 64,
-    shadows: Cesium.ShadowMode.ENABLED
-  });
-
-  viewer.scene.primitives.add(model);
-
-  // بعد الجاهزية، قرّب الكاميرا بشكل مضمون على الباوندنج سفير
-  await model.readyPromise;
-  const r = model.boundingSphere.radius;
-  viewer.camera.flyToBoundingSphere(model.boundingSphere, {
-    offset: new Cesium.HeadingPitchRange(0, -0.6, r * 3.0)
-  });
-
-  // تقليل قيود الكاميرا (لو كان فيه منع اقتراب)
-  viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0.1;
-})();
-
-  // ======== تلوين حسب استعمالات الأرض (إن وُجدت حقول مناسبة) ========
-  let currentStyled = false;
-
-  const landUseColor = (lu) => {
-    const x = (lu || '').toString().toLowerCase();
-    if (x.includes('res') || x.includes('سكن')) return 'color("#f59e0b")';   // سكني
-    if (x.includes('com') || x.includes('تجار')) return 'color("#10b981")'; // تجاري
-    if (x.includes('ind') || x.includes('صناع')) return 'color("#6366f1")'; // صناعي
-    if (x.includes('edu') || x.includes('تعلي') ) return 'color("#ef4444")'; // تعليمي
-    if (x.includes('hea') || x.includes('صح')  ) return 'color("#14b8a6")'; // صحي
-    if (x.includes('rec') || x.includes('ترفي') ) return 'color("#84cc16")'; // ترفيهي
-    if (x.includes('gov') || x.includes('حك')  ) return 'color("#f43f5e")'; // حكومي
-    return 'color("#9ca3af")'; // أخرى
-  };
-
-  function applyLandUseStyle(propName='land_use'){
-    // إن كانت هناك خصائص على عناصر البلاطات/المجسم
-    try {
-      model.style = new Cesium.Cesium3DTileStyle({
-        color: 'color("#9ca3af")'
-      });
-    } catch (e){
-      // النماذج GLB الصرفة قد لا تدعم TileStyle؛ تجاهل بصمت.
-    }
-    currentStyled = true;
-  }
-
-  function resetStyle(){
-    try { model.style = undefined; } catch(e){}
-    currentStyled = false;
-  }
-
-  // ======== التفاعل: نقر لعرض خصائص العنصر (إن وُجدت) ========
-  const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-  const attrsBox = document.getElementById('attrs');
-
-  function showAttrs(obj){
-    attrsBox.innerHTML = '';
-    if (!obj){ attrsBox.innerHTML = '<div class="muted">لا توجد خصائص متاحة.</div>'; return; }
-    Object.entries(obj).slice(0, 16).forEach(([k,v])=>{
-      const d = document.createElement('div');
-      d.className = 'attr';
-      d.textContent = k + ': ' + v;
-      attrsBox.appendChild(d);
+  let model;
+  try {
+    model = Cesium.Model.fromGltf({
+      url: testUrl,
+      modelMatrix,
+      minimumPixelSize: 64,
+      shadows: Cesium.ShadowMode.ENABLED,
+      allowPicking: true
     });
+    viewer.scene.primitives.add(model);
+    await model.readyPromise;
+
+    // 4) تحريك الكاميرا بحيث يظهر النموذج بوضوح
+    const r = model.boundingSphere.radius;
+    viewer.camera.flyToBoundingSphere(model.boundingSphere, {
+      offset: new Cesium.HeadingPitchRange(0.0, -0.6, r * 3.0),
+      duration: 0.8
+    });
+
+  } catch (e) {
+    console.error('فشل تحميل نموذج الاختبار:', e);
+    alert('فشل تحميل نموذج الاختبار (تحقق من الاتصال).');
+    return;
   }
 
-  handler.setInputAction((movement) => {
-    const picked = viewer.scene.pick(movement.position);
-    if (Cesium.defined(picked) && picked?.getPropertyNames){
-      const props = {};
-      try {
-        const names = picked.getPropertyNames();
-        names.forEach(n => { try{ props[n] = picked.getProperty(n); } catch(e){} });
-      } catch(e){}
-      showAttrs(props);
-    } else {
-      showAttrs(null);
-    }
-  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-  // ======== مفتاح الألوان ========
-  const legend = document.getElementById('legend');
-  [
-    ['سكني','#f59e0b'],['تجاري','#10b981'],['صناعي','#6366f1'],
-    ['تعليمي','#ef4444'],['صحي','#14b8a6'],['ترفيهي','#84cc16'],
-    ['حكومي','#f43f5e'],['أخرى','#9ca3af']
-  ].forEach(([label,color])=>{
-    const d = document.createElement('div');
-    d.className = 'pill'; d.style.borderColor = color+'66';
-    d.innerHTML = `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};margin-left:6px;vertical-align:middle"></span>${label}`;
-    legend.appendChild(d);
-  });
-
-  // ======== أزرار ========
+  // زر إعادة التموضع
   document.getElementById('btnHome').onclick = () => {
-    viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(lon, lat, 3000),
-      orientation: { heading: 0, pitch: -0.8, roll: 0 },
-      duration: 1.0
-    });
+    try{
+      const r = model.boundingSphere.radius;
+      viewer.camera.flyToBoundingSphere(model.boundingSphere, {
+        offset: new Cesium.HeadingPitchRange(0.0, -0.6, r * 3.0),
+        duration: 0.6
+      });
+    }catch(e){}
   };
-  document.getElementById('btnStyle').onclick = ()=>{
-    // لو أردت تلوينًا حقيقيًا ستحتاج 3D Tiles مع خصائص؛ للـGLB غالبًا لن تتوفر خصائص.
-    if (!currentStyled) applyLandUseStyle('land_use'); else applyLandUseStyle('use');
-  };
-  document.getElementById('btnReset').onclick = resetStyle;
-
 })();
 </script>
 </body>
