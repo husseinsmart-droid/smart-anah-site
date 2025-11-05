@@ -2,135 +2,126 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" />
-  <title>التوأم الرقمي — مدينة عَنّة الذكية (اختبار GLB)</title>
-  <meta name="theme-color" content="#ffffff" />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>التوأم الرقمي — مدينة عَنّة</title>
 
-  <!-- CesiumJS -->
-  <link rel="stylesheet" href="https://unpkg.com/cesium/Build/Cesium/Widgets/widgets.css">
-  <script src="https://unpkg.com/cesium/Build/Cesium/Cesium.js"></script>
+  <!-- CesiumJS (آخر نسخة مستقرة) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.118.0/Build/Cesium/Widgets/widgets.css">
+  <script src="https://cdn.jsdelivr.net/npm/cesium@1.118.0/Build/Cesium/Cesium.js"></script>
 
   <style>
-    :root{ --brand:#d79a19; --ink:#1f2937; --muted:#6b7280 }
-    html,body{height:100%;margin:0;font-family:'Cairo',sans-serif;color:#111827}
-    #wrap{position:fixed;inset:0;display:grid;grid-template-rows:auto 1fr}
-    header{
-      background:#fff;border-bottom:1px solid #e5e7eb;padding:10px 14px;
-      display:flex;align-items:center;justify-content:space-between;gap:10px
+    html, body, #cesiumContainer { height:100%; width:100%; margin:0; padding:0; overflow:hidden }
+    .toolbar {
+      position: absolute; top: 12px; right: 12px; z-index: 10;
+      display: flex; gap: 8px; flex-wrap: wrap;
     }
-    .brand{display:flex;align-items:center;gap:10px;font-weight:700}
-    .brand .dot{width:28px;height:28px;border-radius:8px;background:var(--brand);display:inline-grid;place-items:center;color:#fff}
-    .btn{padding:8px 12px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer}
-    .btn.brand{background:var(--brand);color:#fff;border-color:transparent}
-    #viewer{position:relative}
-    #cesiumContainer{position:absolute;inset:0}
-
-    /* لوحة معلومات */
-    #panel{
-      position:absolute; top:12px; right:12px; width:320px; max-width:75vw;
-      background:#ffffffd8; backdrop-filter: blur(8px);
-      border:1px solid #e5e7eb; border-radius:14px; padding:12px;
-      box-shadow:0 10px 30px rgba(0,0,0,.12)
+    .btn {
+      background:#fff; border:1px solid #e5e7eb; border-radius:10px;
+      padding:8px 12px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.06);
     }
-    #panel h3{margin:0 0 6px; font-size:16px}
-    #panel .muted{color:#6b7280; font-size:12px}
-    #hint{
-      position:absolute; left:12px; bottom:12px; padding:8px 10px; font-size:12px;
-      background:#ffffffd8; border:1px solid #e5e7eb; border-radius:10px
-    }
-    @media (max-width:520px){ #panel{width:auto; left:12px; right:12px} }
+    .btn:disabled{ opacity:.6; cursor:not-allowed }
   </style>
 </head>
 <body>
-<div id="wrap">
-  <header>
-    <div class="brand"><span class="dot">ع</span> التوأم الرقمي — اختبار تحميل GLB</div>
-    <div style="display:flex; gap:8px">
-      <button id="btnHome" class="btn">إعادة تموضع</button>
-      <a href="/" class="btn brand">العودة للمنصة</a>
-    </div>
-  </header>
+  <div id="cesiumContainer"></div>
 
-  <div id="viewer">
-    <div id="cesiumContainer"></div>
-
-    <div id="panel" dir="rtl">
-      <h3>ملاحظة الاختبار</h3>
-      <div class="muted">
-        نعرض نموذجًا قياسيًا (MilkTruck.glb) للتأكد من أن التحميل والموقع يعملان.
-        إذا ظهرت الشاحنة، فالمشكلة من ملفك GLB (مقياس/محاور/مواد) وسنحوّله إلى 3D Tiles في الخطوة التالية.
-      </div>
-    </div>
-
-    <div id="hint">تم وضع النموذج فوق عنّة (اختبار). استخدم العجلة للتكبير/التصغير.</div>
+  <div class="toolbar">
+    <button id="btnReset" class="btn">إعادة تموضع</button>
+    <button id="btnHide" class="btn">إخفاء/إظهار النموذج</button>
   </div>
-</div>
 
-<script>
-(async function(){
-  // 1) إنشاء العارض بموفّر خرائط بدون مفاتيح
-  const viewer = new Cesium.Viewer('cesiumContainer', {
-    imageryProvider: new Cesium.OpenStreetMapImageryProvider({ url: 'https://a.tile.openstreetmap.org/' }),
-    terrainProvider: new Cesium.EllipsoidTerrainProvider(),
-    timeline: false, animation: false, homeButton: false, sceneModePicker: false,
-    baseLayerPicker: false, geocoder: false, navigationHelpButton: false, selectionIndicator: true
-  });
-  // اقتراب شديد مسموح
-  viewer.scene.screenSpaceCameraController.minimumZoomDistance = 0.1;
-  viewer.scene.globe.depthTestAgainstTerrain = true;
+  <script>
+    // لا نستخدم أي أصول من ion، لذلك لا حاجة لتوكن
+    Cesium.Ion.defaultAccessToken = "";
 
-  // 2) إحداثيات عنّة
-  const lon = 41.9866, lat = 34.3758, height = 210;  // عدّل الارتفاع إذا احتجت
-  const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
-  const enu    = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
-
-  // 3) نموذج اختبار معروف من Cesium (لا يحتاج رفع ملفاتك)
-  const testUrl = 'https://cesium.com/downloads/cesiumjs/releases/1.118/Apps/SampleData/models/CesiumMilkTruck/CesiumMilkTruck.glb';
-
-  // مقياس 1:1 في الاختبار
-  const modelMatrix = Cesium.Matrix4.multiply(
-    enu,
-    Cesium.Matrix4.fromUniformScale(1.0),
-    new Cesium.Matrix4()
-  );
-
-  let model;
-  try {
-    model = Cesium.Model.fromGltf({
-      url: testUrl,
-      modelMatrix,
-      minimumPixelSize: 64,
-      shadows: Cesium.ShadowMode.ENABLED,
-      allowPicking: true
-    });
-    viewer.scene.primitives.add(model);
-    await model.readyPromise;
-
-    // 4) تحريك الكاميرا بحيث يظهر النموذج بوضوح
-    const r = model.boundingSphere.radius;
-    viewer.camera.flyToBoundingSphere(model.boundingSphere, {
-      offset: new Cesium.HeadingPitchRange(0.0, -0.6, r * 3.0),
-      duration: 0.8
+    // 1) تهيئة العارض
+    const viewer = new Cesium.Viewer("cesiumContainer", {
+      timeline: false,
+      animation: false,
+      geocoder: false,
+      homeButton: false,
+      sceneModePicker: true,
+      baseLayerPicker: true,
+      navigationHelpButton: false,
+      fullscreenButton: false,
+      terrainProvider: new Cesium.EllipsoidTerrainProvider(), // بدون تضاريس ion
     });
 
-  } catch (e) {
-    console.error('فشل تحميل نموذج الاختبار:', e);
-    alert('فشل تحميل نموذج الاختبار (تحقق من الاتصال).');
-    return;
-  }
+    // لون خلفية الفضاء
+    viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#0b1020");
 
-  // زر إعادة التموضع
-  document.getElementById('btnHome').onclick = () => {
-    try{
-      const r = model.boundingSphere.radius;
+    // اجعل العمق عبر التضاريس مفعلاً إن رغبت
+    viewer.scene.globe.depthTestAgainstTerrain = true;
+
+    // 2) مسار النموذج (تأكد من صحة المسار)
+    const testUrl = "/assets/city3d/anahcityscenes01_0.glb"; // غيّر الاسم لو لزم
+
+    // 3) موضع عَنّة التقريبي (عدّله لو احتجت)
+    const lon = 41.9866;   // خط طول عَنّة
+    const lat = 34.3758;   // خط عرض عَنّة
+    const height = 210;    // ارتفاع بالمتر فوق سطح البحر (عدّله إن تطلب)
+
+    const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+    const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+
+    // 4) تحميل GLB بالطريقة الصحيحة
+    let model;   // سنضع المرجع هنا لنستخدمه لاحقًا
+    (async () => {
+      try {
+        // اختياري: اختبار الوصول للمسار قبل التحميل
+        // سيظهر في Network إن كان 200 أو غير ذلك
+        console.log("Fetching:", testUrl);
+
+        model = await Cesium.Model.fromGltfAsync({
+          url: testUrl,
+          modelMatrix,
+          // scale: 1.0,            // جرّب ضبط المقياس إن لزم (0.01 أو 100 مثلًا)
+          minimumPixelSize: 64,     // يحافظ على ظهور النموذج من بعيد
+          shadows: Cesium.ShadowMode.ENABLED,
+          allowPicking: true
+        });
+
+        // أضف للمشهد
+        viewer.scene.primitives.add(model);
+
+        // انتظر جاهزية النموذج ثم قرّب عليه
+        await model.readyPromise;
+
+        // ضمّن رؤية النموذج
+        const r = model.boundingSphere.radius;
+        viewer.camera.flyToBoundingSphere(model.boundingSphere, {
+          offset: new Cesium.HeadingPitchRange(0, -0.6, r * 3.0),
+          duration: 0.9
+        });
+
+        console.log("GLB loaded and ready:", testUrl);
+      } catch (e) {
+        console.error("Error loading GLB:", e);
+        alert("تعذّر تحميل نموذج GLB. افحص Console و Network للمسار والحالة.");
+      }
+    })();
+
+    // 5) أزرار مساعدة
+    document.getElementById("btnReset").addEventListener("click", () => {
+      if (!model) return;
+      const r = model.boundingSphere.radius || 500;
       viewer.camera.flyToBoundingSphere(model.boundingSphere, {
-        offset: new Cesium.HeadingPitchRange(0.0, -0.6, r * 3.0),
-        duration: 0.6
+        offset: new Cesium.HeadingPitchRange(0, -0.6, r * 3.0),
+        duration: 0.8
       });
-    }catch(e){}
-  };
-})();
-</script>
+    });
+
+    document.getElementById("btnHide").addEventListener("click", () => {
+      if (!model) return;
+      model.show = !model.show;
+    });
+
+    // 6) نصائح تشخيص سريعة في Console
+    console.log("%cتشخيص سريع",
+      "background:#111827;color:#fff;padding:4px 8px;border-radius:6px");
+    console.log("URL:", testUrl);
+    console.log("Position:", { lon, lat, height });
+  </script>
 </body>
 </html>
