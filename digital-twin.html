@@ -102,7 +102,7 @@ const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
 const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
 
 const model = await Cesium.Model.fromGltf({
-  url: '/assets/city3d/anahcityscenes01_0.glb?v=2',  // عدّل الاسم إن كان مختلفًا
+  url: '/city3d/anahcityscenes01_0.glb?v=3',  // عدّل الاسم إن كان مختلفًا
   modelMatrix,
   scale: 1.0,                // إن كان كبير/صغير غيّرها: 0.1 أو 10 مثلاً
   minimumPixelSize: 64,
