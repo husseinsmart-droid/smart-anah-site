@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>منصة عَنّة الذكية</title>
+  <meta name="description" content="المنصة الرقمية لمدينة عَنّة — خدمات، مبادرات، توأم رقمي ثلاثي الأبعاد، وبيانات مفتوحة." />
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png" />
+
+  <!-- خطوط -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:'#fff8ec',100:'#ffefd3',200:'#ffe1a6',300:'#ffd074',400:'#f7b53c',
+              500:'#d79a19',600:'#b07b12',700:'#8a5f0e',800:'#6a490b',900:'#4a3308'
+            },
+            ink: {50:'#f9fafb',100:'#eef2f7',200:'#e7ecf3',300:'#dfe6ee',700:'#374151',900:'#1f2937'},
+            accent: {blue:'#2563eb',green:'#10b981',purple:'#7c3aed',rose:'#f43f5e',amber:'#f59e0b'}
+          },
+          boxShadow:{soft:'0 10px 30px rgba(2, 6, 23, .08)'},
+          borderRadius:{xl2:'1.25rem'},
+          keyframes:{
+            float:{ '0%,100%':{transform:'translateY(0)'}, '50%':{transform:'translateY(-6px)'} },
+            pulseSoft:{ '0%,100%':{opacity:.35}, '50%':{opacity:.85} },
+            drift:{ '0%':{backgroundPosition:'0% 0%'}, '100%':{backgroundPosition:'200% 0%'} },
+            ticker:{ '0%':{transform:'translateX(0)'}, '100%':{transform:'translateX(-50%)'} }
+          },
+          animation:{
+            float:'float 4s ease-in-out infinite',
+            pulseSoft:'pulseSoft 3s ease-in-out infinite',
+            drift:'drift 18s linear infinite',
+            ticker:'ticker 22s linear infinite'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Cairo', sans-serif; background: #f9fafb; color: #1f2937; }
+    .section-head { display:inline-flex; align-items:center; gap:.6rem; padding:.55rem 1rem; border-radius:999px; background:#fff; box-shadow:0 6px 18px rgba(0,0,0,.07); }
+    .section-head .dot { width:.6rem; height:.6rem; border-radius:50%; background:#d79a19; }
+    .card { background:#fff; border:1px solid #e5e7eb; border-radius:1rem; padding:1.25rem; transition:.25s transform,.25s box-shadow; }
+    .card:hover { transform:translateY(-3px); box-shadow:0 12px 28px rgba(2,6,23,.08); }
+
+    /* خلفية خفيفة */
+    .smart-bg { position:absolute; inset:-2px; z-index:-1;
+      background: radial-gradient(1000px 300px at 90% -10%, rgba(247,181,60,.18), transparent 60%),
+                  linear-gradient(90deg, rgba(37,99,235,.06), rgba(16,185,129,.06), rgba(124,58,237,.06), rgba(244,63,94,.06));
+      background-size:200% 100%; animation:drift 22s linear infinite; filter:saturate(1.05);
+    }
+
+    /* نقاط مدينة */
+    .city-nodes { position:absolute; inset:0; pointer-events:none; }
+    .city-nodes .n { position:absolute; width:6px; height:6px; border-radius:50%;
+      background:#10b981; box-shadow:0 0 12px rgba(16,185,129,.5); animation:pulseSoft 3s ease-in-out infinite;
+    }
+    .city-nodes .n:nth-child(odd){ background:#2563eb; box-shadow:0 0 12px rgba(37,99,235,.45); animation-duration: 2.4s; }
+
+    /* صورة الهيرو — تلاشي من اليمين إلى اليسار */
+    .hero-figure{background:url('/assets/img/hero-city.jpg') center/cover no-repeat; position:relative}
+    .hero-figure::after{
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(270deg, rgba(249,250,251,0.95) 0%, rgba(249,250,251,0.45) 40%, rgba(249,250,251,0) 65%);
+    }
+
+    /* كبسولات علوية */
+    .top-buttons{position:fixed;top:10px;right:10px;display:flex;gap:10px;z-index:60}
+    .top-buttons a{background:#ffffffee;padding:10px 20px;border-radius:50px;font-size:15px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,.1);backdrop-filter:blur(6px);border:1px solid #e6f1ff;transition:all .2s}
+    .top-buttons a:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.12)}
+  </style>
+</head>
+
+<body>
+
+  <!-- كبسولات ثابتة أعلى الصفحة -->
+  <div class="top-buttons">
+    <a href="https://nodered.smart-anah.org/ui" title="لوحة البيانات (خاصة بالموظفين)">📊 لوحة البيانات</a>
+    <a href="https://reports.smart-anah.org/reports/index.html" title="إرسال بلاغ">🚨 بلّغ الآن</a>
+  </div>
+
+  <!-- الشريط العلوي -->
+  <header class="fixed top-0 inset-x-0 bg-white/90 backdrop-blur border-b border-ink-200 z-50">
+    <div class="max-w-6xl mx-auto flex justify-between items-center px-4 h-14">
+      <a href="/" class="font-bold text-brand-700 text-lg flex items-center gap-2">
+        <span class="inline-grid place-items-center w-8 h-8 rounded-xl bg-brand-500 text-white">ع</span>
+        منصة عَنّة الذكية
+      </a>
+      <nav class="hidden md:flex gap-4 text-sm font-semibold">
+        <a href="#services" class="text-ink-700 hover:text-ink-900">الخدمات</a>
+        <a href="#platforms" class="text-ink-700 hover:text-ink-900">المنصّات</a>
+        <a href="/digital-twin.html" class="text-ink-700 hover:text-ink-900">توأم عَنّة الرقمي</a>
+        <a href="#opendata" class="text-ink-700 hover:text-ink-900">البيانات المفتوحة</a>
+        <a href="#strategy" class="text-ink-700 hover:text-ink-900">الاستراتيجية</a>
+      </nav>
+      <div class="flex gap-3 text-sm font-semibold">
+        <a href="https://nodered.smart-anah.org/ui" target="_blank" class="bg-ink-100 px-3 py-1.5 rounded-lg hover:bg-ink-200" aria-label="لوحة البيانات — خاص بالموظفين">
+          <span>لوحة البيانات</span>
+          <span class="ml-1 inline-block px-2 py-0.5 text-xs rounded-full bg-ink-200 text-ink-700">🔒 موظفين</span>
+        </a>
+        <a href="https://reports.smart-anah.org/reports/index.html" class="border border-ink-300 px-5 py-3 rounded-xl hover:bg-ink-100">إرسال بلاغ</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- الهيرو -->
+  <section class="relative pt-24 pb-8">
+    <div class="smart-bg"></div>
+    <div class="city-nodes">
+      <span class="n" style="top:12%; right:14%"></span>
+      <span class="n" style="top:26%; right:34%"></span>
+      <span class="n" style="top:44%; right:10%"></span>
+      <span class="n" style="top:60%; right:22%"></span>
+      <span class="n" style="top:18%; left:10%"></span>
+      <span class="n" style="top:36%; left:22%"></span>
+      <span class="n" style="top:58%; left:14%"></span>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
+      <!-- النص يمين -->
+      <div>
+        <div class="section-head mb-3"><span class="dot"></span><span>مدينة عَنّة الذكية</span></div>
+        <h1 class="text-4xl font-extrabold mb-3 leading-snug text-ink-900">خدمات حديثة، بيانات حية، ومبادرات ذكية</h1>
+        <p class="text-ink-700 mb-6">وصول موحّد إلى البلاغات ولوحات البيانات، مع توأم رقمي ثلاثي الأبعاد مُحدّث من CityEngine.</p>
+        <div class="flex gap-3 flex-wrap">
+          <a href="#services" class="bg-brand-500 text-white px-5 py-3 rounded-xl shadow-soft hover:bg-brand-600">استكشف الخدمات</a>
+          <a href="https://nodered.smart-anah.org/ui/#/weather" class="border border-ink-300 px-5 py-3 rounded-xl hover:bg-ink-100">لوحة الطقس (مفتوحة)</a>
+          <a href="/digital-twin.html" class="border border-ink-300 px-5 py-3 rounded-xl hover:bg-ink-100">توأم عَنّة الرقمي (3D)</a>
+        </div>
+      </div>
+
+      <!-- الصورة يسار بتلاشي من اليمين -->
+      <div class="md:order-1">
+        <figure class="hero-figure w-full h-72 md:h-[380px] rounded-2xl shadow-soft overflow-hidden"></figure>
+      </div>
+    </div>
+
+    <!-- شريط الأخبار -->
+    <div id="ticker" class="mt-6 overflow-hidden rounded-xl border border-ink-200 bg-white">
+      <div class="flex items-center gap-2 px-3 py-2 bg-ink-100 text-sm font-semibold text-ink-700">
+        <span>📢</span><span>أخبار وإعلانات</span>
+      </div>
+      <div class="relative h-11">
+        <ul class="absolute inset-0 flex items-center gap-6 px-4 text-sm text-ink-700 whitespace-nowrap animate-ticker">
+          <li>تشغيل لوحة الطقس التجريبية — البيانات مُحدّثة كل 30 ثانية</li>
+          <li>بدء مبادرة أصدقاء البيئة — شارك الآن</li>
+          <li>بوابة البلاغات تعمل عبر البريد الإلكتروني والتحقق</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- الاستراتيجية (مرفوعة للأعلى) -->
+  <section id="strategy" class="py-16 bg-gradient-to-b from-white to-ink-100 text-gray-800 text-center">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-extrabold mb-4 text-brand-700">استراتيجية مدينة عَنّة الذكية</h2>
+      <p class="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+        نحو <span class="font-semibold text-brand-600">عَنّة أكثر ذكاءً واستدامة</span> — رؤية تُحوّل الخدمات التقليدية إلى منظومة رقمية متفاعلة تُلبي احتياجات المواطن وتواكب تطور المدن الحديثة.
+      </p>
+    </div>
+  </section>
+
+  <!-- الخدمات -->
+  <section id="services" class="py-16 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="section-head mb-3"><span class="dot"></span><span>الخدمات</span></div>
+      <h2 class="text-3xl font-bold mb-8 text-ink-900">خدمات المنصّة</h2>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a class="card block" href="/services/municipal.html">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-brand-600" viewBox="0 0 24 24" fill="currentColor"><path d="M4 12h16v8H4v-8Zm2-8h12l2 4H4l2-4Z"/></svg>
+            <h3 class="text-lg font-bold text-ink-900">الخدمات البلدية</h3>
+          </div>
+        </a>
+
+        <a class="card block" href="/services/education.html">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-accent-purple" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 5-9 5-9-5 9-5Zm0 7l6.75-3.75L12 2.5 5.25 6.25 12 10Zm-7 3 7 4 7-4v4l-7 4-7-4v-4Z"/></svg>
+            <h3 class="text-lg font-bold text-ink-900">الخدمات التعليمية</h3>
+          </div>
+        </a>
+
+        <a class="card block" href="/services/health.html">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-accent-green" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 5.53 4.48 10 10 10s10-4.47 10-10C22 6.48 17.52 2 12 2Zm1 14h-2v-3H8v-2h3V8h2v3h3v2h-3v3Z"/></svg>
+            <h3 class="text-lg font-bold text-ink-900">الخدمات الصحية</h3>
+          </div>
+        </a>
+
+        <a class="card block" href="/services/recreation.html">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-amber-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 1 21h22L12 2Zm0 4.84 7.53 13.1H4.47L12 6.84Z"/></svg>
+            <h3 class="text-lg font-bold text-ink-900">الخدمات الترفيهية</h3>
+          </div>
+        </a>
+
+        <a class="card block" href="/services/tourism.html">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-accent-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l4 8H8l4-8Zm0 20l-4-8h8l-4 8Z"/></svg>
+            <h3 class="text-lg font-bold text-ink-900">الخدمات السياحية</h3>
+          </div>
+        </a>
+
+        <a class="card block" href="/services/business.html">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-brand-600" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4Zm2 4h14l-1 12H6L5 8Zm3 2v8h2v-8H8Zm4 0v8h2v-8h-2Z"/></svg>
+            <h3 class="text-lg font-bold text-ink-900">الخدمات التجارية</h3>
+          </div>
+        </a>
+
+        <a class="card block" href="/services/transport.html">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-accent-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M4 16V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10h-2v2h-2v-2H8v2H6v-2H4Zm2-8h12V6H6v2Z"/></svg>
+            <h3 class="text-lg font-bold text-ink-900">خدمات النقل</h3>
+          </div>
+        </a>
+
+        <a class="card block" href="/services/more.html">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-accent-rose" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 6-9 6-9-6 9-6Zm0 14l7 4-7 4-7-4 7-4Z"/></svg>
+            <h3 class="text-lg font-bold text-ink-900">خدمات أخرى</h3>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- المنصّات -->
+  <section id="platforms" class="py-16 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="section-head mb-3"><span class="dot"></span><span>منصّات المدينة</span></div>
+      <h2 class="text-3xl font-bold mb-8 text-ink-900">لوحات حيّة وتكامل البيانات</h2>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <a class="card hover:bg-ink-100" href="https://nodered.smart-anah.org/ui" target="_blank">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-accent-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M4 12h16v8H4v-8Zm2-8h12l2 4H4ل2-4Z"/></svg>
+            <div class="text-lg font-semibold text-ink-900">لوحة ضغط المياه</div>
+          </div>
+          <p class="mt-2 text-ink-700 text-sm">ثلاث حساسات + اتجاهات يوم/شهر/سنة.</p>
+        </a>
+        <a class="card hover:bg-ink-100" href="https://nodered.smart-anah.org/ui" target="_blank">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-accent-green" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 5.53 4.48 10 10 10s10-4.47 10-10C22 6.48 17.52 2 12 2Zm1 14h-2v-3H8v-2h3V8h2v3h3v2h-3v3Z"/></svg>
+            <div class="text-lg font-semibold text-ink-900">لوحة جودة المياه</div>
+          </div>
+          <p class="mt-2 text-ink-700 text-sm">pH, TDS, NTU, °C مع تنبيهات.</p>
+        </a>
+        <a class="card hover:bg-ink-100" href="https://nodered.smart-anah.org/ui" target="_blank">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-amber-500" viewBox="0 0 24 24" fill="currentColor"><path d="M9 3h6l1 2h5v2H3V5h5ل1-2Zm1 6h2v9h-2V9Zm4 0h2v9h-2V9ZM5 7h14ل-1 14H6L5 7Z"/></svg>
+            <div class="text-lg font-semibold text-ink-900">لوحة النفايات الذكية</div>
+          </div>
+          <p class="mt-2 text-ink-700 text-sm">مستويات التعبئة وخريطة الحاويات.</p>
+        </a>
+        <a class="card hover:bg-ink-100" href="/digital-twin.html">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-brand-600" viewBox="0 0 24 24" fill="currentColor"><path d="M4 22V7l8-5 8 5v15h-6v-6H10v6H4Zm8-14 4 2v2h-4V8Z"/></svg>
+            <div class="text-lg font-semibold text-ink-900">توأم عَنّة الرقمي (3D)</div>
+          </div>
+          <p class="mt-2 text-ink-700 text-sm">مجسم ثلاثي الأبعاد للمباني واستعمالات الأرض.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- المبادرات الذكية -->
+  <section id="initiatives" class="py-16 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="section-head mb-3"><span class="dot"></span><span>المبادرات الذكية</span></div>
+      <h2 class="text-3xl font-bold mb-8 text-ink-900">شارك واصنع الأثر</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a class="card block" href="/initiatives/open-data.html">
+          <h3 class="text-lg font-bold">مبادرة البيانات المفتوحة</h3>
+          <p class="mt-2 text-sm text-ink-700">نشر مجموعات بيانات المدينة.</p>
+        </a>
+        <a class="card block" href="/initiatives/green-friends.html">
+          <h3 class="text-lg font-bold">مبادرة أصدقاء البيئة</h3>
+          <p class="mt-2 text-sm text-ink-700">حملات تشجير وتنظيف تطوعية.</p>
+        </a>
+        <a class="card block" href="https://reports.smart-anah.org/reports/index.html">
+          <h3 class="text-lg font-bold">مبادرة بَلّغ</h3>
+          <p class="mt-2 text-sm text-ink-700">الإبلاغ عن المشكلات الخدمية.</p>
+        </a>
+        <a class="card block" href="/initiatives/propose.html">
+          <h3 class="text-lg font-bold">اقترح مبادرة</h3>
+          <p class="mt-2 text-sm text-ink-700">قدّم فكرة وسيتم مراجعتها.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- البيانات المفتوحة -->
+  <section id="opendata" class="py-16 bg-ink-100">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="section-head mb-3"><span class="dot"></span><span>البيانات المفتوحة</span></div>
+      <h2 class="text-3xl font-bold mb-8 text-ink-900">مجموعات قابلة للتنزيل</h2>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="card">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-brand-600" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v12H4V6Zm2 2v8h12V8H6Z"/></svg>
+            <div class="text-lg font-semibold text-ink-900">Smart Bins — Markers</div>
+          </div>
+          <p class="mt-2 text-ink-700 text-sm">GeoJSON مُحدّث دوريًا لمواقع ومستويات التعبئة.</p>
+          <div class="mt-3 text-brand-600 text-sm">تنزيل قريبًا</div>
+        </div>
+        <div class="card">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-accent-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4Zm2 4h14ل-1 12H6L5 8Zm3 2v8h2v-8H8Zm4 0v8h2v-8h-2Z"/></svg>
+            <div class="text-lg font-semibold text-ink-900">Water Pressure — Trends</div>
+          </div>
+          <p class="mt-2 text-ink-700 text-sm">CSV/JSON لاتجاهات الضغط اليومية/الشهرية.</p>
+          <div class="mt-3 text-brand-600 text-sm">تنزيل قريبًا</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- تذييل -->
+  <footer class="bg-ink-900 text-white py-10 text-center text-sm">
+    <div class="max-w-6xl mx-auto px-4 space-y-3">
+      <p>© <span id="year"></span> منصة عَنّة الذكية — جميع الحقوق محفوظة</p>
+      <p>للتواصل والدعم: <a class="underline" href="mailto:smart.anah25@gmail.com">smart.anah25@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <!-- زر التثبيت -->
+  <div id="installPrompt" class="fixed bottom-5 left-5 z-50 hidden">
+    <button id="installBtn" class="px-5 py-3 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-full shadow-lg flex items-center gap-2">📱 تثبيت تطبيق منصة عَنّة</button>
+  </div>
+
+  <!-- سكربتات -->
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log("✅ Service Worker registered"))
+        .catch(err => console.error("❌ SW error:", err));
+    }
+
+    // PWA Install
+    let deferredPrompt;
+    const installDiv = document.getElementById('installPrompt');
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installDiv.classList.remove('hidden');
+    });
+
+    installBtn?.addEventListener('click', async () => {
+      installDiv.classList.add('hidden');
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+      }
+    });
+
+    window.addEventListener('appinstalled', () => {
+      installDiv.classList.add('hidden');
+    });
+  </script>
+
+</body>
+</html>
+
