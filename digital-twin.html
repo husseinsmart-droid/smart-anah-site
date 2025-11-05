@@ -86,8 +86,7 @@
 
 <script>
 (async function(){
-  // =========== الإعداد الأساسي ===========
-  // استخدم OSM imagery (بدون مفاتيح) وتضاريس مسطحة لضمان عمله على استضافة ساكنة
+  // ======== إعداد العارض ========
   const viewer = new Cesium.Viewer('cesiumContainer', {
     imageryProvider: new Cesium.OpenStreetMapImageryProvider({ url: 'https://a.tile.openstreetmap.org/' }),
     terrainProvider: new Cesium.EllipsoidTerrainProvider(),
@@ -95,28 +94,49 @@
     baseLayerPicker: false, geocoder: false, navigationHelpButton: false, selectionIndicator: true
   });
   viewer.scene.globe.depthTestAgainstTerrain = true;
+  viewer.scene.skyBox = undefined;
+  viewer.scene.skyAtmosphere = undefined;
 
-// تحميل GLB مع إسناد جغرافي لعَنّة
-const lon = 41.9866, lat = 34.3758, height = 210;   // إحداثيات عَنّة (قابلة للضبط)
-const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
-const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+  // ======== موضع عَنّة (عدّله إذا لزم) ========
+  const lon   = 41.9866;     // خط الطول
+  const lat   = 34.3758;     // خط العرض
+  const height= 220;         // ارتفاع التثبيت بالمتر (ارفعه إذا التصق بالأرض)
 
-const model = await Cesium.Model.fromGltf({
-  url: '/city3d/anahcityscenes01_0.glb?v=3',  // عدّل الاسم إن كان مختلفًا
-  modelMatrix,
-  scale: 0.001,                // إن كان كبير/صغير غيّرها: 0.1 أو 10 مثلاً
-  minimumPixelSize: 64,
-  shadows: Cesium.ShadowMode.ENABLED
-});
+  // ======== تحميل GLB (عدّل المسار إن غيّرت الاسم/المجلد) ========
+  const glbUrl = '/city3d/anahcityscenes01_0.glb?v=3';
 
-viewer.scene.primitives.add(model);
-await model.readyPromise;
-viewer.zoomTo(model);
+  // مصفوفة التثبيت شرق-شمال-أعلى عند أصل عَنّة
+  const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+  const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
 
+  // ملاحظة مهمّة:
+  // بعض نماذج CityEngine/GLB تأتي بمقاييس ضخمة جداً.
+  // لهذا نبدأ بمقياس صغير جداً. جرّب تكبير/تصغير value أدناه حتى يظهر الحجم الواقعي.
+  const MODEL_SCALE = 0.000005; // <-- غيّرها إلى 0.000001 أو 0.00001 حسب الحاجة
 
-  // =========== تلوين حسب استعمالات الأرض ===========
-  // عدّل أسماء الخصائص حسب ما تُصدّره من CityEngine (مثال: land_use, LU, useClass...)
+  const model = await Cesium.Model.fromGltfAsync({
+    url: glbUrl,
+    modelMatrix,
+    scale: MODEL_SCALE,
+    // تحسينات عرض اختيارية:
+    show: true,
+    shadows: Cesium.ShadowMode.ENABLED,
+    minimumPixelSize: 48
+  });
+
+  viewer.scene.primitives.add(model);
+  await model.ready;
+
+  // أبعد الكاميرا عن المركز بدل zoomTo(model) حتى لا تدخل داخل المجسم
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(lon, lat, 3000), // ارتفاع ~ 3 كم
+    orientation: { heading: 0, pitch: -0.8, roll: 0 },
+    duration: 1.2
+  });
+
+  // ======== تلوين حسب استعمالات الأرض (إن وُجدت حقول مناسبة) ========
   let currentStyled = false;
+
   const landUseColor = (lu) => {
     const x = (lu || '').toString().toLowerCase();
     if (x.includes('res') || x.includes('سكن')) return 'color("#f59e0b")';   // سكني
@@ -130,41 +150,30 @@ viewer.zoomTo(model);
   };
 
   function applyLandUseStyle(propName='land_use'){
-    tileset.style = new Cesium.Cesium3DTileStyle({
-      color: {
-        conditions: [
-          ['${'+propName+'} !== undefined', 'rgba(255,255,255,1)'] // placeholder
-        ]
-      }
-    });
-    // نصنع تعبير ديناميكي: نحصل على قيمة الحقل ونرجّع لونًا
-    tileset.style.color = new Cesium.Expression((f)=>{
-      try {
-        const v = f.getProperty(propName);
-        /* ترجمة land_use إلى لون */
-        return eval(landUseColor(v));
-      } catch(e) { return Cesium.Color.fromCssColorString('#9ca3af'); }
-    });
+    // إن كانت هناك خصائص على عناصر البلاطات/المجسم
+    try {
+      model.style = new Cesium.Cesium3DTileStyle({
+        color: 'color("#9ca3af")'
+      });
+    } catch (e){
+      // النماذج GLB الصرفة قد لا تدعم TileStyle؛ تجاهل بصمت.
+    }
     currentStyled = true;
   }
 
   function resetStyle(){
-    tileset.style = undefined;
+    try { model.style = undefined; } catch(e){}
     currentStyled = false;
   }
 
-  // =========== التفاعل: نقر لقراءة الخصائص ===========
+  // ======== التفاعل: نقر لعرض خصائص العنصر (إن وُجدت) ========
   const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
   const attrsBox = document.getElementById('attrs');
-  function showAttrs(props){
+
+  function showAttrs(obj){
     attrsBox.innerHTML = '';
-    const keys = Object.keys(props || {}).slice(0, 16); // نكتفي بـ 16 خانة للعرض
-    if (!keys.length){
-      attrsBox.innerHTML = '<div class="muted">لا توجد خصائص متاحة لهذا العنصر.</div>';
-      return;
-    }
-    keys.forEach(k=>{
-      const v = props[k];
+    if (!obj){ attrsBox.innerHTML = '<div class="muted">لا توجد خصائص متاحة.</div>'; return; }
+    Object.entries(obj).slice(0, 16).forEach(([k,v])=>{
       const d = document.createElement('div');
       d.className = 'attr';
       d.textContent = k + ': ' + v;
@@ -174,38 +183,42 @@ viewer.zoomTo(model);
 
   handler.setInputAction((movement) => {
     const picked = viewer.scene.pick(movement.position);
-    if (Cesium.defined(picked) && picked.getProperty){
+    if (Cesium.defined(picked) && picked?.getPropertyNames){
       const props = {};
-      // جرّب أسماء شائعة من CityEngine: name, id, land_use, height, floors...
-      ['name','id','land_use','height','floors','use','lu','bldg_id','parcel','area'].forEach(p=>{
-        try { const v = picked.getProperty(p); if (v !== undefined) props[p] = v; } catch(e){}
-      });
-      // التقط كل الحقول إن أحببت:
-      try{
-        const all = picked.getPropertyNames?.() || [];
-        all.forEach(p=>{ if(!(p in props)) { try{ props[p] = picked.getProperty(p);}catch(e){} } });
-      }catch(e){}
+      try {
+        const names = picked.getPropertyNames();
+        names.forEach(n => { try{ props[n] = picked.getProperty(n); } catch(e){} });
+      } catch(e){}
       showAttrs(props);
+    } else {
+      showAttrs(null);
     }
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-  // =========== مفتاح ألوان بسيط ===========
+  // ======== مفتاح الألوان ========
   const legend = document.getElementById('legend');
-  const legendItems = [
+  [
     ['سكني','#f59e0b'],['تجاري','#10b981'],['صناعي','#6366f1'],
-    ['تعليمي','#ef4444'],['صحي','#14b8a6'],['ترفيهي','#84cc16'],['حكومي','#f43f5e'],['أخرى','#9ca3af']
-  ];
-  legendItems.forEach(([label,color])=>{
+    ['تعليمي','#ef4444'],['صحي','#14b8a6'],['ترفيهي','#84cc16'],
+    ['حكومي','#f43f5e'],['أخرى','#9ca3af']
+  ].forEach(([label,color])=>{
     const d = document.createElement('div');
     d.className = 'pill'; d.style.borderColor = color+'66';
     d.innerHTML = `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};margin-left:6px;vertical-align:middle"></span>${label}`;
     legend.appendChild(d);
   });
 
-  // =========== أزرار ===========
-  document.getElementById('btnHome').onclick = ()=>viewer.zoomTo(tileset);
+  // ======== أزرار ========
+  document.getElementById('btnHome').onclick = () => {
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(lon, lat, 3000),
+      orientation: { heading: 0, pitch: -0.8, roll: 0 },
+      duration: 1.0
+    });
+  };
   document.getElementById('btnStyle').onclick = ()=>{
-    if (!currentStyled) applyLandUseStyle('land_use'); else applyLandUseStyle('use'); // جرّب اسمًا بديلًا
+    // لو أردت تلوينًا حقيقيًا ستحتاج 3D Tiles مع خصائص؛ للـGLB غالبًا لن تتوفر خصائص.
+    if (!currentStyled) applyLandUseStyle('land_use'); else applyLandUseStyle('use');
   };
   document.getElementById('btnReset').onclick = resetStyle;
 
@@ -213,4 +226,3 @@ viewer.zoomTo(model);
 </script>
 </body>
 </html>
-
