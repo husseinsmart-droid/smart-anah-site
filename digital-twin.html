@@ -96,21 +96,26 @@
   });
   viewer.scene.globe.depthTestAgainstTerrain = true;
 
-  // =========== تحميل 3D Tiles ===========
-  // ضع هنا مسار الـTileset الذي ستُصدره من CityEngine (3D Tiles):
-  // مثال:  /assets/tiles/live/tileset.json
-  const TILESET_URL = '/assets/tiles/live/tileset.json';
+// =========== تحميل GLB ===========
+const lon = 41.98;   // خط الطول (عنّة تقريباً) — عدّل إذا لزم
+const lat = 34.37;   // خط العرض (عنّة تقريباً)
+const height = 0;    // الارتفاع بالمتر
 
-  const tileset = await Cesium.Cesium3DTileset.fromUrl(TILESET_URL, {
-    // تحسين تحميل الصفائح
-    dynamicScreenSpaceError: true,
-    skipLevelOfDetail: true
-  });
-  viewer.scene.primitives.add(tileset);
-  await tileset.readyPromise;
+const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
 
-  // تقريب إلى extent المدينة
-  try { viewer.zoomTo(tileset); } catch(e) {}
+const model = await Cesium.Model.fromGltf({
+  // غيّر المسار إن اختلف اسم/مكان الملف
+  url: '/city3d/anahcityscenes01_0.glb',
+  modelMatrix,
+  scale: 1.0,
+  minimumPixelSize: 64,
+  shadows: Cesium.ShadowMode.ENABLED
+});
+
+viewer.scene.primitives.add(model);
+try { await model.readyPromise; viewer.zoomTo(model); } catch(e) {}
+
 
   // =========== تلوين حسب استعمالات الأرض ===========
   // عدّل أسماء الخصائص حسب ما تُصدّره من CityEngine (مثال: land_use, LU, useClass...)
