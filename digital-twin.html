@@ -85,55 +85,42 @@
 </div>
 
 <script>
-(async function(){
-  // ======== إعداد العارض ========
-  const viewer = new Cesium.Viewer('cesiumContainer', {
-    imageryProvider: new Cesium.OpenStreetMapImageryProvider({ url: 'https://a.tile.openstreetmap.org/' }),
-    terrainProvider: new Cesium.EllipsoidTerrainProvider(),
-    timeline: false, animation: false, homeButton: false, sceneModePicker: false,
-    baseLayerPicker: false, geocoder: false, navigationHelpButton: false, selectionIndicator: true
-  });
-  viewer.scene.globe.depthTestAgainstTerrain = true;
-  viewer.scene.skyBox = undefined;
-  viewer.scene.skyAtmosphere = undefined;
+(async function () {
+  // ... الإعدادات الموجودة للـ viewer تبقى كما هي ...
 
-  // ======== موضع عَنّة (عدّله إذا لزم) ========
-  const lon   = 41.9866;     // خط الطول
-  const lat   = 34.3758;     // خط العرض
-  const height= 220;         // ارتفاع التثبيت بالمتر (ارفعه إذا التصق بالأرض)
+  // إحداثيات عَنّة (عدّلها إذا لزم)
+  const lon = 41.9866;
+  const lat = 34.3758;
+  const height = 210;
 
-  // ======== تحميل GLB (عدّل المسار إن غيّرت الاسم/المجلد) ========
-  const glbUrl = '/city3d/anahcityscenes01_0.glb?v=3';
-
-  // مصفوفة التثبيت شرق-شمال-أعلى عند أصل عَنّة
+  // إطار شرق-شمال-أعلى عند موقع المدينة
   const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
-  const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+  const enu = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
 
-  // ملاحظة مهمّة:
-  // بعض نماذج CityEngine/GLB تأتي بمقاييس ضخمة جداً.
-  // لهذا نبدأ بمقياس صغير جداً. جرّب تكبير/تصغير value أدناه حتى يظهر الحجم الواقعي.
-  const MODEL_SCALE = 0.000005; // <-- غيّرها إلى 0.000001 أو 0.00001 حسب الحاجة
+  // تقلـيص قوي للنموذج (جرّب 1e-5 ثم كبّره/صغّره لاحقًا)
+  const scaleMatrix = Cesium.Matrix4.fromUniformScale(1e-5); // 0.00001
 
-  const model = await Cesium.Model.fromGltfAsync({
-    url: glbUrl,
+  // دمج التدوير المكاني + المقياس في مصفوفة واحدة
+  const modelMatrix = Cesium.Matrix4.multiply(enu, scaleMatrix, new Cesium.Matrix4());
+
+  // تحميل النموذج
+  const model = await Cesium.Model.fromGltf({
+    url: '/city3d/anahcityscenes01_0.glb', // تأكد من الاسم/المسار الصحيح
     modelMatrix,
-    scale: MODEL_SCALE,
-    // تحسينات عرض اختيارية:
-    show: true,
-    shadows: Cesium.ShadowMode.ENABLED,
-    minimumPixelSize: 48
+    minimumPixelSize: 64,
+    shadows: Cesium.ShadowMode.ENABLED
   });
 
   viewer.scene.primitives.add(model);
   await model.ready;
 
- // ابعِد الكاميرا تلقائياً حسب نصف قطر النموذج
-const r = model.boundingSphere.radius;
-viewer.camera.flyToBoundingSphere(
-  model.boundingSphere,
-  { offset: new Cesium.HeadingPitchRange(0, -0.6, r * 2.8) }
-);
-
+  // أبعد الكاميرا نسبةً لحجم النموذج بعد التصغير
+  const r = model.boundingSphere.radius;
+  viewer.camera.flyToBoundingSphere(
+    model.boundingSphere,
+    { offset: new Cesium.HeadingPitchRange(0, -0.6, r * 2.8) }
+  );
+})();
 
   // ======== تلوين حسب استعمالات الأرض (إن وُجدت حقول مناسبة) ========
   let currentStyled = false;
