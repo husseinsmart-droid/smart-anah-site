@@ -1,127 +1,103 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>التوأم الرقمي — مدينة عَنّة</title>
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-  <!-- CesiumJS (آخر نسخة مستقرة) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.118.0/Build/Cesium/Widgets/widgets.css">
-  <script src="https://cdn.jsdelivr.net/npm/cesium@1.118.0/Build/Cesium/Cesium.js"></script>
+    <title>التوأم الرقمي — مدينة عَنّة</title>
 
-  <style>
-    html, body, #cesiumContainer { height:100%; width:100%; margin:0; padding:0; overflow:hidden }
-    .toolbar {
-      position: absolute; top: 12px; right: 12px; z-index: 10;
-      display: flex; gap: 8px; flex-wrap: wrap;
-    }
-    .btn {
-      background:#fff; border:1px solid #e5e7eb; border-radius:10px;
-      padding:8px 12px; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.06);
-    }
-    .btn:disabled{ opacity:.6; cursor:not-allowed }
-  </style>
-</head>
-<body>
-  <div id="cesiumContainer"></div>
+    <!-- ArcGIS JS API -->
+    <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.30/"></script>
 
-  <div class="toolbar">
-    <button id="btnReset" class="btn">إعادة تموضع</button>
-    <button id="btnHide" class="btn">إخفاء/إظهار النموذج</button>
-  </div>
-
-  <script>
-    // لا نستخدم أي أصول من ion، لذلك لا حاجة لتوكن
-    Cesium.Ion.defaultAccessToken = "";
-
-    // 1) تهيئة العارض
-    const viewer = new Cesium.Viewer("cesiumContainer", {
-      timeline: false,
-      animation: false,
-      geocoder: false,
-      homeButton: false,
-      sceneModePicker: true,
-      baseLayerPicker: true,
-      navigationHelpButton: false,
-      fullscreenButton: false,
-      terrainProvider: new Cesium.EllipsoidTerrainProvider(), // بدون تضاريس ion
-    });
-
-    // لون خلفية الفضاء
-    viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#0b1020");
-
-    // اجعل العمق عبر التضاريس مفعلاً إن رغبت
-    viewer.scene.globe.depthTestAgainstTerrain = true;
-
-    // 2) مسار النموذج (تأكد من صحة المسار)
-    const testUrl = "/assets/city3d/anahcityscenes01_0.glb"; // غيّر الاسم لو لزم
-
-    // 3) موضع عَنّة التقريبي (عدّله لو احتجت)
-    const lon = 41.9866;   // خط طول عَنّة
-    const lat = 34.3758;   // خط عرض عَنّة
-    const height = 210;    // ارتفاع بالمتر فوق سطح البحر (عدّله إن تطلب)
-
-    const origin = Cesium.Cartesian3.fromDegrees(lon, lat, height);
-    const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
-
-    // 4) تحميل GLB بالطريقة الصحيحة
-    let model;   // سنضع المرجع هنا لنستخدمه لاحقًا
-    (async () => {
-      try {
-        // اختياري: اختبار الوصول للمسار قبل التحميل
-        // سيظهر في Network إن كان 200 أو غير ذلك
-        console.log("Fetching:", testUrl);
-
-        model = await Cesium.Model.fromGltfAsync({
-          url: testUrl,
-          modelMatrix,
-          // scale: 1.0,            // جرّب ضبط المقياس إن لزم (0.01 أو 100 مثلًا)
-          minimumPixelSize: 64,     // يحافظ على ظهور النموذج من بعيد
-          shadows: Cesium.ShadowMode.ENABLED,
-          allowPicking: true
-        });
-
-        // أضف للمشهد
-        viewer.scene.primitives.add(model);
-
-        // انتظر جاهزية النموذج ثم قرّب عليه
-        await model.readyPromise;
-
-        // ضمّن رؤية النموذج
-        const r = model.boundingSphere.radius;
-        viewer.camera.flyToBoundingSphere(model.boundingSphere, {
-          offset: new Cesium.HeadingPitchRange(0, -0.6, r * 3.0),
-          duration: 0.9
-        });
-
-        console.log("GLB loaded and ready:", testUrl);
-      } catch (e) {
-        console.error("Error loading GLB:", e);
-        alert("تعذّر تحميل نموذج GLB. افحص Console و Network للمسار والحالة.");
+    <style>
+      html, body, #viewDiv {
+        padding: 0; margin: 0;
+        height: 100%; width: 100%;
+        overflow: hidden;
+        font-family: "Segoe UI", Tahoma, Arial;
       }
-    })();
+      .toolbar {
+        position: absolute;
+        top: 15px; right: 15px;
+        z-index: 10;
+        display: flex; gap: 10px;
+      }
+      .btn {
+        background:#ffffff;
+        padding:8px 14px;
+        border:1px solid #ddd;
+        border-radius:10px;
+        cursor:pointer;
+        box-shadow:0 2px 8px rgba(0,0,0,.1);
+      }
+    </style>
+  </head>
 
-    // 5) أزرار مساعدة
-    document.getElementById("btnReset").addEventListener("click", () => {
-      if (!model) return;
-      const r = model.boundingSphere.radius || 500;
-      viewer.camera.flyToBoundingSphere(model.boundingSphere, {
-        offset: new Cesium.HeadingPitchRange(0, -0.6, r * 3.0),
-        duration: 0.8
+  <body>
+    <div id="viewDiv"></div>
+
+    <div class="toolbar">
+      <button id="btnReset" class="btn">إعادة تموضع</button>
+      <button id="btnToggle" class="btn">إخفاء / إظهار المباني</button>
+    </div>
+
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/SceneView",
+        "esri/layers/SceneLayer"
+      ], function(Map, SceneView, SceneLayer) {
+
+        // 1) طبقة الـ SLPK
+        const sceneLayer = new SceneLayer({
+          url: "/assets/city3d/anahcityscenes01.slpk" // <-- ضع هنا المسار الصحيح
+        });
+
+        // 2) إعداد الخريطة
+        const map = new Map({
+          basemap: "satellite",
+          ground: "world-elevation",
+          layers: [sceneLayer]
+        });
+
+        // 3) إعداد المشهد الثلاثي
+        const view = new SceneView({
+          container: "viewDiv",
+          map: map,
+          environment: {
+            background: { type: "color", color: "#0b1020" },
+            starsEnabled: false,
+            atmosphereEnabled: true
+          },
+          camera: {
+            position: {
+              longitude: 41.9866,   // إحداثيات عَنّة
+              latitude: 34.3758,
+              z: 800
+            },
+            tilt: 60
+          }
+        });
+
+        // 4) زر إعادة التموضع
+        document.getElementById("btnReset").onclick = () => {
+          view.goTo({
+            position: {
+              longitude: 41.9866,
+              latitude: 34.3758,
+              z: 800
+            },
+            tilt: 60
+          });
+        };
+
+        // 5) زر إخفاء / إظهار الطبقة
+        document.getElementById("btnToggle").onclick = () => {
+          sceneLayer.visible = !sceneLayer.visible;
+        };
+
       });
-    });
-
-    document.getElementById("btnHide").addEventListener("click", () => {
-      if (!model) return;
-      model.show = !model.show;
-    });
-
-    // 6) نصائح تشخيص سريعة في Console
-    console.log("%cتشخيص سريع",
-      "background:#111827;color:#fff;padding:4px 8px;border-radius:6px");
-    console.log("URL:", testUrl);
-    console.log("Position:", { lon, lat, height });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
