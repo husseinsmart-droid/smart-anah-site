@@ -1,103 +1,88 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>التوأم الرقمي — مدينة عَنّة</title>
 
-    <title>التوأم الرقمي — مدينة عَنّة</title>
+  <!-- CesiumJS -->
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Cesium.js"></script>
 
-    <!-- ArcGIS JS API -->
-    <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
-    <script src="https://js.arcgis.com/4.30/"></script>
+  <style>
+    html, body, #cesiumContainer {
+      width: 100%; height: 100%; margin:0; padding:0;
+      font-family: "Segoe UI", Arial;
+    }
+    .toolbar {
+      position:absolute;
+      top:15px; right:15px; z-index:10;
+      display:flex; gap:10px;
+    }
+    .btn {
+      background:white;
+      padding:8px 14px;
+      border-radius:8px;
+      border:1px solid #ddd;
+      cursor:pointer;
+    }
+  </style>
+</head>
 
-    <style>
-      html, body, #viewDiv {
-        padding: 0; margin: 0;
-        height: 100%; width: 100%;
-        overflow: hidden;
-        font-family: "Segoe UI", Tahoma, Arial;
-      }
-      .toolbar {
-        position: absolute;
-        top: 15px; right: 15px;
-        z-index: 10;
-        display: flex; gap: 10px;
-      }
-      .btn {
-        background:#ffffff;
-        padding:8px 14px;
-        border:1px solid #ddd;
-        border-radius:10px;
-        cursor:pointer;
-        box-shadow:0 2px 8px rgba(0,0,0,.1);
-      }
-    </style>
-  </head>
+<body>
 
-  <body>
-    <div id="viewDiv"></div>
+<div id="cesiumContainer"></div>
 
-    <div class="toolbar">
-      <button id="btnReset" class="btn">إعادة تموضع</button>
-      <button id="btnToggle" class="btn">إخفاء / إظهار المباني</button>
-    </div>
+<div class="toolbar">
+  <button id="btnReset" class="btn">إعادة التموضع</button>
+  <button id="btnToggle" class="btn">إخفاء / إظهار المباني</button>
+</div>
 
-    <script>
-      require([
-        "esri/Map",
-        "esri/views/SceneView",
-        "esri/layers/SceneLayer"
-      ], function(Map, SceneView, SceneLayer) {
+<script>
 
-        // 1) طبقة الـ SLPK
-        const sceneLayer = new SceneLayer({
-          url: "/assets/city3d/anahcityscenes01.slpk" // <-- ضع هنا المسار الصحيح
-        });
+// 0) إعداد مفتاح Google
+Cesium.GoogleMaps.defaultApiKey = "YOUR_GOOGLE_API_KEY";
 
-        // 2) إعداد الخريطة
-        const map = new Map({
-          basemap: "satellite",
-          ground: "world-elevation",
-          layers: [sceneLayer]
-        });
+// 1) بدء المشهد
+const viewer = new Cesium.Viewer("cesiumContainer", {
+  terrain: Cesium.CesiumTerrainProvider.fromIonAssetId(1), // Terrain من Cesium (أفضل من Esri)
+  baseLayerPicker: false,
+  timeline: false,
+  animation: false,
+});
 
-        // 3) إعداد المشهد الثلاثي
-        const view = new SceneView({
-          container: "viewDiv",
-          map: map,
-          environment: {
-            background: { type: "color", color: "#0b1020" },
-            starsEnabled: false,
-            atmosphereEnabled: true
-          },
-          camera: {
-            position: {
-              longitude: 41.9866,   // إحداثيات عَنّة
-              latitude: 34.3758,
-              z: 800
-            },
-            tilt: 60
-          }
-        });
+// 2) إضافة Google 3D Photorealistic
+const googleLayer = viewer.scene.primitives.add(
+  new Cesium.GoogleMaps3DTileset()
+);
 
-        // 4) زر إعادة التموضع
-        document.getElementById("btnReset").onclick = () => {
-          view.goTo({
-            position: {
-              longitude: 41.9866,
-              latitude: 34.3758,
-              z: 800
-            },
-            tilt: 60
-          });
-        };
+// 3) طبقة SLPK الخاصة بك (يجب رفعها على Cesium Ion)
+const slpkLayer = viewer.scene.primitives.add(
+  new Cesium.Cesium3DTileset({
+    url: "/assets/city3d/anahcityscenes01/tileset.json"
+  })
+);
 
-        // 5) زر إخفاء / إظهار الطبقة
-        document.getElementById("btnToggle").onclick = () => {
-          sceneLayer.visible = !sceneLayer.visible;
-        };
+// 4) كاميرا البداية على مدينة عَنّة
+viewer.camera.flyTo({
+  destination: Cesium.Cartesian3.fromDegrees(41.9866, 34.3758, 900),
+  orientation: { pitch: Cesium.Math.toRadians(-45) }
+});
 
-      });
-    </script>
-  </body>
+// 5) زر إعادة التموضع
+document.getElementById("btnReset").onclick = () => {
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(41.9866, 34.3758, 900),
+    orientation: { pitch: Cesium.Math.toRadians(-45) }
+  });
+};
+
+// 6) زر إخفاء / إظهار المباني
+document.getElementById("btnToggle").onclick = () => {
+  slpkLayer.show = !slpkLayer.show;
+};
+
+</script>
+
+</body>
 </html>
