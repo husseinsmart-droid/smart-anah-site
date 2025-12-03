@@ -5,23 +5,36 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>التوأم الرقمي — مدينة عَنّة</title>
 
-  <!-- CesiumJS (نسخة 1.113 المطلوبة لـ Google 3D) -->
+  <!-- CesiumJS -->
   <link href="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Cesium.js"></script>
 
   <style>
     html, body, #cesiumContainer {
-      width: 100%; height: 100%; margin: 0; padding: 0;
-      font-family: "Segoe UI";
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
       overflow: hidden;
+      font-family: "Segoe UI", Arial;
     }
+
     .toolbar {
-      position:absolute; top:15px; right:15px; z-index:10;
-      display:flex; gap:10px;
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      gap: 10px;
+      z-index: 10;
     }
+
     .btn {
-      background:white; border:1px solid #ddd;
-      padding:8px 14px; border-radius:8px; cursor:pointer;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
     }
   </style>
 </head>
@@ -32,40 +45,62 @@
 
 <div class="toolbar">
   <button id="btnReset" class="btn">إعادة التموضع</button>
-  <button id="btnToggle" class="btn">إظهار/إخفاء المباني</button>
+  <button id="btnToggleSLPK" class="btn">إظهار/إخفاء نماذج عَنّة</button>
+  <button id="btnToggleOSM" class="btn">إظهار/إخفاء مباني OSM</button>
 </div>
 
 <script>
-// 1) مفتاح Google
-Cesium.GoogleMaps.defaultApiKey = "YOUR_GOOGLE_API_KEY";
 
-// 2) بدء المشهد
+//--------------------------------------------------------------------
+// 1) Cesium ion token (مجاني — ضروري للتيرين ومباني OSM)
+//--------------------------------------------------------------------
+Cesium.Ion.defaultAccessToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyZmM4MWRmYS00OGM1LTRkNTAtOWRhNy02YjNiMmZiNzQwOWMiLCJpZCI6MzU3NDMyLCJpYXQiOjE3NjIzNDUzMTh9.5zHkzhDjdsx1o5bmSO5stXIA0sivF549ITVtiBHtIhY";  
+// يمكنك استخدام Default Token الذي ظهر لك سابقاً
+
+//--------------------------------------------------------------------
+// 2) إنشاء المشهد الأساسي
+//--------------------------------------------------------------------
 const viewer = new Cesium.Viewer("cesiumContainer", {
   terrainProvider: Cesium.CesiumTerrainProvider.fromIonAssetId(1),
-  baseLayerPicker: false,
+  baseLayerPicker: true,
   timeline: false,
   animation: false
 });
 
-// 3) إضافة Google Photorealistic 3D Tiles
-const google3d = viewer.scene.primitives.add(
-  new Cesium.GoogleMaps3DTileset()
+//--------------------------------------------------------------------
+// 3) إضافة مباني OSM ثلاثية الأبعاد
+//--------------------------------------------------------------------
+const osmBuildings = viewer.scene.primitives.add(
+  new Cesium.Cesium3DTileset({
+    url: Cesium.IonResource.fromAssetId(96188)
+  })
 );
 
-// 4) إضافة طبقة SLPK الخاصة بك
+//--------------------------------------------------------------------
+// 4) إضافة طبقة SLPK المحلية الخاصة بك (بعد فكها لمجلد tileset.json)
+//--------------------------------------------------------------------
 const slpk = viewer.scene.primitives.add(
   new Cesium.Cesium3DTileset({
     url: "/assets/city3d/anahcityscenes01/tileset.json"
   })
 );
 
-// 5) كاميرا البداية
+//--------------------------------------------------------------------
+// 5) ضبط الكاميرا فوق مدينة عَنّة
+//--------------------------------------------------------------------
 viewer.camera.flyTo({
   destination: Cesium.Cartesian3.fromDegrees(41.9866, 34.3758, 900),
-  orientation: { pitch: Cesium.Math.toRadians(-45) }
+  orientation: {
+    pitch: Cesium.Math.toRadians(-45)
+  }
 });
 
-// 6) زر إعادة التموضع
+//--------------------------------------------------------------------
+// 6) أزرار التحكم
+//--------------------------------------------------------------------
+
+// إعادة التموضع
 document.getElementById("btnReset").onclick = () => {
   viewer.camera.flyTo({
     destination: Cesium.Cartesian3.fromDegrees(41.9866, 34.3758, 900),
@@ -73,10 +108,16 @@ document.getElementById("btnReset").onclick = () => {
   });
 };
 
-// 7) زر إخفاء الــ SLPK
-document.getElementById("btnToggle").onclick = () => {
+// إظهار / إخفاء SLPK
+document.getElementById("btnToggleSLPK").onclick = () => {
   slpk.show = !slpk.show;
 };
+
+// إظهار / إخفاء مباني OSM
+document.getElementById("btnToggleOSM").onclick = () => {
+  osmBuildings.show = !osmBuildings.show;
+};
+
 </script>
 
 </body>
