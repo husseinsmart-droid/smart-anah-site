@@ -2,29 +2,26 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>التوأم الرقمي — مدينة عَنّة</title>
 
-  <!-- CesiumJS -->
+  <!-- CesiumJS (نسخة 1.113 المطلوبة لـ Google 3D) -->
   <link href="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.113/Build/Cesium/Cesium.js"></script>
 
   <style>
     html, body, #cesiumContainer {
-      width: 100%; height: 100%; margin:0; padding:0;
-      font-family: "Segoe UI", Arial;
+      width: 100%; height: 100%; margin: 0; padding: 0;
+      font-family: "Segoe UI";
+      overflow: hidden;
     }
     .toolbar {
-      position:absolute;
-      top:15px; right:15px; z-index:10;
+      position:absolute; top:15px; right:15px; z-index:10;
       display:flex; gap:10px;
     }
     .btn {
-      background:white;
-      padding:8px 14px;
-      border-radius:8px;
-      border:1px solid #ddd;
-      cursor:pointer;
+      background:white; border:1px solid #ddd;
+      padding:8px 14px; border-radius:8px; cursor:pointer;
     }
   </style>
 </head>
@@ -35,41 +32,40 @@
 
 <div class="toolbar">
   <button id="btnReset" class="btn">إعادة التموضع</button>
-  <button id="btnToggle" class="btn">إخفاء / إظهار المباني</button>
+  <button id="btnToggle" class="btn">إظهار/إخفاء المباني</button>
 </div>
 
 <script>
-
-// 0) إعداد مفتاح Google
+// 1) مفتاح Google
 Cesium.GoogleMaps.defaultApiKey = "YOUR_GOOGLE_API_KEY";
 
-// 1) بدء المشهد
+// 2) بدء المشهد
 const viewer = new Cesium.Viewer("cesiumContainer", {
-  terrain: Cesium.CesiumTerrainProvider.fromIonAssetId(1), // Terrain من Cesium (أفضل من Esri)
+  terrainProvider: Cesium.CesiumTerrainProvider.fromIonAssetId(1),
   baseLayerPicker: false,
   timeline: false,
-  animation: false,
+  animation: false
 });
 
-// 2) إضافة Google 3D Photorealistic
-const googleLayer = viewer.scene.primitives.add(
+// 3) إضافة Google Photorealistic 3D Tiles
+const google3d = viewer.scene.primitives.add(
   new Cesium.GoogleMaps3DTileset()
 );
 
-// 3) طبقة SLPK الخاصة بك (يجب رفعها على Cesium Ion)
-const slpkLayer = viewer.scene.primitives.add(
+// 4) إضافة طبقة SLPK الخاصة بك
+const slpk = viewer.scene.primitives.add(
   new Cesium.Cesium3DTileset({
     url: "/assets/city3d/anahcityscenes01/tileset.json"
   })
 );
 
-// 4) كاميرا البداية على مدينة عَنّة
+// 5) كاميرا البداية
 viewer.camera.flyTo({
   destination: Cesium.Cartesian3.fromDegrees(41.9866, 34.3758, 900),
   orientation: { pitch: Cesium.Math.toRadians(-45) }
 });
 
-// 5) زر إعادة التموضع
+// 6) زر إعادة التموضع
 document.getElementById("btnReset").onclick = () => {
   viewer.camera.flyTo({
     destination: Cesium.Cartesian3.fromDegrees(41.9866, 34.3758, 900),
@@ -77,11 +73,10 @@ document.getElementById("btnReset").onclick = () => {
   });
 };
 
-// 6) زر إخفاء / إظهار المباني
+// 7) زر إخفاء الــ SLPK
 document.getElementById("btnToggle").onclick = () => {
-  slpkLayer.show = !slpkLayer.show;
+  slpk.show = !slpk.show;
 };
-
 </script>
 
 </body>
