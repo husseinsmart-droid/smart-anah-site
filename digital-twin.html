@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>التوأم الرقمي — مدينة عَنّة</title>
 
   <!-- ArcGIS JS API -->
@@ -12,26 +11,30 @@
 
   <style>
     html, body, #viewDiv {
-      padding: 0; margin: 0;
-      height: 100%; width: 100%;
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      font-family: "Segoe UI", Arial;
       overflow: hidden;
-      font-family: "Segoe UI", Tahoma, Arial;
     }
 
     .toolbar {
       position: absolute;
-      top: 15px; right: 15px;
-      z-index: 10;
-      display: flex; gap: 10px;
+      top: 15px;
+      right: 15px;
+      z-index: 20;
+      display: flex;
+      gap: 10px;
     }
 
     .btn {
-      background: #ffffff;
-      padding: 8px 14px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      background:#ffffff;
+      padding:8px 14px;
+      border:1px solid #ddd;
+      border-radius:10px;
+      cursor:pointer;
+      box-shadow:0 2px 8px rgba(0,0,0,.15);
     }
   </style>
 </head>
@@ -40,9 +43,8 @@
   <div id="viewDiv"></div>
 
   <div class="toolbar">
-    <button id="btnReset" class="btn">إعادة التموضع</button>
-    <button id="btnToggle01" class="btn">إظهار/إخفاء مباني 01</button>
-    <button id="btnToggle04" class="btn">إظهار/إخفاء مباني 04</button>
+    <button id="btnReset" class="btn">إعادة التمركز</button>
+    <button id="btnToggle" class="btn">إظهار / إخفاء المباني</button>
   </div>
 
   <script>
@@ -50,33 +52,24 @@
       "esri/Map",
       "esri/views/SceneView",
       "esri/layers/SceneLayer"
-    ], function (Map, SceneView, SceneLayer) {
+    ], function(Map, SceneView, SceneLayer) {
 
-      // ----------- طبقات SLPK -------------
-      const layer01 = new SceneLayer({
-        url: "/assets/city3d/anahcityscenes01.slpk"
-      });
-
-      const layer04 = new SceneLayer({
+      // تحميل طبقة المباني SLPK
+      const buildingsLayer = new SceneLayer({
         url: "/assets/city3d/anahcityscenes04.slpk"
       });
 
-      // ----------- إعداد الخريطة -------------
+      // إعداد الخريطة
       const map = new Map({
         basemap: "satellite",
         ground: "world-elevation",
-        layers: [layer01, layer04]
+        layers: [buildingsLayer]
       });
 
-      // ----------- إعداد المشهد -------------
+      // إعداد المشهد
       const view = new SceneView({
         container: "viewDiv",
         map: map,
-        environment: {
-          background: { type: "color", color: "#0b1020" },
-          starsEnabled: false,
-          atmosphereEnabled: true
-        },
         camera: {
           position: {
             longitude: 41.9866,
@@ -84,23 +77,29 @@
             z: 800
           },
           tilt: 60
+        },
+        environment: {
+          background: { type: "color", color: "#0b1020" },
+          starsEnabled: false,
+          atmosphereEnabled: true
         }
       });
 
-      // ----------- أزرار التحكم بالطبقات -------------
+      // زر إعادة التمركز
       document.getElementById("btnReset").onclick = () => {
         view.goTo({
-          position: { longitude: 41.9866, latitude: 34.3758, z: 800 },
+          position: {
+            longitude: 41.9866,
+            latitude: 34.3758,
+            z: 800
+          },
           tilt: 60
         });
       };
 
-      document.getElementById("btnToggle01").onclick = () => {
-        layer01.visible = !layer01.visible;
-      };
-
-      document.getElementById("btnToggle04").onclick = () => {
-        layer04.visible = !layer04.visible;
+      // إظهار / إخفاء المباني
+      document.getElementById("btnToggle").onclick = () => {
+        buildingsLayer.visible = !buildingsLayer.visible;
       };
 
     });
