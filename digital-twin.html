@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>التوأم الرقمي — مدينة عَنّة</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>طبقة الطرق فقط — عَنّة</title>
 
-  <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
+  <!-- ArcGIS JS API -->
+  <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
   <script src="https://js.arcgis.com/4.30/"></script>
 
   <style>
@@ -15,35 +16,13 @@
       height: 100%;
       width: 100%;
       overflow: hidden;
-      font-family: sans-serif;
-    }
-
-    .toolbar {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      z-index: 20;
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn {
-      background:#fff;
-      border:1px solid #ccc;
-      padding:8px 14px;
-      border-radius:8px;
-      cursor:pointer;
-      box-shadow:0 2px 8px rgba(0,0,0,.15);
+      font-family: "Segoe UI", Arial;
     }
   </style>
 </head>
 
 <body>
   <div id="viewDiv"></div>
-
-  <div class="toolbar">
-    <button id="btnRoads" class="btn">إظهار / إخفاء الطرق</button>
-  </div>
 
   <script>
     require([
@@ -52,30 +31,28 @@
       "esri/layers/GeoJSONLayer"
     ], function(Map, SceneView, GeoJSONLayer) {
 
-      // رابط RAW الصحيح
-      const roadsUrl =
-        "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/city3d/Roads02.geojson";
-
-      // طبقة الطرق
+      // طبقة الطرق GeoJSON من GitHub (raw)
       const roadsLayer = new GeoJSONLayer({
-        url: roadsUrl,
+        url: "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/city3d/Roads02.geojson",
         elevationInfo: { mode: "on-the-ground" },
         renderer: {
           type: "simple",
           symbol: {
             type: "simple-line",
-            color: [255, 0, 0, 1],
+            color: [0, 0, 255, 1],   // أزرق
             width: 2
           }
         }
       });
 
+      // إنشاء الخريطة
       const map = new Map({
-        basemap: "satellite",
+        basemap: "gray-vector",    // خلفية بسيطة جداً
         ground: "world-elevation",
         layers: [roadsLayer]
       });
 
+      // عرض المشهد
       const view = new SceneView({
         container: "viewDiv",
         map: map,
@@ -83,16 +60,11 @@
           position: {
             longitude: 41.9866,
             latitude: 34.3758,
-            z: 1200
+            z: 2500
           },
           tilt: 65
         }
       });
-
-      // زر إظهار / إخفاء الطرق
-      document.getElementById("btnRoads").onclick = () => {
-        roadsLayer.visible = !roadsLayer.visible;
-      };
 
     });
   </script>
