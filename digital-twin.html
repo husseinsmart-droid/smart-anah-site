@@ -11,12 +11,12 @@
 
   <style>
     html, body, #viewDiv {
-      margin: 0;
       padding: 0;
-      width: 100%;
+      margin: 0;
       height: 100%;
-      overflow: hidden;
+      width: 100%;
       font-family: "Segoe UI", Arial;
+      overflow: hidden;
     }
 
     .toolbar {
@@ -29,90 +29,79 @@
     }
 
     .btn {
-      background: #fff;
-      padding: 8px 14px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      background:#ffffff;
+      padding:8px 14px;
+      border:1px solid #ddd;
+      border-radius:10px;
+      cursor:pointer;
+      box-shadow:0 2px 8px rgba(0,0,0,.15);
     }
   </style>
 </head>
 
 <body>
+  <div id="viewDiv"></div>
 
-<div id="viewDiv"></div>
+  <div class="toolbar">
+    <button id="btnToggleRoads" class="btn">إظهار / إخفاء الطرق</button>
+  </div>
 
-<div class="toolbar">
-  <button id="btnReset" class="btn">إعادة التمركز</button>
-  <button id="btnRoads" class="btn">إظهار / إخفاء الطرق</button>
-</div>
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/layers/GeoJSONLayer"
+    ], function(Map, SceneView, GeoJSONLayer) {
 
-<script>
-  require([
-    "esri/Map",
-    "esri/views/SceneView",
-    "esri/layers/GeoJSONLayer"
-  ], function (Map, SceneView, GeoJSONLayer) {
-
-    // ========== 1) طبقة الطرق GeoJSON ==========
-    const roadsLayer = new GeoJSONLayer({
-      url: "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/city3d/Roads02.geojson",
-      renderer: {
-        type: "simple",
-        symbol: {
-          type: "simple-line",
-          color: "#00E5FF",
-          width: 2
+      // ----------- طبقة الطرق GeoJSON -----------
+      const roadsLayer = new GeoJSONLayer({
+        url: "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/city3d/Roads02.geojson",
+        elevationInfo: { mode: "on-the-ground" },
+        renderer: {
+          type: "simple",
+          symbol: {
+            type: "simple-line",
+            color: [0, 255, 255, 1],   // سماوي واضح
+            width: 2.5
+          }
         }
-      }
-    });
-
-    // ========== 2) إنشاء خريطة بدون Basemap ==========
-    const map = new Map({
-      basemap: null,   // إخفاء طبقة القمر الصناعي بالكامل
-      ground: "world-elevation",
-      layers: [roadsLayer]
-    });
-
-    // ========== 3) إعداد المشهد ==========
-    const view = new SceneView({
-      container: "viewDiv",
-      map: map,
-      camera: {
-        position: {
-          longitude: 41.9866,
-          latitude: 34.3758,
-          z: 1500
-        },
-        tilt: 65
-      },
-      environment: {
-        background: { type: "color", color: "#101820" },
-        starsEnabled: false,
-        atmosphereEnabled: true
-      }
-    });
-
-    // ========== 4) زر إعادة التمركز ==========
-    document.getElementById("btnReset").onclick = () => {
-      view.goTo({
-        position: {
-          longitude: 41.9866,
-          latitude: 34.3758,
-          z: 1500
-        },
-        tilt: 65
       });
-    };
 
-    // ========== 5) إظهار/إخفاء الطرق ==========
-    document.getElementById("btnRoads").onclick = () => {
-      roadsLayer.visible = !roadsLayer.visible;
-    };
+      // ----------- إعداد الخريطة بدون صورة فضائية -----------
+      const map = new Map({
+        basemap: null,           // ❗ إزالة الصورة الفضائية بالكامل
+        ground: "world-elevation",
+        layers: [roadsLayer]
+      });
 
-  });
-</script>
+      // ----------- إعداد المشهد -----------
+      const view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          position: {
+            longitude: 41.9866,
+            latitude: 34.3758,
+            z: 850
+          },
+          tilt: 65
+        },
+        environment: {
+          background: {
+            type: "color",
+            color: "#e5e5e5"      // أرضية فاتحة بدون صور
+          },
+          starsEnabled: false,
+          atmosphereEnabled: false
+        }
+      });
 
+      // ----------- زر إظهار / إخفاء الطرق -----------
+      document.getElementById("btnToggleRoads").onclick = () => {
+        roadsLayer.visible = !roadsLayer.visible;
+      };
+
+    });
+  </script>
 </body>
 </html>
