@@ -1,14 +1,23 @@
-/* Smart Anah — Service Worker */
-const CACHE_NAME = "smart-anah-v1";
+/* Smart Anah — Service Worker (Fixed for Digital Twin) */
+
+const CACHE_NAME = "smart-anah-v2";
+
+// الملفات التي نريد أن يتجاوزها الـ SW ولا يعترضها
+const BYPASS_EXT = [
+  ".slpk", ".glb", ".gltf", ".bin", ".3tz", ".ktx2",
+  ".jsonz", ".geopkg"
+];
+
+// الملفات التي نريد تخزينها مسبقاً
 const PRECACHE = [
-  "/",                          // الصفحة الرئيسية
+  "/",
   "/manifest.webmanifest",
   "/sw.js",
   "/assets/icons/icon-192.png",
   "/assets/icons/icon-512.png"
 ];
 
-// تفعيل Navigation Preload + تنظيف الكاش القديم
+// التفعيل
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     if (self.registration.navigationPreload) {
@@ -20,7 +29,7 @@ self.addEventListener("activate", (event) => {
   })());
 });
 
-// التثبيت + precache
+// التثبيت
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
@@ -29,18 +38,27 @@ self.addEventListener("install", (event) => {
   })());
 });
 
-// إستراتيجيات الجلب
+// التعامل مع الطلبات
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
   const sameOrigin = url.origin === self.location.origin;
 
-  // تنقّلات HTML: شبكة أولاً ثم كاش كنسخة احتياطية
+  // ❗ ملفات التوأم الرقمي يتم تجاوزها (لا كاش ولا اعتراض)
+  for (const ext of BYPASS_EXT) {
+    if (url.pathname.toLowerCase().endsWith(ext)) {
+      event.respondWith(fetch(req));
+      return;
+    }
+  }
+
+  // تنقّلات HTML
   if (req.mode === "navigate") {
     event.respondWith((async () => {
       try {
         const preload = await event.preloadResponse;
         if (preload) return preload;
+
         const net = await fetch(req);
         const cache = await caches.open(CACHE_NAME);
         cache.put(req, net.clone());
@@ -53,12 +71,12 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // أصول ثابتة محليّة: Cache-First
+  // الأيقونات وملفات PWA
   if (sameOrigin && (
-      url.pathname.startsWith("/assets/icons/") ||
-      url.pathname === "/manifest.webmanifest" ||
-      url.pathname === "/sw.js"
-    )) {
+    url.pathname.startsWith("/assets/icons/") ||
+    url.pathname === "/manifest.webmanifest" ||
+    url.pathname === "/sw.js"
+  )) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       const cached = await cache.match(req);
@@ -74,7 +92,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // باقي الطلبات: Network-First مع fallback للكاش
+  // باقي الملفات – Network First
   event.respondWith((async () => {
     try {
       const net = await fetch(req);
@@ -87,8 +105,14 @@ self.addEventListener("fetch", (event) => {
       const cache = await caches.open(CACHE_NAME);
       const cached = await cache.match(req);
       if (cached) return cached;
-      if (req.destination === "image") return new Response("", { status: 204 });
-      return new Response("Offline", { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" }});
+
+      if (req.destination === "image")
+        return new Response("", { status: 204 });
+
+      return new Response("Offline", {
+        status: 503,
+        headers: { "Content-Type": "text/plain; charset=utf-8" }
+      });
     }
   })());
 });
