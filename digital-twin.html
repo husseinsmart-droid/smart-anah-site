@@ -44,29 +44,45 @@
 
   <div class="toolbar">
     <button id="btnReset" class="btn">إعادة التمركز</button>
-    <button id="btnToggle" class="btn">إظهار / إخفاء المباني</button>
+    <button id="btnToggleRoads" class="btn">إظهار / إخفاء الطرق</button>
   </div>
 
   <script>
     require([
       "esri/Map",
       "esri/views/SceneView",
-      "esri/layers/SceneLayer"
-    ], function(Map, SceneView, SceneLayer) {
+      "esri/layers/GeoJSONLayer"
+    ], function(Map, SceneView, GeoJSONLayer) {
 
-      // تحميل طبقة المباني SLPK
-      const buildingsLayer = new SceneLayer({
-        url: "/assets/city3d/anahcityscenes04.slpk"
+      // ================================
+      // تحميل طبقة الطرق GeoJSON
+      // ================================
+      const roadsLayer = new GeoJSONLayer({
+        url: "/assets/city3d/Roads02.geojson",
+        renderer: {
+          type: "simple",
+          symbol: {
+            type: "simple-line",
+            color: "#00e5ff",
+            width: 2
+          }
+        }
       });
 
-      // إعداد الخريطة
+      // ================================
+      // لاحقاً: تحميل طبقة المباني SLPK
+      // (غير مفعّلة حالياً لأن GitHub لا يدعم SLPK)
+      // ================================
+      // const buildingsLayer = new SceneLayer({
+      //   url: "/assets/city3d/anahcityscenes04.slpk"
+      // });
+
       const map = new Map({
         basemap: "satellite",
         ground: "world-elevation",
-        layers: [buildingsLayer]
+        layers: [roadsLayer] // لاحقاً نضيف المباني هنا
       });
 
-      // إعداد المشهد
       const view = new SceneView({
         container: "viewDiv",
         map: map,
@@ -74,9 +90,9 @@
           position: {
             longitude: 41.9866,
             latitude: 34.3758,
-            z: 800
+            z: 1200
           },
-          tilt: 60
+          tilt: 65
         },
         environment: {
           background: { type: "color", color: "#0b1020" },
@@ -91,15 +107,15 @@
           position: {
             longitude: 41.9866,
             latitude: 34.3758,
-            z: 800
+            z: 1200
           },
-          tilt: 60
+          tilt: 65
         });
       };
 
-      // إظهار / إخفاء المباني
-      document.getElementById("btnToggle").onclick = () => {
-        buildingsLayer.visible = !buildingsLayer.visible;
+      // إظهار وإخفاء الطرق
+      document.getElementById("btnToggleRoads").onclick = () => {
+        roadsLayer.visible = !roadsLayer.visible;
       };
 
     });
