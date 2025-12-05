@@ -1,67 +1,80 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>التوأم الرقمي – مدينة عَنّة</title>
+    <meta charset="UTF-8">
+    <title>Digital Twin - Anah Smart City</title>
 
-  <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
-  <script src="https://js.arcgis.com/4.30/"></script>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 
-  <style>
-    html, body { margin:0; padding:0; height:100%; overflow:hidden; }
-    #viewDiv { width:100%; height:100%; }
-  </style>
+    <style>
+        html, body, #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
-
 <body>
-<div id="viewDiv"></div>
+
+<div id="cesiumContainer"></div>
 
 <script>
-require([
-  "esri/Map",
-  "esri/views/SceneView",
-  "esri/layers/SceneLayer",
-  "esri/layers/GeoJSONLayer"
-], function(Map, SceneView, SceneLayer, GeoJSONLayer) {
-
-  const map = new Map({
-    basemap: null,
-    ground: { layers: [] }
-  });
-
-  const view = new SceneView({
-    container: "viewDiv",
-    map: map,
-    camera: {
-      position: { x: 41.985, y: 34.37, z: 1200 },
-      tilt: 65
-    },
-    environment: {
-      background: { type: "color", color: "#d9d9d9" },
-      starsEnabled: false,
-      atmosphereEnabled: false
-    }
-  });
-
-  // 🔵 تحميل الـ SLPK مباشرة من RAW GitHub
-  const buildings = new SceneLayer({
-    url: "https://raw.githubusercontent.com/huseinsmart-droid/smart-anah-site/main/assets/digital-twin/anahcityscenes06.slpk"
-  });
-  map.add(buildings);
-
-  // 🟡 طبقة الطرق GeoJSON
-  const roads02 = new GeoJSONLayer({
-    url: "./assets/digital-twin/Roads02.geojson",
-    elevationInfo: { mode: "on-the-ground" },
-    renderer: {
-      type: "simple",
-      symbol: { type: "simple-line", color: "yellow", width: 2 }
-    }
-  });
-  map.add(roads02);
-
+// -----------------------
+// إعداد المشهد الأساسي
+// -----------------------
+const viewer = new Cesium.Viewer("cesiumContainer", {
+    terrainProvider: Cesium.createWorldTerrain(),
+    animation: false,
+    timeline: false,
+    baseLayerPicker: true,
+    sceneMode: Cesium.SceneMode.SCENE3D
 });
+
+// ------------------------------
+// 1) طبقة الطرق (GeoJSON)
+// ------------------------------
+Cesium.GeoJsonDataSource.load(
+    "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/digital-twin/Roads02.geojson",
+    {
+        stroke: Cesium.Color.YELLOW,
+        fill: Cesium.Color.YELLOW,
+        strokeWidth: 2,
+        clampToGround: true
+    }
+).then(function(dataSource) {
+    viewer.dataSources.add(dataSource);
+    console.log("Roads layer loaded");
+}).catch(function(error) {
+    console.error("Error loading Roads layer:", error);
+});
+
+// ------------------------------
+// 2) طبقة المباني (SLPK)
+// ------------------------------
+const buildingsLayer = new Cesium.Cesium3DTileset({
+    url: "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/digital-twin/anah_buildings02.slpk"
+});
+
+viewer.scene.primitives.add(buildingsLayer);
+
+buildingsLayer.readyPromise.then(() => {
+    console.log("Buildings SLPK loaded successfully");
+
+    // تحريك الكاميرا تلقائياً عند تحميل المباني
+    viewer.zoomTo(buildingsLayer);
+}).catch((error) => {
+    console.error("Error loading buildings SLPK:", error);
+});
+
+// ------------------------------
+// 3) تحسين الإضاءة والظلال
+// ------------------------------
+viewer.scene.globe.enableLighting = true;
+viewer.shadows = true;
+
 </script>
 
 </body>
