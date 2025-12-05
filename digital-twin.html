@@ -3,10 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>طبقة الطرق فقط — عَنّة</title>
+  <title>طبقة الطرق فقط — تجريب</title>
 
-  <!-- ArcGIS JS API -->
-  <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
+  <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
   <script src="https://js.arcgis.com/4.30/"></script>
 
   <style>
@@ -15,8 +14,6 @@
       margin: 0;
       height: 100%;
       width: 100%;
-      overflow: hidden;
-      font-family: "Segoe UI", Arial;
     }
   </style>
 </head>
@@ -31,28 +28,27 @@
       "esri/layers/GeoJSONLayer"
     ], function(Map, SceneView, GeoJSONLayer) {
 
-      // طبقة الطرق GeoJSON من GitHub (raw)
+      // رابط طبقة الطرق
       const roadsLayer = new GeoJSONLayer({
         url: "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/city3d/Roads02.geojson",
-        elevationInfo: { mode: "on-the-ground" },
         renderer: {
           type: "simple",
           symbol: {
             type: "simple-line",
-            color: [0, 0, 255, 1],   // أزرق
+            color: [255, 0, 0, 1],
             width: 2
           }
         }
       });
 
-      // إنشاء الخريطة
+      // الخريطة
       const map = new Map({
-        basemap: "gray-vector",    // خلفية بسيطة جداً
+        basemap: "none",     // ⚠️ بدون صورة فضائية
         ground: "world-elevation",
         layers: [roadsLayer]
       });
 
-      // عرض المشهد
+      // العرض ثلاثي الأبعاد
       const view = new SceneView({
         container: "viewDiv",
         map: map,
@@ -60,10 +56,15 @@
           position: {
             longitude: 41.9866,
             latitude: 34.3758,
-            z: 2500
+            z: 1500
           },
           tilt: 65
         }
+      });
+
+      // عند تحميل بيانات الطرق
+      roadsLayer.when(() => {
+        view.goTo(roadsLayer.fullExtent)
       });
 
     });
