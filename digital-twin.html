@@ -1,37 +1,38 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>التوأم الرقمي – مدينة عنّة</title>
+  <meta charset="utf-8">
+  <title>التوأم الرقمي — مدينة عَنّة الذكية</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.113/Cesium.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.113/Widgets/widgets.css" rel="stylesheet" />
+  <!-- تحميل مكتبة Cesium -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.114/Cesium.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.114/Widgets/widgets.css" rel="stylesheet"/>
 
-<style>
+  <style>
     html, body, #cesiumContainer {
-        width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
-        font-family: "Cairo", sans-serif;
+      width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     }
 
     .toolbar {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-        display: flex;
-        gap: 10px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 999;
+      background: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-family: sans-serif;
     }
 
-    .btn {
-        background: white;
-        padding: 8px 14px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        cursor: pointer;
-        font-size: 14px;
+    .toolbar button {
+      margin-bottom: 6px;
+      width: 120px;
+      padding: 7px;
+      font-size: 14px;
+      cursor: pointer;
     }
-</style>
+  </style>
 </head>
 
 <body>
@@ -39,73 +40,86 @@
 <div id="cesiumContainer"></div>
 
 <div class="toolbar">
-    <button class="btn" onclick="viewer.camera.flyHome()">إعادة المركز</button>
-    <button class="btn" onclick="toggleRoads()">إظهار / إخفاء الطرق</button>
+  <button onclick="toggleRoads()">إظهار / إخفاء الطرق</button><br>
+  <button onclick="resetView()">إعادة المركز</button>
 </div>
 
 <script>
-// -------------------------------
-// 1) إنشاء العارض
-// -------------------------------
-const viewer = new Cesium.Viewer("cesiumContainer", {
-    terrainProvider: Cesium.createWorldTerrain(),
+  // مفتاح Bing Maps (مفتاح عام مجاني من Cesium)
+  Cesium.Ion.defaultAccessToken = '';
+
+  const viewer = new Cesium.Viewer("cesiumContainer", {
+    terrain: Cesium.Terrain.fromWorldTerrain(),
+    imageryProvider: new Cesium.IonImageryProvider({ assetId: 3 }), // Bing Aerial
+    baseLayerPicker: false,
+    geocoder: false,
+    homeButton: false,
+    navigationHelpButton: false,
+    sceneModePicker: false,
     timeline: false,
-    animation: false,
-});
+    animation: false
+  });
 
-// -------------------------------
-// 2) تحميل طبقة الطرق (GeoJSON)
-// -------------------------------
-let roadsLayerVisible = true;
+  // ============================================================
+  // 🎯 تحميل طبقة المباني (SLPK)
+  // ============================================================
+  const buildingsTileset = viewer.scene.primitives.add(
+    new Cesium.Cesium3DTileset({
+      url:
+"https://rawcdn.githack.com/husseinsmart-droid/smart-anah-site/47d2d766445b249384b530510e1bb80e25a874a6/assets/digital-twin/anah_buildings02.slpk"
+    })
+  );
 
-const roadsPromise = Cesium.GeoJsonDataSource.load(
+  buildingsTileset.readyPromise.then(() => {
+    console.log("✔ تمت إضافة المباني");
+  });
+
+  // ============================================================
+  // 🎯 تحميل الطرق (GeoJSON)
+  // ============================================================
+  let roadsLayer;
+
+  Cesium.GeoJsonDataSource.load(
     "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/digital-twin/Roads02.geojson",
     {
-        stroke: Cesium.Color.YELLOW,
-        fill: Cesium.Color.YELLOW.withAlpha(0.4),
-        strokeWidth: 2
+      clampToGround: true,
+      stroke: Cesium.Color.YELLOW,
+      strokeWidth: 2
     }
-);
+  ).then((ds) => {
+    roadsLayer = ds;
+    viewer.dataSources.add(ds);
+    console.log("✔ تمت إضافة الطرق");
+  }).catch(err => {
+    console.error("خطأ تحميل الطرق:", err);
+  });
 
-let roadsLayer;
+  // ============================================================
+  // 🎯 دالة إظهار وإخفاء الطرق
+  // ============================================================
+  function toggleRoads() {
+    if (roadsLayer) {
+      roadsLayer.show = !roadsLayer.show;
+    }
+  }
 
-roadsPromise.then((dataSource) => {
-    roadsLayer = dataSource;
-    viewer.dataSources.add(dataSource);
-
-    dataSource.entities.values.forEach(entity => {
-        if (entity.polyline) {
-            entity.polyline.width = 2;
-            entity.polyline.material = Cesium.Color.YELLOW;
-        }
+  // ============================================================
+  // 🎯 دالة إعادة المركز على مدينة عَنّة
+  // ============================================================
+  function resetView() {
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(41.9815, 34.4690, 2500),
+      orientation: {
+        heading: Cesium.Math.toRadians(0),
+        pitch: Cesium.Math.toRadians(-45),
+        roll: 0
+      }
     });
+  }
 
-}).catch((error) => {
-    console.error("فشل تحميل طبقة الطرق:", error);
-});
+  // تشغيلها عند فتح الصفحة
+  setTimeout(resetView, 2000);
 
-// -------------------------------
-// 3) تحميل طبقة المباني SLPK
-// -------------------------------
-const buildingsTileset = new Cesium.Cesium3DTileset({
-    url: "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/digital-twin/anah_buildings02.slpk"
-});
-
-viewer.scene.primitives.add(buildingsTileset);
-
-buildingsTileset.readyPromise.then(() => {
-    console.log("تم تحميل المباني بنجاح");
-}).catch(error => {
-    console.error("فشل تحميل المباني:", error);
-});
-
-// -------------------------------
-// 4) وظيفة إظهار وإخفاء الطرق
-// -------------------------------
-function toggleRoads() {
-    if (!roadsLayer) return;
-    roadsLayer.show = !roadsLayer.show;
-}
 </script>
 
 </body>
