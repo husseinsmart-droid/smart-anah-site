@@ -30,39 +30,41 @@
       "esri/Map",
       "esri/views/SceneView",
       "esri/layers/SceneLayer",
-      "esri/layers/GeoJSONLayer"
-    ], function (Map, SceneView, SceneLayer, GeoJSONLayer) {
+      "esri/layers/GeoJSONLayer",
+      "esri/layers/ElevationLayer"
+    ], function (Map, SceneView, SceneLayer, GeoJSONLayer, ElevationLayer) {
 
       //--------------------------------------
-      // 1) خريطة بدون أي Basemap
+      // 1) منع ArcGIS من تحميل أي خريطة افتراضية
       //--------------------------------------
-      const map = new Map({
-        basemap: null,
-        ground: "world-elevation"
+      const emptyElevation = new ElevationLayer({
+        url: null,                 // لا يوجد مصدر Elevation
+        loadError: () => {}        // منع الاخطاء
       });
 
-      //--------------------------------------
-      // 2) إعداد المشهد
-      //--------------------------------------
+      const map = new Map({
+        basemap: null,             // حذف أي Basemap
+        ground: { layers: [] }     // حذف elevation بالكامل
+      });
+
       const view = new SceneView({
         container: "viewDiv",
         map: map,
-        camera: {
-          position: { x: 41.985, y: 34.37, z: 1500 },
-          tilt: 65
-        },
+        qualityProfile: "low",
         environment: {
-          background: {
-            type: "color",
-            color: "#e6e6e6"   // خلفية رمادية بسيطة بدون صور
-          },
+          background: { type: "color", color: "#e6e6e6" },   // خلفية فقط
           starsEnabled: false,
-          atmosphereEnabled: false
+          atmosphereEnabled: false,
+          lighting: { directShadowsEnabled: false }
+        },
+        camera: {
+          position: [41.985, 34.37, 1500],
+          tilt: 65
         }
       });
 
       //--------------------------------------
-      // 3) طبقة المباني SLPK
+      // 2) طبقة المباني SLPK
       //--------------------------------------
       const buildings = new SceneLayer({
         url: "./assets/digital-twin/anahcityscenes06.slpk"
@@ -70,7 +72,7 @@
       map.add(buildings);
 
       //--------------------------------------
-      // 4) طبقة الطرق Roads02.geojson
+      // 3) طبقة الطرق
       //--------------------------------------
       const roads02 = new GeoJSONLayer({
         url: "./assets/digital-twin/Roads02.geojson",
