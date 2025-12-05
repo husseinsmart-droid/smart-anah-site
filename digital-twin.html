@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>التوأم الرقمي — مدينة عَنّة</title>
 
-  <!-- ArcGIS JS API -->
   <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
   <script src="https://js.arcgis.com/4.30/"></script>
 
@@ -15,8 +14,8 @@
       margin: 0;
       height: 100%;
       width: 100%;
-      font-family: "Segoe UI", Arial;
       overflow: hidden;
+      font-family: sans-serif;
     }
 
     .toolbar {
@@ -29,10 +28,10 @@
     }
 
     .btn {
-      background:#ffffff;
+      background:#fff;
+      border:1px solid #ccc;
       padding:8px 14px;
-      border:1px solid #ddd;
-      border-radius:10px;
+      border-radius:8px;
       cursor:pointer;
       box-shadow:0 2px 8px rgba(0,0,0,.15);
     }
@@ -43,7 +42,7 @@
   <div id="viewDiv"></div>
 
   <div class="toolbar">
-    <button id="btnToggleRoads" class="btn">إظهار / إخفاء الطرق</button>
+    <button id="btnRoads" class="btn">إظهار / إخفاء الطرق</button>
   </div>
 
   <script>
@@ -53,28 +52,30 @@
       "esri/layers/GeoJSONLayer"
     ], function(Map, SceneView, GeoJSONLayer) {
 
-      // ----------- طبقة الطرق GeoJSON -----------
+      // رابط RAW الصحيح
+      const roadsUrl =
+        "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/city3d/Roads02.geojson";
+
+      // طبقة الطرق
       const roadsLayer = new GeoJSONLayer({
-        url: "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/city3d/Roads02.geojson",
+        url: roadsUrl,
         elevationInfo: { mode: "on-the-ground" },
         renderer: {
           type: "simple",
           symbol: {
             type: "simple-line",
-            color: [0, 255, 255, 1],   // سماوي واضح
-            width: 2.5
+            color: [255, 0, 0, 1],
+            width: 2
           }
         }
       });
 
-      // ----------- إعداد الخريطة بدون صورة فضائية -----------
       const map = new Map({
-        basemap: null,           // ❗ إزالة الصورة الفضائية بالكامل
+        basemap: "satellite",
         ground: "world-elevation",
         layers: [roadsLayer]
       });
 
-      // ----------- إعداد المشهد -----------
       const view = new SceneView({
         container: "viewDiv",
         map: map,
@@ -82,22 +83,14 @@
           position: {
             longitude: 41.9866,
             latitude: 34.3758,
-            z: 850
+            z: 1200
           },
           tilt: 65
-        },
-        environment: {
-          background: {
-            type: "color",
-            color: "#e5e5e5"      // أرضية فاتحة بدون صور
-          },
-          starsEnabled: false,
-          atmosphereEnabled: false
         }
       });
 
-      // ----------- زر إظهار / إخفاء الطرق -----------
-      document.getElementById("btnToggleRoads").onclick = () => {
+      // زر إظهار / إخفاء الطرق
+      document.getElementById("btnRoads").onclick = () => {
         roadsLayer.visible = !roadsLayer.visible;
       };
 
