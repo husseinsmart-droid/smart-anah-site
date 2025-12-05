@@ -2,51 +2,42 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Digital Twin – Roads Only</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.113/Cesium.js"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.113/Widgets/widgets.css" rel="stylesheet" />
+  <title>الطرق فقط — التوأم الرقمي</title>
   <style>
-    html, body, #cesiumContainer {
-      width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+    html, body, #map {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #ffffff; /* خلفية بيضاء */
     }
   </style>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 
 <body>
+  <div id="map"></div>
 
-<div id="cesiumContainer"></div>
+  <script>
+    // إنشاء الخريطة بدون أي طبقات أساس
+    const map = L.map('map', {
+      zoomControl: true,
+      attributionControl: false
+    }).setView([34.3474, 41.9150], 15); // مركز عانة
 
-<script>
-  // إنشاء Viewer بدون أي طبقات أرضية أو صور
-  const viewer = new Cesium.Viewer("cesiumContainer", {
-    imageryProvider: false,        // لا صور
-    baseLayerPicker: false,
-    skyAtmosphere: false,
-    skyBox: false,
-    timeline: false,
-    animation: false,
-    sceneModePicker: false,
-    geocoder: false,
-    homeButton: false,
-    fullscreenButton: false,
-    navigationHelpButton: false
-  });
-
-  // إخفاء الأرض تماماً
-  viewer.scene.globe.show = false;
-
-  // تحميل طبقة الطرق فقط
-  Cesium.GeoJsonDataSource.load('./assets/city3d/Roads02.geojson', {
-    stroke: Cesium.Color.YELLOW,
-    fill: Cesium.Color.YELLOW,
-    strokeWidth: 2,
-    clampToGround: false
-  }).then(function(ds){
-    viewer.dataSources.add(ds);
-    viewer.flyTo(ds);
-  });
-</script>
-
+    // تحميل طبقة الطرق GeoJSON
+    fetch("https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/city3d/Roads02.geojson")
+      .then(res => res.json())
+      .then(data => {
+        L.geoJSON(data, {
+          style: {
+            color: "#000000",
+            weight: 1.2
+          }
+        }).addTo(map);
+      });
+  </script>
 </body>
 </html>
