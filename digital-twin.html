@@ -1,80 +1,111 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>Digital Twin - Anah Smart City</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>التوأم الرقمي – مدينة عنّة</title>
 
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
-    <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.113/Cesium.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.113/Widgets/widgets.css" rel="stylesheet" />
 
-    <style>
-        html, body, #cesiumContainer {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-    </style>
+<style>
+    html, body, #cesiumContainer {
+        width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        font-family: "Cairo", sans-serif;
+    }
+
+    .toolbar {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn {
+        background: white;
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        font-size: 14px;
+    }
+</style>
 </head>
+
 <body>
 
 <div id="cesiumContainer"></div>
 
+<div class="toolbar">
+    <button class="btn" onclick="viewer.camera.flyHome()">إعادة المركز</button>
+    <button class="btn" onclick="toggleRoads()">إظهار / إخفاء الطرق</button>
+</div>
+
 <script>
-// -----------------------
-// إعداد المشهد الأساسي
-// -----------------------
+// -------------------------------
+// 1) إنشاء العارض
+// -------------------------------
 const viewer = new Cesium.Viewer("cesiumContainer", {
     terrainProvider: Cesium.createWorldTerrain(),
-    animation: false,
     timeline: false,
-    baseLayerPicker: true,
-    sceneMode: Cesium.SceneMode.SCENE3D
+    animation: false,
 });
 
-// ------------------------------
-// 1) طبقة الطرق (GeoJSON)
-// ------------------------------
-Cesium.GeoJsonDataSource.load(
+// -------------------------------
+// 2) تحميل طبقة الطرق (GeoJSON)
+// -------------------------------
+let roadsLayerVisible = true;
+
+const roadsPromise = Cesium.GeoJsonDataSource.load(
     "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/digital-twin/Roads02.geojson",
     {
         stroke: Cesium.Color.YELLOW,
-        fill: Cesium.Color.YELLOW,
-        strokeWidth: 2,
-        clampToGround: true
+        fill: Cesium.Color.YELLOW.withAlpha(0.4),
+        strokeWidth: 2
     }
-).then(function(dataSource) {
+);
+
+let roadsLayer;
+
+roadsPromise.then((dataSource) => {
+    roadsLayer = dataSource;
     viewer.dataSources.add(dataSource);
-    console.log("Roads layer loaded");
-}).catch(function(error) {
-    console.error("Error loading Roads layer:", error);
+
+    dataSource.entities.values.forEach(entity => {
+        if (entity.polyline) {
+            entity.polyline.width = 2;
+            entity.polyline.material = Cesium.Color.YELLOW;
+        }
+    });
+
+}).catch((error) => {
+    console.error("فشل تحميل طبقة الطرق:", error);
 });
 
-// ------------------------------
-// 2) طبقة المباني (SLPK)
-// ------------------------------
-const buildingsLayer = new Cesium.Cesium3DTileset({
+// -------------------------------
+// 3) تحميل طبقة المباني SLPK
+// -------------------------------
+const buildingsTileset = new Cesium.Cesium3DTileset({
     url: "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/digital-twin/anah_buildings02.slpk"
 });
 
-viewer.scene.primitives.add(buildingsLayer);
+viewer.scene.primitives.add(buildingsTileset);
 
-buildingsLayer.readyPromise.then(() => {
-    console.log("Buildings SLPK loaded successfully");
-
-    // تحريك الكاميرا تلقائياً عند تحميل المباني
-    viewer.zoomTo(buildingsLayer);
-}).catch((error) => {
-    console.error("Error loading buildings SLPK:", error);
+buildingsTileset.readyPromise.then(() => {
+    console.log("تم تحميل المباني بنجاح");
+}).catch(error => {
+    console.error("فشل تحميل المباني:", error);
 });
 
-// ------------------------------
-// 3) تحسين الإضاءة والظلال
-// ------------------------------
-viewer.scene.globe.enableLighting = true;
-viewer.shadows = true;
-
+// -------------------------------
+// 4) وظيفة إظهار وإخفاء الطرق
+// -------------------------------
+function toggleRoads() {
+    if (!roadsLayer) return;
+    roadsLayer.show = !roadsLayer.show;
+}
 </script>
 
 </body>
