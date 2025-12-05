@@ -1,110 +1,42 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>التوأم الرقمي — مدينة عَنّة</title>
+<script>
+  require([
+    "esri/Map",
+    "esri/views/SceneView",
+    "esri/layers/GeoJSONLayer"
+  ], function(Map, SceneView, GeoJSONLayer) {
 
-  <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
-  <script src="https://js.arcgis.com/4.30/"></script>
-
-  <style>
-    html, body, #viewDiv {
-      padding: 0;
-      margin: 0;
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      font-family: "Segoe UI", Arial;
-    }
-
-    .toolbar {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      z-index: 20;
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn {
-      background:#ffffff;
-      padding:8px 14px;
-      border:1px solid #ddd;
-      border-radius:10px;
-      cursor:pointer;
-      box-shadow:0 2px 8px rgba(0,0,0,.12);
-    }
-  </style>
-</head>
-
-<body>
-  <div id="viewDiv"></div>
-
-  <div class="toolbar">
-    <button id="btnReset" class="btn">إعادة التمركز</button>
-    <button id="btnToggleRoads" class="btn">إظهار / إخفاء الطرق</button>
-  </div>
-
-  <script>
-    require([
-      "esri/Map",
-      "esri/views/SceneView",
-      "esri/layers/GeoJSONLayer"
-    ], function(Map, SceneView, GeoJSONLayer) {
-
-      // --- طبقة الطرق (GeoJSON)
-      const roadsLayer = new GeoJSONLayer({
-        url: "/assets/city3d/Roads02.geojson",
-        renderer: {
-          type: "simple",
-          symbol: {
-            type: "simple-line",
-            color: "#00e1ff",
-            width: 2
-          }
+    // طبقة الطرق GeoJSON
+    const roadsLayer = new GeoJSONLayer({
+      url: "/assets/city3d/Roads02.geojson",
+      renderer: {
+        type: "simple",
+        symbol: {
+          type: "line-3d",
+          symbolLayers: [{
+            type: "path",
+            profile: "quad",
+            width: 6,
+            material: { color: "#00e1ff" },
+            cap: "round",
+            join: "round"
+          }]
         }
-      });
-
-      // --- إعداد الخريطة
-      const map = new Map({
-        basemap: "satellite",
-        ground: "world-elevation",
-        layers: [roadsLayer]
-      });
-
-      // --- إعداد المشهد
-      const view = new SceneView({
-        container: "viewDiv",
-        map: map,
-        camera: {
-          position: {
-            longitude: 41.9866,
-            latitude: 34.3758,
-            z: 900
-          },
-          tilt: 65
-        }
-      });
-
-      // --- زر إعادة التمركز
-      document.getElementById("btnReset").onclick = () => {
-        view.goTo({
-          position: {
-            longitude: 41.9866,
-            latitude: 34.3758,
-            z: 900
-          },
-          tilt: 65
-        });
-      };
-
-      // --- إظهار / إخفاء طبقة الطرق
-      document.getElementById("btnToggleRoads").onclick = () => {
-        roadsLayer.visible = !roadsLayer.visible;
-      };
-
+      }
     });
-  </script>
-</body>
-</html>
+
+    const map = new Map({
+      basemap: "satellite",
+      ground: "world-elevation",
+      layers: [roadsLayer]
+    });
+
+    const view = new SceneView({
+      container: "viewDiv",
+      map: map,
+      camera: {
+        position: { longitude: 41.9866, latitude: 34.3758, z: 900 },
+        tilt: 65
+      }
+    });
+  });
+</script>
