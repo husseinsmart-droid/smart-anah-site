@@ -1,64 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>طبقة الطرق — مدينة عَنّة</title>
-
-  <!-- ArcGIS JS API -->
-  <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css" />
-  <script src="https://js.arcgis.com/4.30/"></script>
-
+  <title>Digital Twin – Roads Only</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.113/Cesium.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.113/Widgets/widgets.css" rel="stylesheet" />
   <style>
-    html, body, #viewDiv {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      background: #ffffff;
-      overflow: hidden;
+    html, body, #cesiumContainer {
+      width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
     }
   </style>
 </head>
 
 <body>
-  <div id="viewDiv"></div>
 
-  <script>
-    require([
-      "esri/Map",
-      "esri/views/MapView",
-      "esri/layers/GeoJSONLayer"
-    ], function (Map, MapView, GeoJSONLayer) {
+<div id="cesiumContainer"></div>
 
-      // رابط الطرق (GeoJSON) من GitHub RAW
-      const roadsLayer = new GeoJSONLayer({
-        url: "https://raw.githubusercontent.com/husseinsmart-droid/smart-anah-site/main/assets/city3d/Roads04.geojson",
-        renderer: {
-          type: "simple",
-          symbol: {
-            type: "simple-line",
-            color: [0, 100, 255],
-            width: 1.5
-          }
-        }
-      });
+<script>
+  // إنشاء Viewer بدون أي طبقات أرضية أو صور
+  const viewer = new Cesium.Viewer("cesiumContainer", {
+    imageryProvider: false,        // لا صور
+    baseLayerPicker: false,
+    skyAtmosphere: false,
+    skyBox: false,
+    timeline: false,
+    animation: false,
+    sceneModePicker: false,
+    geocoder: false,
+    homeButton: false,
+    fullscreenButton: false,
+    navigationHelpButton: false
+  });
 
-      // الخريطة بدون أي Basemap
-      const map = new Map({
-        basemap: null,
-        layers: [roadsLayer]
-      });
+  // إخفاء الأرض تماماً
+  viewer.scene.globe.show = false;
 
-      // عرض 2D بسيط
-      const view = new MapView({
-        container: "viewDiv",
-        map: map,
-        center: [41.9866, 34.3758], // مركز عَنّة
-        zoom: 14
-      });
+  // تحميل طبقة الطرق فقط
+  Cesium.GeoJsonDataSource.load('./assets/city3d/Roads02.geojson', {
+    stroke: Cesium.Color.YELLOW,
+    fill: Cesium.Color.YELLOW,
+    strokeWidth: 2,
+    clampToGround: false
+  }).then(function(ds){
+    viewer.dataSources.add(ds);
+    viewer.flyTo(ds);
+  });
+</script>
 
-    });
-  </script>
 </body>
 </html>
