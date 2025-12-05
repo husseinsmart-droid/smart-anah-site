@@ -3,92 +3,66 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>التوأم الرقمي – مدينة عَنّة الذكية</title>
+  <title>التوأم الرقمي – مدينة عَنّة</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/themes/light/main.css">
   <script src="https://js.arcgis.com/4.30/"></script>
 
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-    }
-    #viewDiv {
-      width: 100%;
-      height: 100%;
-    }
+    html, body { margin:0; padding:0; height:100%; overflow:hidden; }
+    #viewDiv { width:100%; height:100%; }
   </style>
 </head>
 
 <body>
-  <div id="viewDiv"></div>
+<div id="viewDiv"></div>
 
-  <script>
-    require([
-      "esri/Map",
-      "esri/views/SceneView",
-      "esri/layers/SceneLayer",
-      "esri/layers/GeoJSONLayer",
-      "esri/layers/ElevationLayer"
-    ], function (Map, SceneView, SceneLayer, GeoJSONLayer, ElevationLayer) {
+<script>
+require([
+  "esri/Map",
+  "esri/views/SceneView",
+  "esri/layers/SceneLayer",
+  "esri/layers/GeoJSONLayer"
+], function(Map, SceneView, SceneLayer, GeoJSONLayer) {
 
-      //--------------------------------------
-      // 1) منع ArcGIS من تحميل أي خريطة افتراضية
-      //--------------------------------------
-      const emptyElevation = new ElevationLayer({
-        url: null,                 // لا يوجد مصدر Elevation
-        loadError: () => {}        // منع الاخطاء
-      });
+  const map = new Map({
+    basemap: null,
+    ground: { layers: [] }
+  });
 
-      const map = new Map({
-        basemap: null,             // حذف أي Basemap
-        ground: { layers: [] }     // حذف elevation بالكامل
-      });
+  const view = new SceneView({
+    container: "viewDiv",
+    map: map,
+    camera: {
+      position: { x: 41.985, y: 34.37, z: 1200 },
+      tilt: 65
+    },
+    environment: {
+      background: { type: "color", color: "#d9d9d9" },
+      starsEnabled: false,
+      atmosphereEnabled: false
+    }
+  });
 
-      const view = new SceneView({
-        container: "viewDiv",
-        map: map,
-        qualityProfile: "low",
-        environment: {
-          background: { type: "color", color: "#e6e6e6" },   // خلفية فقط
-          starsEnabled: false,
-          atmosphereEnabled: false,
-          lighting: { directShadowsEnabled: false }
-        },
-        camera: {
-          position: [41.985, 34.37, 1500],
-          tilt: 65
-        }
-      });
+  // 🔵 تحميل الـ SLPK مباشرة من RAW GitHub
+  const buildings = new SceneLayer({
+    url: "https://raw.githubusercontent.com/huseinsmart-droid/smart-anah-site/main/assets/digital-twin/anahcityscenes06.slpk"
+  });
+  map.add(buildings);
 
-      //--------------------------------------
-      // 2) طبقة المباني SLPK
-      //--------------------------------------
-      const buildings = new SceneLayer({
-        url: "./assets/digital-twin/anahcityscenes06.slpk"
-      });
-      map.add(buildings);
+  // 🟡 طبقة الطرق GeoJSON
+  const roads02 = new GeoJSONLayer({
+    url: "./assets/digital-twin/Roads02.geojson",
+    elevationInfo: { mode: "on-the-ground" },
+    renderer: {
+      type: "simple",
+      symbol: { type: "simple-line", color: "yellow", width: 2 }
+    }
+  });
+  map.add(roads02);
 
-      //--------------------------------------
-      // 3) طبقة الطرق
-      //--------------------------------------
-      const roads02 = new GeoJSONLayer({
-        url: "./assets/digital-twin/Roads02.geojson",
-        elevationInfo: { mode: "on-the-ground" },
-        renderer: {
-          type: "simple",
-          symbol: {
-            type: "simple-line",
-            color: [255, 200, 0, 1],
-            width: 2
-          }
-        }
-      });
-      map.add(roads02);
+});
+</script>
 
-    });
-  </script>
 </body>
 </html>
