@@ -14,7 +14,6 @@
       padding: 0;
       height: 100%;
       overflow: hidden;
-      font-family: sans-serif;
     }
     #viewDiv {
       width: 100%;
@@ -35,25 +34,35 @@
     ], function (Map, SceneView, SceneLayer, GeoJSONLayer) {
 
       //--------------------------------------
-      // 1) إعداد الخريطة ثلاثية الأبعاد
+      // 1) خريطة بدون أي Basemap
       //--------------------------------------
       const map = new Map({
-        basemap: "satellite",
+        basemap: null,
         ground: "world-elevation"
       });
 
+      //--------------------------------------
+      // 2) إعداد المشهد
+      //--------------------------------------
       const view = new SceneView({
         container: "viewDiv",
         map: map,
         camera: {
-          position: { x: 41.985, y: 34.37, z: 900 }, // موقع عنّة
-          tilt: 65,
-          heading: 45
+          position: { x: 41.985, y: 34.37, z: 1500 },
+          tilt: 65
+        },
+        environment: {
+          background: {
+            type: "color",
+            color: "#e6e6e6"   // خلفية رمادية بسيطة بدون صور
+          },
+          starsEnabled: false,
+          atmosphereEnabled: false
         }
       });
 
       //--------------------------------------
-      // 2) طبقة المباني SLPK
+      // 3) طبقة المباني SLPK
       //--------------------------------------
       const buildings = new SceneLayer({
         url: "./assets/digital-twin/anahcityscenes06.slpk"
@@ -61,7 +70,7 @@
       map.add(buildings);
 
       //--------------------------------------
-      // 3) طبقة الطرق Roads02.geojson
+      // 4) طبقة الطرق Roads02.geojson
       //--------------------------------------
       const roads02 = new GeoJSONLayer({
         url: "./assets/digital-twin/Roads02.geojson",
@@ -70,7 +79,7 @@
           type: "simple",
           symbol: {
             type: "simple-line",
-            color: [255, 255, 0, 1], // أصفر
+            color: [255, 200, 0, 1],
             width: 2
           }
         }
