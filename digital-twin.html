@@ -1,12 +1,35 @@
-<script type="module"
-  src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-</script>
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8">
+  <title>Digital Twin Test</title>
 
-<model-viewer
-  src="/assets/digital-twin/anah_city4_0.glb"
-  style="width:100%; height:100vh;"
-  camera-controls
-  auto-rotate
-  shadow-intensity="1"
-  exposure="1">
-</model-viewer>
+  <!-- model-viewer -->
+  <script type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+  </script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      background: #f3f4f6;
+    }
+  </style>
+</head>
+
+<body>
+  <model-viewer
+    src="/assets/digital-twin/anah_city4_0.glb"
+    camera-controls
+    auto-rotate
+    exposure="1">
+  </model-viewer>
+</body>
+</html>
