@@ -2,32 +2,29 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>التوأم الرقمي - عنه</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digital Twin Test</title>
   <style>
     html, body { height: 100%; margin: 0; }
-    #digital-twin { height: 100vh; width: 100vw; overflow: hidden; background: #f2f2f2; }
+    #digital-twin { height: 100vh; width: 100vw; }
     canvas { display: block; }
   </style>
 </head>
-
 <body>
   <div id="digital-twin"></div>
 
   <script type="module">
     import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
     import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
-    import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
 
     const container = document.getElementById("digital-twin");
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf2f2f2);
 
-    const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100000);
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10000);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
@@ -36,70 +33,36 @@
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.9));
     const dir = new THREE.DirectionalLight(0xffffff, 0.9);
-    dir.position.set(300, 600, 300);
+    dir.position.set(50, 100, 50);
     scene.add(dir);
 
-    // اختبار سريع: مكعب حتى نتأكد أن الرسم شغال حتى لو فشل الملف
-    const testCube = new THREE.Mesh(
-      new THREE.BoxGeometry(50, 50, 50),
-      new THREE.MeshStandardMaterial({ color: 0x3b82f6 })
-    );
-    testCube.position.set(0, 25, 0);
-    scene.add(testCube);
+    // === Test cube (لاختبار أن العرض يعمل) ===
+    const geo = new THREE.BoxGeometry(20, 20, 20);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x3b82f6 });
+    const cube = new THREE.Mesh(geo, mat);
+    scene.add(cube);
 
-    // ضع الكاميرا مبدئياً حتى يظهر المكعب
-    camera.position.set(150, 120, 150);
-    controls.target.set(0, 25, 0);
+    camera.position.set(60, 40, 60);
+    controls.target.set(0, 0, 0);
     controls.update();
 
-    const loader = new GLTFLoader();
-    const url = "/assets/digital-twin/Anahcity2_0.glb";
-
-    loader.load(
-      url,
-      (gltf) => {
-        // عند نجاح التحميل نحذف المكعب ونضيف المدينة
-        scene.remove(testCube);
-
-        const model = gltf.scene;
-        scene.add(model);
-
-        const box = new THREE.Box3().setFromObject(model);
-        const size = box.getSize(new THREE.Vector3()).length();
-        const center = box.getCenter(new THREE.Vector3());
-
-        controls.target.copy(center);
-        camera.position.copy(center).add(new THREE.Vector3(size * 0.6, size * 0.3, size * 0.6));
-        camera.near = Math.max(0.1, size / 1000);
-        camera.far  = size * 10;
-        camera.updateProjectionMatrix();
-        controls.update();
-
-        console.log("GLB loaded OK:", url, "size:", size, "center:", center);
-      },
-      (xhr) => {
-        // تقدم التحميل (اختياري)
-        // console.log((xhr.loaded / (xhr.total || 1)) * 100, "%");
-      },
-      (err) => {
-        console.error("GLB load FAILED:", url, err);
-      }
-    );
+    function resize() {
+      const w = container.clientWidth || window.innerWidth;
+      const h = container.clientHeight || window.innerHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener("resize", resize);
+    resize();
 
     function animate() {
       requestAnimationFrame(animate);
+      cube.rotation.y += 0.005;
       controls.update();
       renderer.render(scene, camera);
     }
     animate();
-
-    window.addEventListener("resize", () => {
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    });
   </script>
 </body>
 </html>
