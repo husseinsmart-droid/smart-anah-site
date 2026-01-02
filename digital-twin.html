@@ -1,27 +1,24 @@
 <!doctype html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>التوأم الرقمي - عنة</title>
+  <title>التوأم الرقمي - مدينة عنه الذكية</title>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
-    html, body { margin:0; height:100%; }
-    model-viewer { width:100%; height:100vh; display:block; background:#f2f2f2; }
+    html, body { height: 100%; margin: 0; }
+    model-viewer { width: 100%; height: 100vh; background: #f2f2f2; }
   </style>
-
-  <!-- Model Viewer -->
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
-
 <body>
   <model-viewer
-    src="/assets/digital-twin/Anahcity2_0.glb"
+    src="assets/digital-twin/Anahcity2_0.glb"
     camera-controls
-    exposure="1"
-    shadow-intensity="0.6"
     autoplay
-    ar
-  ></model-viewer>
+    exposure="1"
+    shadow-intensity="0.6">
+  </model-viewer>
 </body>
 </html>
