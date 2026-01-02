@@ -2,12 +2,12 @@
 <html lang="ar">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Digital Twin Test</title>
   <style>
-    html, body { margin: 0; height: 100%; }
-    #digital-twin { width: 100%; height: 100vh; background: #f2f2f2; }
-    canvas { display: block; }
+    html, body { margin:0; height:100%; }
+    #digital-twin { width:100%; height:100vh; }
+    canvas { display:block; }
   </style>
 </head>
 <body>
@@ -22,38 +22,26 @@
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf2f2f2);
 
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10000);
+    const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 10000);
     camera.position.set(3, 2, 3);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio || 1);
+    renderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.target.set(0, 0, 0);
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-    const dir = new THREE.DirectionalLight(0xffffff, 0.9);
-    dir.position.set(5, 10, 7);
+    const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+    dir.position.set(5, 10, 5);
     scene.add(dir);
 
-    // Test cube
-    const cube = new THREE.Mesh(
-      new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshStandardMaterial({ color: 0x2b6cb0 })
-    );
+    // مكعب للاختبار
+    const geo = new THREE.BoxGeometry(1, 1, 1);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x3b82f6 });
+    const cube = new THREE.Mesh(geo, mat);
     scene.add(cube);
-
-    function resize() {
-      const w = container.clientWidth || window.innerWidth;
-      const h = container.clientHeight || window.innerHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h, false);
-    }
-    window.addEventListener("resize", resize);
-    resize();
 
     function animate() {
       requestAnimationFrame(animate);
@@ -63,7 +51,13 @@
     }
     animate();
 
-    console.log("Three.js test running ✅");
+    window.addEventListener("resize", () => {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    });
   </script>
 </body>
 </html>
