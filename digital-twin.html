@@ -1,68 +1,27 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Digital Twin Test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>التوأم الرقمي - عنة</title>
+
   <style>
-    html, body { height: 100%; margin: 0; }
-    #digital-twin { height: 100vh; width: 100vw; }
-    canvas { display: block; }
+    html, body { margin:0; height:100%; }
+    model-viewer { width:100%; height:100vh; display:block; background:#f2f2f2; }
   </style>
+
+  <!-- Model Viewer -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
+
 <body>
-  <div id="digital-twin"></div>
-
-  <script type="module">
-    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
-    import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
-
-    const container = document.getElementById("digital-twin");
-
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf2f2f2);
-
-    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10000);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-
-    scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-    const dir = new THREE.DirectionalLight(0xffffff, 0.9);
-    dir.position.set(50, 100, 50);
-    scene.add(dir);
-
-    // === Test cube (لاختبار أن العرض يعمل) ===
-    const geo = new THREE.BoxGeometry(20, 20, 20);
-    const mat = new THREE.MeshStandardMaterial({ color: 0x3b82f6 });
-    const cube = new THREE.Mesh(geo, mat);
-    scene.add(cube);
-
-    camera.position.set(60, 40, 60);
-    controls.target.set(0, 0, 0);
-    controls.update();
-
-    function resize() {
-      const w = container.clientWidth || window.innerWidth;
-      const h = container.clientHeight || window.innerHeight;
-      renderer.setSize(w, h, false);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-    }
-    window.addEventListener("resize", resize);
-    resize();
-
-    function animate() {
-      requestAnimationFrame(animate);
-      cube.rotation.y += 0.005;
-      controls.update();
-      renderer.render(scene, camera);
-    }
-    animate();
-  </script>
+  <model-viewer
+    src="/assets/digital-twin/Anahcity2_0.glb"
+    camera-controls
+    exposure="1"
+    shadow-intensity="0.6"
+    autoplay
+    ar
+  ></model-viewer>
 </body>
 </html>
