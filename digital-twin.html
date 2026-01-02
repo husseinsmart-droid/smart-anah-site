@@ -1,32 +1,105 @@
 <!doctype html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>التوأم الرقمي - عنه</title>
-
-  <!-- model-viewer -->
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-
   <style>
-    html, body { height: 100%; margin: 0; background: #f2f2f2; }
-    model-viewer {
-      width: 100vw;
-      height: 100vh;
-      display: block;
-      background: #f2f2f2;
-    }
+    html, body { height: 100%; margin: 0; }
+    #digital-twin { height: 100vh; width: 100vw; overflow: hidden; background: #f2f2f2; }
+    canvas { display: block; }
   </style>
 </head>
 
 <body>
-  <model-viewer
-    src="/assets/digital-twin/Anahcity2_0.glb"
-    camera-controls
-    auto-rotate
-    exposure="1"
-    shadow-intensity="0.8"
-    loading="eager">
-  </model-viewer>
+  <div id="digital-twin"></div>
+
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+    import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+    import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
+
+    const container = document.getElementById("digital-twin");
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf2f2f2);
+
+    const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100000);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+    const dir = new THREE.DirectionalLight(0xffffff, 0.9);
+    dir.position.set(300, 600, 300);
+    scene.add(dir);
+
+    // اختبار سريع: مكعب حتى نتأكد أن الرسم شغال حتى لو فشل الملف
+    const testCube = new THREE.Mesh(
+      new THREE.BoxGeometry(50, 50, 50),
+      new THREE.MeshStandardMaterial({ color: 0x3b82f6 })
+    );
+    testCube.position.set(0, 25, 0);
+    scene.add(testCube);
+
+    // ضع الكاميرا مبدئياً حتى يظهر المكعب
+    camera.position.set(150, 120, 150);
+    controls.target.set(0, 25, 0);
+    controls.update();
+
+    const loader = new GLTFLoader();
+    const url = "/assets/digital-twin/Anahcity2_0.glb";
+
+    loader.load(
+      url,
+      (gltf) => {
+        // عند نجاح التحميل نحذف المكعب ونضيف المدينة
+        scene.remove(testCube);
+
+        const model = gltf.scene;
+        scene.add(model);
+
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3()).length();
+        const center = box.getCenter(new THREE.Vector3());
+
+        controls.target.copy(center);
+        camera.position.copy(center).add(new THREE.Vector3(size * 0.6, size * 0.3, size * 0.6));
+        camera.near = Math.max(0.1, size / 1000);
+        camera.far  = size * 10;
+        camera.updateProjectionMatrix();
+        controls.update();
+
+        console.log("GLB loaded OK:", url, "size:", size, "center:", center);
+      },
+      (xhr) => {
+        // تقدم التحميل (اختياري)
+        // console.log((xhr.loaded / (xhr.total || 1)) * 100, "%");
+      },
+      (err) => {
+        console.error("GLB load FAILED:", url, err);
+      }
+    );
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener("resize", () => {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    });
+  </script>
 </body>
 </html>
