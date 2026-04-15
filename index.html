@@ -82,6 +82,7 @@
   </style>
 </head>
 
+<body>
   <!-- الشريط العلوي -->
   <header class="fixed top-0 inset-x-0 bg-white/90 backdrop-blur border-b border-ink-200 z-50">
     <div class="max-w-6xl mx-auto flex justify-between items-center px-4 h-14">
@@ -93,19 +94,25 @@
         <a href="#services" class="text-ink-700 hover:text-ink-900">الخدمات</a>
         <a href="#platforms" class="text-ink-700 hover:text-ink-900">المنصّات</a>
         <a href="/digital-twin.html" class="text-ink-700 hover:text-ink-900">توأم عَنّة الرقمي</a>
+        <a href="/report.html" class="text-ink-700 hover:text-ink-900">التقرير</a>
         <a href="#opendata" class="text-ink-700 hover:text-ink-900">البيانات المفتوحة</a>
         <a href="#strategy" class="text-ink-700 hover:text-ink-900">الاستراتيجية</a>
       </nav>
       <div class="flex gap-3 text-sm font-semibold">
-  <a href="https://nodered.smart-anah.org/ui" target="_blank"
-     class="border border-ink-300 px-5 py-3 rounded-xl hover:bg-ink-100">
-     📊 لوحة البيانات
-  </a>
-  <a href="https://nodered.smart-anah.org/reports/index.html"
-     class="bg-brand-500 text-white px-5 py-3 rounded-xl hover:bg-brand-600">
-     🚨 أرسل بلاغ
-  </a>
-</div>
+        <a href="https://nodered.smart-anah.org/ui" target="_blank"
+           class="border border-ink-300 px-5 py-3 rounded-xl hover:bg-ink-100">
+           📊 لوحة البيانات
+        </a>
+        <a href="/report.html"
+           class="border border-ink-300 px-5 py-3 rounded-xl hover:bg-ink-100">
+           📘 تقرير المدينة الذكية
+        </a>
+        <a href="https://nodered.smart-anah.org/reports/index.html"
+           class="bg-brand-500 text-white px-5 py-3 rounded-xl hover:bg-brand-600">
+           🚨 أرسل بلاغ
+        </a>
+      </div>
+    </div>
   </header>
 
   <!-- الهيرو -->
@@ -131,6 +138,7 @@
           <a href="#services" class="bg-brand-500 text-white px-5 py-3 rounded-xl shadow-soft hover:bg-brand-600">استكشف الخدمات</a>
           <a href="https://nodered.smart-anah.org/ui/#/weather" class="border border-ink-300 px-5 py-3 rounded-xl hover:bg-ink-100">لوحة الطقس (مفتوحة)</a>
           <a href="/digital-twin.html" class="border border-ink-300 px-5 py-3 rounded-xl hover:bg-ink-100">توأم عَنّة الرقمي (3D)</a>
+          <a href="/report.html" class="border border-ink-300 px-5 py-3 rounded-xl hover:bg-ink-100">تصفح التقرير</a>
         </div>
       </div>
 
@@ -240,7 +248,7 @@
       <div class="grid md:grid-cols-3 gap-4">
         <a class="card hover:bg-ink-100" href="https://nodered.smart-anah.org/ui" target="_blank">
           <div class="flex items-center gap-2">
-            <svg class="w-6 h-6 text-accent-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M4 12h16v8H4v-8Zm2-8h12l2 4H4ل2-4Z"/></svg>
+            <svg class="w-6 h-6 text-accent-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M4 12h16v8H4v-8Zm2-8h12l2 4H4l2-4Z"/></svg>
             <div class="text-lg font-semibold text-ink-900">لوحة ضغط المياه</div>
           </div>
           <p class="mt-2 text-ink-700 text-sm">ثلاث حساسات + اتجاهات يوم/شهر/سنة.</p>
@@ -254,7 +262,7 @@
         </a>
         <a class="card hover:bg-ink-100" href="https://nodered.smart-anah.org/ui" target="_blank">
           <div class="flex items-center gap-2">
-            <svg class="w-6 h-6 text-amber-500" viewBox="0 0 24 24" fill="currentColor"><path d="M9 3h6l1 2h5v2H3V5h5ل1-2Zm1 6h2v9h-2V9Zm4 0h2v9h-2V9ZM5 7h14ل-1 14H6L5 7Z"/></svg>
+            <svg class="w-6 h-6 text-amber-500" viewBox="0 0 24 24" fill="currentColor"><path d="M9 3h6l1 2h5v2H3V5h5l1-2Zm1 6h2v9h-2V9Zm4 0h2v9h-2V9ZM5 7h14l-1 14H6L5 7Z"/></svg>
             <div class="text-lg font-semibold text-ink-900">لوحة النفايات الذكية</div>
           </div>
           <p class="mt-2 text-ink-700 text-sm">مستويات التعبئة وخريطة الحاويات.</p>
@@ -313,7 +321,7 @@
         </div>
         <div class="card">
           <div class="flex items-center gap-2">
-            <svg class="w-6 h-6 text-accent-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4Zm2 4h14ل-1 12H6L5 8Zm3 2v8h2v-8H8Zm4 0v8h2v-8h-2Z"/></svg>
+            <svg class="w-6 h-6 text-accent-blue" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4Zm2 4h14l-1 12H6L5 8Zm3 2v8h2v-8H8Zm4 0v8h2v-8h-2Z"/></svg>
             <div class="text-lg font-semibold text-ink-900">Water Pressure — Trends</div>
           </div>
           <p class="mt-2 text-ink-700 text-sm">CSV/JSON لاتجاهات الضغط اليومية/الشهرية.</p>
