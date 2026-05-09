@@ -39,23 +39,27 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans
 .coords{bottom:12px;}
 .datetime{bottom:48px;}
 
-.search-panel{
+.search-panel,.buffer-panel{
   position:absolute;top:82px;left:55px;z-index:1000;width:260px;
   background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
   border-radius:14px;padding:10px;box-shadow:0 6px 22px rgba(0,0,0,.25);
   display:none;
 }
-.search-panel.show{display:block;}
-.close-search{position:absolute;top:6px;right:9px;border:0;background:transparent;font-size:20px;cursor:pointer;}
-.search-panel h3{margin:0 0 8px;font-size:14px;color:#0f172a;}
-.search-panel input{
+.search-panel.show,.buffer-panel.show{display:block;}
+
+.close-search,.close-buffer{
+  position:absolute;top:6px;right:9px;border:0;background:transparent;font-size:20px;cursor:pointer;
+}
+.search-panel h3,.buffer-panel h3{margin:0 0 8px;font-size:14px;color:#0f172a;}
+
+.search-panel input,.buffer-panel input{
   width:100%;box-sizing:border-box;border:1px solid #cbd5e1;
   border-radius:8px;padding:7px;font-size:12px;margin-bottom:6px;
 }
-.search-panel button.main-btn,.coord-row button{
+.search-panel button.main-btn,.buffer-panel button.main-btn,.coord-row button{
   border:0;border-radius:8px;background:#0f172a;color:white;font-size:12px;cursor:pointer;
 }
-.search-panel button.main-btn{width:100%;padding:7px;}
+.search-panel button.main-btn,.buffer-panel button.main-btn{width:100%;padding:7px;}
 .coord-row{display:grid;grid-template-columns:1fr 1fr 56px;gap:5px;margin-top:6px;}
 .coord-row input{margin-bottom:0;}
 
@@ -82,10 +86,10 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans
   .title b{font-size:14px;}
   .title span{font-size:10px;}
 
-  .search-panel{top:72px;left:58px;width:215px;padding:8px;}
-  .search-panel h3{font-size:12px;margin-bottom:6px;}
-  .search-panel input{padding:6px;font-size:11px;margin-bottom:5px;}
-  .search-panel button.main-btn{padding:6px;font-size:11px;}
+  .search-panel,.buffer-panel{top:72px;left:58px;width:215px;padding:8px;}
+  .search-panel h3,.buffer-panel h3{font-size:12px;margin-bottom:6px;}
+  .search-panel input,.buffer-panel input{padding:6px;font-size:11px;margin-bottom:5px;}
+  .search-panel button.main-btn,.buffer-panel button.main-btn{padding:6px;font-size:11px;}
   .coord-row{grid-template-columns:1fr 1fr 48px;gap:4px;}
 
   .panel{
@@ -141,6 +145,13 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans
   </div>
 </div>
 
+<div class="buffer-panel" id="bufferPanel">
+  <button class="close-buffer" onclick="toggleBufferPanel()">×</button>
+  <h3>Buffer Zone</h3>
+  <input id="bufferDistance" type="number" min="1" placeholder="Distance in meters">
+  <button class="main-btn" onclick="activateBufferMode()">Select point</button>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 
@@ -159,23 +170,18 @@ function ensureSvgPatterns(){
          width="10"
          height="10"
          patternTransform="rotate(45)">
-
-  <rect width="10"
-        height="10"
-        fill="#d9b97a"/>
-
-  <line x1="0"
-        y1="0"
-        x2="0"
-        y2="10"
-        stroke="#ffd400"
-        stroke-width="4"/>
+  <rect width="10" height="10" fill="#d9b97a"/>
+  <line x1="0" y1="0" x2="0" y2="10" stroke="#ffd400" stroke-width="4"/>
 </pattern>
 
-    <pattern id="pattern-proposed-commercial" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
-      <rect width="8" height="8" fill="#ffd6d6"/>
-      <line x1="0" y1="0" x2="0" y2="8" stroke="#ff0000" stroke-width="3"/>
-    </pattern>
+<pattern id="pattern-proposed-commercial"
+         patternUnits="userSpaceOnUse"
+         width="8"
+         height="8"
+         patternTransform="rotate(45)">
+  <rect width="8" height="8" fill="#ffd6d6"/>
+  <line x1="0" y1="0" x2="0" y2="8" stroke="#ff0000" stroke-width="3"/>
+</pattern>
   `;
 
   svg.prepend(defs);
@@ -197,6 +203,12 @@ L.control.layers({"Satellite":esriHybrid,"Imagery":esriImagery,"OpenStreetMap":o
 
 function toggleSearchPanel(){
   document.getElementById("searchPanel").classList.toggle("show");
+  document.getElementById("bufferPanel").classList.remove("show");
+}
+
+function toggleBufferPanel(){
+  document.getElementById("bufferPanel").classList.toggle("show");
+  document.getElementById("searchPanel").classList.remove("show");
 }
 
 const SearchControl=L.Control.extend({
@@ -209,6 +221,17 @@ const SearchControl=L.Control.extend({
   }
 });
 map.addControl(new SearchControl());
+
+const BufferControl=L.Control.extend({
+  options:{position:'topleft'},
+  onAdd:function(){
+    const div=L.DomUtil.create('div','leaflet-bar leaflet-control');
+    div.innerHTML='<a href="#" title="Buffer Zone" style="width:34px;height:34px;line-height:34px;text-align:center;font-size:18px;display:block;text-decoration:none;color:#111;background:#fff;">◎</a>';
+    div.onclick=function(e){e.preventDefault();toggleBufferPanel();};
+    return div;
+  }
+});
+map.addControl(new BufferControl());
 
 function updateBaghdadTime(){
   const now=new Date();
@@ -269,6 +292,8 @@ const layersConfig=[
 
 let allFeatureLayers=[];
 let highlightLayer=null;
+let bufferMode=false;
+
 const loadedLayers={};
 const layerList=document.getElementById("layerList");
 const boundsGroup=L.featureGroup();
@@ -277,9 +302,9 @@ layersConfig.forEach((cfg,i)=>{
   const id="layer_"+i;
   const row=document.createElement("div");
   row.className="layer";
+
 row.innerHTML = `
   <input type="checkbox" id="${id}" ${cfg.checked ? "checked" : ""}>
-
   ${
     cfg.name === "Proposed Residential"
     ? `
@@ -319,9 +344,9 @@ row.innerHTML = `
       </span>
     `
   }
-
   <label for="${id}">${cfg.name}</label>
 `;
+
   layerList.appendChild(row);
 
   fetch("./geojson/"+cfg.file)
@@ -436,6 +461,16 @@ function removeMeasure(layer){
 function updateMeasure(layer){
   removeMeasure(layer);
 
+  if(layer instanceof L.Circle){
+    const center=layer.getLatLng();
+    const radius=layer.getRadius();
+    layer._measureLabel=L.marker(center,{
+      icon:measureLabelIcon("Buffer<br>"+formatM(radius)),
+      interactive:false
+    }).addTo(map);
+    return;
+  }
+
   if(layer instanceof L.Polyline && !(layer instanceof L.Polygon)){
     const pts=layer.getLatLngs();
     const len=lineLength(pts);
@@ -492,12 +527,17 @@ map.on(L.Draw.Event.CREATED,function(e){
 
 map.on("draw:edited",function(e){
   e.layers.eachLayer(function(layer){
-    if(layer instanceof L.Polygon || (layer instanceof L.Polyline && !(layer instanceof L.Polygon))){
+    if(layer instanceof L.Circle ||
+       layer instanceof L.Polygon ||
+       (layer instanceof L.Polyline && !(layer instanceof L.Polygon))){
       updateMeasure(layer);
     }
+
     if(layer instanceof L.Marker){
       const p=layer.getLatLng();
-      layer.setTooltipContent(p.lat.toFixed(6)+"<br>"+p.lng.toFixed(6));
+      if(layer.setTooltipContent){
+        layer.setTooltipContent(p.lat.toFixed(6)+"<br>"+p.lng.toFixed(6));
+      }
     }
   });
 });
@@ -507,6 +547,45 @@ map.on("draw:deleted",function(e){
 });
 
 L.control.scale({position:'bottomleft'}).addTo(map);
+
+function activateBufferMode(){
+  const dist=parseFloat(document.getElementById("bufferDistance").value);
+
+  if(isNaN(dist)||dist<=0){
+    alert("Enter valid buffer distance in meters");
+    return;
+  }
+
+  bufferMode=true;
+  map.getContainer().style.cursor="crosshair";
+  document.getElementById("bufferPanel").classList.remove("show");
+}
+
+map.on("click",function(e){
+  if(!bufferMode) return;
+
+  const dist=parseFloat(document.getElementById("bufferDistance").value);
+  if(isNaN(dist)||dist<=0){
+    bufferMode=false;
+    map.getContainer().style.cursor="";
+    return;
+  }
+
+  const circle=L.circle(e.latlng,{
+    radius:dist,
+    color:"#2563eb",
+    weight:2,
+    fillColor:"#60a5fa",
+    fillOpacity:0.20
+  });
+
+  drawnItems.addLayer(circle);
+  updateMeasure(circle);
+
+  bufferMode=false;
+  map.getContainer().style.cursor="";
+  document.getElementById("bufferDistance").value="";
+});
 
 function searchPlot(){
   const q=normalizeSearchValue(document.getElementById("plotSearch").value);
