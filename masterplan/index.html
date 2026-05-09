@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anah Master Plan Web GIS</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
+
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;}
+#map{width:100%;height:100%;}
+
+.title{
+  position:absolute;top:14px;left:55px;z-index:1000;
+  background:rgba(15,23,42,.82);color:#fff;padding:10px 16px;
+  border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.title b{font-size:17px;}
+.title span{display:block;font-size:12px;color:#cbd5e1;}
+
+.panel{
+  position:absolute;top:64px;right:14px;z-index:1000;
+  width:max-content;min-width:185px;max-width:245px;max-height:80vh;
+  overflow:auto;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);
+  border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.28);padding:10px 12px;
+}
+.panel h2{margin:0 0 4px;font-size:18px;color:#0f172a;}
+.panel small{color:#64748b;}
+
+.layer{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:14px;white-space:nowrap;}
+.swatch{width:16px;height:16px;border-radius:4px;border:1px solid #555;flex:0 0 16px;}
+
+.coords,.datetime{
+  position:absolute;left:12px;z-index:1000;background:rgba(15,23,42,.86);
+  color:#fff;padding:8px 12px;border-radius:10px;font-size:13px;
+}
+.coords{bottom:12px;}
+.datetime{bottom:48px;}
+
+.search-panel{
+  position:absolute;top:82px;left:55px;z-index:1000;width:260px;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+  border-radius:14px;padding:10px;box-shadow:0 6px 22px rgba(0,0,0,.25);
+  display:none;
+}
+.search-panel.show{display:block;}
+.close-search{position:absolute;top:6px;right:9px;border:0;background:transparent;font-size:20px;cursor:pointer;}
+.search-panel h3{margin:0 0 8px;font-size:14px;color:#0f172a;}
+.search-panel input{
+  width:100%;box-sizing:border-box;border:1px solid #cbd5e1;
+  border-radius:8px;padding:7px;font-size:12px;margin-bottom:6px;
+}
+.search-panel button.main-btn,.coord-row button{
+  border:0;border-radius:8px;background:#0f172a;color:white;font-size:12px;cursor:pointer;
+}
+.search-panel button.main-btn{width:100%;padding:7px;}
+.coord-row{display:grid;grid-template-columns:1fr 1fr 56px;gap:5px;margin-top:6px;}
+.coord-row input{margin-bottom:0;}
+
+.measure-label{
+  background:rgba(15,23,42,.86);color:white;padding:3px 6px;
+  border-radius:7px;font-size:10px;line-height:1.25;white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);text-align:center;pointer-events:none;
+}
+
+.leaflet-tooltip.coord-tooltip{
+  background:rgba(15,23,42,.86);color:#fff;border:0;border-radius:7px;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);font-size:9px;line-height:1.25;padding:2px 5px;
+}
+.leaflet-tooltip.coord-tooltip:before{display:none;}
+
+.proposed-residential{fill:url(#pattern-proposed-residential) !important;}
+.proposed-commercial{fill:url(#pattern-proposed-commercial) !important;}
+
+@media(max-width:700px){
+  .title{
+    left:50%;transform:translateX(-50%);top:12px;max-width:230px;
+    padding:7px 12px;border-radius:12px;text-align:center;
+  }
+  .title b{font-size:14px;}
+  .title span{font-size:10px;}
+
+  .search-panel{top:72px;left:58px;width:215px;padding:8px;}
+  .search-panel h3{font-size:12px;margin-bottom:6px;}
+  .search-panel input{padding:6px;font-size:11px;margin-bottom:5px;}
+  .search-panel button.main-btn{padding:6px;font-size:11px;}
+  .coord-row{grid-template-columns:1fr 1fr 48px;gap:4px;}
+
+  .panel{
+    width:calc(100% - 16px);min-width:0;max-width:none;
+    left:8px;right:8px;top:auto;bottom:8px;
+    max-height:18vh;padding:6px 8px;border-radius:14px;overflow:auto;
+  }
+  .panel h2{font-size:11px;margin:0;line-height:1.1;}
+  .panel small{display:none;}
+
+  #layerList{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px 6px;margin-top:4px;}
+  .layer{margin:0;gap:4px;font-size:10px;line-height:1.15;white-space:nowrap;}
+  .layer input{width:11px;height:11px;margin:0;}
+  .swatch{width:9px;height:9px;flex:0 0 9px;border-radius:2px;}
+
+  .coords{bottom:132px;left:10px;font-size:10px;padding:5px 7px;}
+  .datetime{bottom:165px;left:10px;font-size:10px;padding:5px 7px;}
+
+  .leaflet-top.leaflet-right{top:10px !important;right:10px !important;}
+  .leaflet-control-layers{margin:0 !important;}
+  .leaflet-control-layers-toggle{width:34px !important;height:34px !important;}
+}
+</style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<div class="title">
+  <b>Anah Master Plan</b>
+  <span>Urban Land Use Web GIS</span>
+</div>
+
+<div class="panel">
+  <h2>Land Use</h2>
+  <small>Turn layers on / off</small>
+  <div id="layerList"></div>
+</div>
+
+<div class="coords" id="coords">Lat: -- | Lon: --</div>
+<div class="datetime" id="datetime">Iraq Time: --</div>
+
+<div class="search-panel" id="searchPanel">
+  <button class="close-search" onclick="toggleSearchPanel()">×</button>
+  <h3>Search / Add Coordinates</h3>
+  <input id="plotSearch" type="text" placeholder="Search plot number">
+  <button class="main-btn" onclick="searchPlot()">Search</button>
+  <div class="coord-row">
+    <input id="manualLat" type="text" placeholder="Lat">
+    <input id="manualLon" type="text" placeholder="Lon">
+    <button onclick="addManualMarker()">Add</button>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
+<script>
+const map = L.map('map',{zoomControl:true,maxZoom:22}).setView([34.369,41.981],13);
+
+function ensureSvgPatterns(){
+  const svg = document.querySelector(".leaflet-overlay-pane svg");
+  if(!svg || svg.querySelector("#pattern-proposed-residential")) return;
+
+  const defs = document.createElementNS("http://www.w3.org/2000/svg","defs");
+
+  defs.innerHTML = `
+<pattern id="pattern-proposed-residential"
+         patternUnits="userSpaceOnUse"
+         width="10"
+         height="10"
+         patternTransform="rotate(45)">
+
+  <rect width="10"
+        height="10"
+        fill="#d9b97a"/>
+
+  <line x1="0"
+        y1="0"
+        x2="0"
+        y2="10"
+        stroke="#ffd400"
+        stroke-width="4"/>
+</pattern>
+
+    <pattern id="pattern-proposed-commercial" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="#ffd6d6"/>
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#ff0000" stroke-width="3"/>
+    </pattern>
+  `;
+
+  svg.prepend(defs);
+}
+
+const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:22,attribution:'© OpenStreetMap'});
+
+const esriImagery = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  {maxZoom:22,maxNativeZoom:18,attribution:'Tiles © Esri'}
+);
+
+const esriHybrid = L.layerGroup([
+  esriImagery,
+  L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',{maxZoom:22})
+]).addTo(map);
+
+L.control.layers({"Satellite":esriHybrid,"Imagery":esriImagery,"OpenStreetMap":osm},null,{position:'topright'}).addTo(map);
+
+function toggleSearchPanel(){
+  document.getElementById("searchPanel").classList.toggle("show");
+}
+
+const SearchControl=L.Control.extend({
+  options:{position:'topleft'},
+  onAdd:function(){
+    const div=L.DomUtil.create('div','leaflet-bar leaflet-control');
+    div.innerHTML='<a href="#" title="Search" style="width:34px;height:34px;line-height:34px;text-align:center;font-size:18px;display:block;text-decoration:none;color:#111;background:#fff;">🔍</a>';
+    div.onclick=function(e){e.preventDefault();toggleSearchPanel();};
+    return div;
+  }
+});
+map.addControl(new SearchControl());
+
+function updateBaghdadTime(){
+  const now=new Date();
+  const baghdad=new Intl.DateTimeFormat('en-GB',{
+    timeZone:'Asia/Baghdad',
+    year:'numeric',month:'2-digit',day:'2-digit',
+    hour:'2-digit',minute:'2-digit',second:'2-digit',
+    hour12:false
+  }).format(now);
+  document.getElementById("datetime").innerHTML="Iraq Time: "+baghdad;
+}
+updateBaghdadTime();
+setInterval(updateBaghdadTime,1000);
+
+function normalizeSearchValue(v){
+  return String(v ?? "").replace(/[\u200E\u200F\u202A-\u202E]/g,"")
+    .replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d))
+    .replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+    .replace(/,/g,"").trim().replace(/\.0$/,"");
+}
+
+function formatPopupValue(key,val){
+  const k=String(key).toLowerCase();
+  if(k.includes("shape_area")||k.includes("area")||k.includes("مساح")){
+    const n=Number(val); if(!isNaN(n)) return Math.round(n)+" m²";
+  }
+  if(k.includes("shape_leng")||k.includes("length")||k.includes("perimeter")||k.includes("محيط")){
+    const n=Number(val); if(!isNaN(n)) return Math.round(n)+" m";
+  }
+  return val;
+}
+
+function isIgnoredSearchKey(k){
+  const key=normalizeSearchValue(k).toLowerCase();
+  return key==="objectid"||key==="fid"||key==="oid"||key==="oid_"||
+    key.includes("shape")||key.includes("area")||key.includes("length")||
+    key.includes("مساح")||key.includes("محيط");
+}
+
+const layersConfig=[
+  {name:"Master Plan Boundary",file:"master plan boundary.geojson",color:"#ff3b3b",fill:"#ffffff",opacity:0.02,weight:3,checked:true},
+  {name:"Residential",file:"Residential.geojson",color:"#9a9a00",fill:"#ffff00",opacity:0.72,weight:0.7,checked:true},
+  {name:"Proposed Residential",file:"Proposed_Residential.geojson",color:"#b36b00",fill:"#ffd27a",opacity:1,weight:1,checked:true,className:"proposed-residential"},
+  {name:"Vertical Residential",file:"Vertical_Residential.geojson",color:"#5e0000",fill:"#8b0000",opacity:0.82,weight:1,checked:true},
+  {name:"Commercial",file:"Commercial.geojson",color:"#b10000",fill:"#ff0000",opacity:0.82,weight:1,checked:true},
+  {name:"Proposed Commercial",file:"Proposed_Commercial.geojson",color:"#b10000",fill:"#ffd6d6",opacity:1,weight:1,checked:true,className:"proposed-commercial"},
+  {name:"Industrial",file:"Industrial.geojson",color:"#6f00b5",fill:"#a000ff",opacity:0.78,weight:1,checked:true},
+  {name:"Public Use",file:"PublicUse.geojson",color:"#6b8ea3",fill:"#c7ddeb",opacity:0.82,weight:1,checked:true},
+  {name:"Educational",file:"Educational.geojson",color:"#003d99",fill:"#0057c2",opacity:0.85,weight:1,checked:true},
+  {name:"Health",file:"Health.geojson",color:"#b86ca1",fill:"#e5acd1",opacity:0.88,weight:1,checked:true},
+  {name:"Green Areas",file:"GreenArea.geojson",color:"#238f00",fill:"#38b000",opacity:0.72,weight:1,checked:true},
+  {name:"Religious",file:"Religious.geojson",color:"#c69a2d",fill:"#f2c96d",opacity:0.90,weight:1.5,checked:true},
+  {name:"Tourist",file:"Tourist.geojson",color:"#8c6500",fill:"#b8860b",opacity:0.82,weight:1,checked:true},
+  {name:"Oil Station",file:"Oil station.geojson",color:"#0077a8",fill:"#00a8e8",opacity:0.90,weight:1,checked:true},
+  {name:"Cemetery",file:"cemetery.geojson",color:"#b89952",fill:"#f0c96b",opacity:0.80,weight:1,checked:true},
+  {name:"Roads",file:"Roads.geojson",color:"#555555",fill:"#8a8a8a",opacity:0.95,weight:2.2,checked:true}
+];
+
+let allFeatureLayers=[];
+let highlightLayer=null;
+const loadedLayers={};
+const layerList=document.getElementById("layerList");
+const boundsGroup=L.featureGroup();
+
+layersConfig.forEach((cfg,i)=>{
+  const id="layer_"+i;
+  const row=document.createElement("div");
+  row.className="layer";
+row.innerHTML = `
+  <input type="checkbox" id="${id}" ${cfg.checked ? "checked" : ""}>
+
+  ${
+    cfg.name === "Proposed Residential"
+    ? `
+      <span class="swatch"
+        style="
+          background:
+          repeating-linear-gradient(
+            45deg,
+            #ffd27a 0px,
+            #ffd27a 6px,
+            #ffff00 6px,
+            #ffff00 10px
+          );
+          border:1px solid #d99000;
+        ">
+      </span>
+    `
+    : cfg.name === "Proposed Commercial"
+    ? `
+      <span class="swatch"
+        style="
+          background:
+          repeating-linear-gradient(
+            45deg,
+            #ffd6d6 0px,
+            #ffd6d6 6px,
+            #ff0000 6px,
+            #ff0000 10px
+          );
+          border:1px solid #b10000;
+        ">
+      </span>
+    `
+    : `
+      <span class="swatch"
+        style="background:${cfg.fill};border-color:${cfg.color}">
+      </span>
+    `
+  }
+
+  <label for="${id}">${cfg.name}</label>
+`;
+  layerList.appendChild(row);
+
+  fetch("./geojson/"+cfg.file)
+    .then(r=>{if(!r.ok) throw new Error(cfg.file+" not found"); return r.json();})
+    .then(data=>{
+      ensureSvgPatterns();
+
+      const layer=L.geoJSON(data,{
+        style:function(){
+          return {
+            color:cfg.color,
+            weight:cfg.weight,
+            fillColor:cfg.fill,
+            fillOpacity:cfg.opacity,
+            opacity:1,
+            className:cfg.className || ""
+          };
+        },
+        onEachFeature:function(feature,lyr){
+          const props=feature.properties||{};
+          let html=`<b>${cfg.name}</b><hr>`;
+          Object.keys(props).forEach(k=>{
+            let val=props[k];
+            if(val!==null&&val!==""){
+              val=formatPopupValue(k,val);
+              html+=`<b>${k}</b>: ${val}<br>`;
+            }
+          });
+          lyr.bindPopup(html);
+        }
+      });
+
+      loadedLayers[id]=layer;
+      allFeatureLayers.push({layer:layer,cfg:cfg});
+      if(cfg.checked) layer.addTo(map);
+      boundsGroup.addLayer(layer);
+
+      document.getElementById(id).addEventListener("change",function(){
+        if(this.checked){map.addLayer(layer);bringImportantLayersToFront();}
+        else{map.removeLayer(layer);}
+      });
+
+      if(Object.keys(loadedLayers).length===layersConfig.length){
+        ensureSvgPatterns();
+        map.fitBounds(boundsGroup.getBounds(),{padding:[30,30]});
+        bringImportantLayersToFront();
+      }
+    });
+});
+
+function bringImportantLayersToFront(){
+  layersConfig.forEach((cfg,i)=>{
+    const layer=loadedLayers["layer_"+i];
+    if(!layer||!map.hasLayer(layer)) return;
+    if(["Religious","Health","Educational","Commercial","Oil Station","Roads","Master Plan Boundary"].includes(cfg.name)){
+      layer.bringToFront();
+    }
+  });
+}
+
+map.on("mousemove",e=>{
+  document.getElementById("coords").innerHTML="Lat: "+e.latlng.lat.toFixed(6)+" | Lon: "+e.latlng.lng.toFixed(6);
+});
+
+const drawnItems=new L.FeatureGroup();
+map.addLayer(drawnItems);
+
+const measureLabelIcon=(text)=>L.divIcon({className:"measure-label",html:text,iconSize:null});
+
+function formatM(v){return Math.round(v)+" m";}
+function formatM2(v){return Math.round(v)+" m²";}
+
+function lineLength(latlngs){
+  let total=0;
+  for(let i=1;i<latlngs.length;i++) total+=latlngs[i-1].distanceTo(latlngs[i]);
+  return total;
+}
+
+function polygonArea(latlngs){
+  const earthRadius=6378137;
+  let area=0;
+  if(latlngs.length>2){
+    for(let i=0;i<latlngs.length;i++){
+      const p1=latlngs[i];
+      const p2=latlngs[(i+1)%latlngs.length];
+      area+=((p2.lng-p1.lng)*Math.PI/180)*(2+Math.sin(p1.lat*Math.PI/180)+Math.sin(p2.lat*Math.PI/180));
+    }
+    area=area*earthRadius*earthRadius/2;
+  }
+  return Math.abs(area);
+}
+
+function polygonPerimeter(latlngs){
+  let total=lineLength(latlngs);
+  total+=latlngs[latlngs.length-1].distanceTo(latlngs[0]);
+  return total;
+}
+
+function centerOf(latlngs){
+  let lat=0,lng=0;
+  latlngs.forEach(p=>{lat+=p.lat;lng+=p.lng;});
+  return L.latLng(lat/latlngs.length,lng/latlngs.length);
+}
+
+function removeMeasure(layer){
+  if(layer._measureLabel){
+    map.removeLayer(layer._measureLabel);
+    layer._measureLabel=null;
+  }
+}
+
+function updateMeasure(layer){
+  removeMeasure(layer);
+
+  if(layer instanceof L.Polyline && !(layer instanceof L.Polygon)){
+    const pts=layer.getLatLngs();
+    const len=lineLength(pts);
+    const mid=pts[Math.floor(pts.length/2)];
+    layer._measureLabel=L.marker(mid,{icon:measureLabelIcon(formatM(len)),interactive:false}).addTo(map);
+  }
+
+  if(layer instanceof L.Polygon){
+    const pts=layer.getLatLngs()[0];
+    const area=polygonArea(pts);
+    const perimeter=polygonPerimeter(pts);
+    const center=centerOf(pts);
+    layer._measureLabel=L.marker(center,{icon:measureLabelIcon(formatM2(area)+"<br>"+formatM(perimeter)),interactive:false}).addTo(map);
+  }
+}
+
+function bindCoordinateTooltip(marker){
+  const p=marker.getLatLng();
+  marker.bindTooltip(p.lat.toFixed(6)+"<br>"+p.lng.toFixed(6),{
+    permanent:true,direction:"top",offset:[0,-20],className:"coord-tooltip",opacity:1
+  });
+  marker.on("drag",function(e){
+    const np=e.target.getLatLng();
+    e.target.setTooltipContent(np.lat.toFixed(6)+"<br>"+np.lng.toFixed(6));
+  });
+}
+
+function addEditableCoordinateMarker(lat,lon){
+  const marker=L.marker([lat,lon],{draggable:true});
+  bindCoordinateTooltip(marker);
+  drawnItems.addLayer(marker);
+  map.setView([lat,lon],18);
+}
+
+const drawControl=new L.Control.Draw({
+  position:'topleft',
+  edit:{featureGroup:drawnItems},
+  draw:{polygon:true,polyline:true,rectangle:false,circle:false,circlemarker:false,marker:true}
+});
+map.addControl(drawControl);
+
+map.on(L.Draw.Event.CREATED,function(e){
+  const layer=e.layer;
+  drawnItems.addLayer(layer);
+
+  if(e.layerType==="polyline"||e.layerType==="polygon") updateMeasure(layer);
+
+  if(e.layerType==="marker"){
+    drawnItems.removeLayer(layer);
+    const p=layer.getLatLng();
+    addEditableCoordinateMarker(p.lat,p.lng);
+  }
+});
+
+map.on("draw:edited",function(e){
+  e.layers.eachLayer(function(layer){
+    if(layer instanceof L.Polygon || (layer instanceof L.Polyline && !(layer instanceof L.Polygon))){
+      updateMeasure(layer);
+    }
+    if(layer instanceof L.Marker){
+      const p=layer.getLatLng();
+      layer.setTooltipContent(p.lat.toFixed(6)+"<br>"+p.lng.toFixed(6));
+    }
+  });
+});
+
+map.on("draw:deleted",function(e){
+  e.layers.eachLayer(function(layer){removeMeasure(layer);});
+});
+
+L.control.scale({position:'bottomleft'}).addTo(map);
+
+function searchPlot(){
+  const q=normalizeSearchValue(document.getElementById("plotSearch").value);
+  if(!q) return;
+
+  let found=null;
+  allFeatureLayers.forEach(item=>{
+    item.layer.eachLayer(lyr=>{
+      const props=lyr.feature?.properties||{};
+      Object.keys(props).forEach(k=>{
+        if(isIgnoredSearchKey(k)) return;
+        const val=normalizeSearchValue(props[k]);
+        if(val===q) found={layer:lyr,cfg:item.cfg};
+      });
+    });
+  });
+
+  if(!found){alert("Plot not found");return;}
+
+  if(highlightLayer){
+    map.removeLayer(highlightLayer);
+    highlightLayer=null;
+  }
+
+  highlightLayer=L.geoJSON(found.layer.feature,{
+    style:{color:"#00ffff",weight:4,fillColor:"#00ffff",fillOpacity:0.35}
+  }).addTo(map);
+
+  if(found.layer.getBounds) map.fitBounds(found.layer.getBounds(),{padding:[40,40],maxZoom:20});
+  found.layer.openPopup();
+}
+
+function addManualMarker(){
+  const lat=parseFloat(document.getElementById("manualLat").value);
+  const lon=parseFloat(document.getElementById("manualLon").value);
+  if(isNaN(lat)||isNaN(lon)){alert("Enter valid coordinates");return;}
+  addEditableCoordinateMarker(lat,lon);
+}
+</script>
+
+</body>
+</html>
