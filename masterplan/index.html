@@ -368,6 +368,7 @@ row.innerHTML = `
         onEachFeature:function(feature,lyr){
           const props=feature.properties||{};
           let html=`<b>${cfg.name}</b><hr>`;
+
           Object.keys(props).forEach(k=>{
             let val=props[k];
             if(val!==null&&val!==""){
@@ -375,6 +376,15 @@ row.innerHTML = `
               html+=`<b>${k}</b>: ${val}<br>`;
             }
           });
+
+          lyr.on("click",function(e){
+            if(bufferMode){
+              createBufferAt(e.latlng);
+              L.DomEvent.stop(e);
+              return;
+            }
+          });
+
           lyr.bindPopup(html);
         }
       });
@@ -561,17 +571,16 @@ function activateBufferMode(){
   document.getElementById("bufferPanel").classList.remove("show");
 }
 
-map.on("click",function(e){
-  if(!bufferMode) return;
-
+function createBufferAt(latlng){
   const dist=parseFloat(document.getElementById("bufferDistance").value);
+
   if(isNaN(dist)||dist<=0){
     bufferMode=false;
     map.getContainer().style.cursor="";
     return;
   }
 
-  const circle=L.circle(e.latlng,{
+  const circle=L.circle(latlng,{
     radius:dist,
     color:"#2563eb",
     weight:2,
@@ -585,6 +594,11 @@ map.on("click",function(e){
   bufferMode=false;
   map.getContainer().style.cursor="";
   document.getElementById("bufferDistance").value="";
+}
+
+map.on("click",function(e){
+  if(!bufferMode) return;
+  createBufferAt(e.latlng);
 });
 
 function searchPlot(){
